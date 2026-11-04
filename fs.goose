@@ -79,6 +79,6 @@ fn remove_empty_dir(path: const u8[:]) -> Status { return mutate(5, path, ""); }
 
 fn owned_name(source: const u8[:]) -> u8[] {
     var result: u8[>..] = [];
-    for c in source { result.push(c); }
+    result.append(source);
     return result;
 }
