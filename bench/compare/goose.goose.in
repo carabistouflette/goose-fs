@@ -39,6 +39,32 @@ fn reads(path: const u8[:], size: i64, count: i64, fresh: bool) {
 fn expected_name(index: i64) -> u8[>..] {
     return str("entry-", index / 1000 % 10, index / 100 % 10, index / 10 % 10, index % 10);
 }
+fn retained_read(path: const u8[:], size: i64, count: i64) {
+    let label = str("read-retained-", size);
+    if !CUSTOM {
+        for sample in 7 { print(label, "\t", sample, "\t0\t0\tunsupported"); }
+        return;
+    }
+    let context, created = fs::create_context(); assert(created.error == fs::Error.None);
+    let file, opened = fs::open_file(context, path, fs::OpenOptions { .. });
+    assert(opened.error == fs::Error.None);
+    var bytes: u8[>..] = [];
+    let warm = fs::read_at(file, 0, size, bytes);
+    assert(warm.status.error == fs::Error.None && warm.bytes == size); check_pattern(bytes);
+    for sample in 7 {
+        var sum: i64 = 0;
+        let start = clock_ns();
+        for _ in count {
+            let result = fs::read_at(file, 0, size, bytes);
+            assert(result.status.error == fs::Error.None && result.bytes == size);
+            sum += checksum(bytes);
+        }
+        let elapsed = clock_ns() - start;
+        print(label, "\t", sample, "\t", elapsed / count, "\t", sum, "\tok");
+    }
+    check_pattern(bytes);
+    assert(fs::close_context(context).error == fs::Error.None);
+}
 fn listing(path: const u8[:], count: i64, iterations: i64) {
     let label = str("list-sorted-", count);
     var entries: fs::Entry[>..] = [];
@@ -111,6 +137,7 @@ fn main() {
     for size in [0, 64, 4096, 65536, 1048576] {
         let path = str(argv[1], "/read-", size);
         reads(path, size, count, true); reads(path, size, count, false);
+        retained_read(path, size, count);
     }
     for entries in [0, 1, 128, 4096] {
         let path = str(argv[1], "/list-", entries); listing(path, entries, count);

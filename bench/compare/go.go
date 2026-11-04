@@ -65,6 +65,14 @@ func main() {
             byteSink = data; return checksum(data)
         })
         validate(byteSink)
+        file, err := os.Open(path); must(err)
+        retained := make([]byte,size)
+        samples(fmt.Sprintf("read-retained-%d",size),count,func() uint64 {
+            n, err := file.ReadAt(retained,0); must(err)
+            if n!=size { panic("wrong retained read length") }
+            byteSink=retained; return checksum(retained)
+        })
+        validate(retained); must(file.Close())
     }
     for _, countEntries := range []int{0,1,128,4096} {
         path := filepath.Join(root,fmt.Sprintf("list-%d",countEntries))

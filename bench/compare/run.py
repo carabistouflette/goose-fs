@@ -47,7 +47,7 @@ list_sizes=[0,1,128,4096]
 expected={}
 for size in read_sizes:
     value=size+(13+((size-1)*17+13)%251 if size else 0)
-    for mode in ['fresh','reuse']: expected[f'read-{mode}-{size}']=value
+    for mode in ['fresh','reuse','retained']: expected[f'read-{mode}-{size}']=value
 for count in list_sizes:
     expected[f'list-sorted-{count}']=sum(159+i%10 for i in range(count))
 expected.update({'metadata-file':65,'is-dir':1})
@@ -64,7 +64,7 @@ def execute(name,root,iterations):
         key=(workload,int(sample))
         assert workload in expected and key not in seen and 0<=int(sample)<7,key
         seen.add(key)
-        unsupported=name=='goose-stdlib' and workload=='metadata-file'
+        unsupported=name=='goose-stdlib' and (workload=='metadata-file' or workload.startswith('read-retained-'))
         assert state==('unsupported' if unsupported else 'ok'),(name,line)
         assert int(ns)>=0 and int(checksum)==(0 if unsupported else expected[workload]*iterations),(name,line)
         rows.append(dict(workload=workload,sample=int(sample),ns_per_call=None if unsupported else int(ns),checksum=int(checksum),state=state))
@@ -103,10 +103,10 @@ metadata=dict(profile='native-public-api-task-costs',timestamp=datetime.datetime
     listing_limits={'goose-fs':{'byte_limit':1048576,'entry_limit':4096}},
     metadata_consumption='All callers test regular kind and size; Rust/Go additionally retain full native metadata objects, Goose may elide unused wrapper fields.',
     policies={
-      'goose-fs':'absolute strict paths; all-component nofollow; bounded regular reads; clear-on-error; owned sorted entries plus kind hints; nofollow metadata',
+      'goose-fs':'absolute strict paths; all-component nofollow; bounded regular reads; clear-on-error; retained read_at holds Context+entry read locks; owned sorted entries plus kind hints; nofollow metadata',
       'goose-stdlib':'cwd-compatible paths; follows links; unbounded append-to-builder whole read reset by runner; sorted newline names; no general metadata',
-      'rust':'std::fs::read fresh; File+read_to_end reused; std::fs::read_dir+owned OsString sort; symlink_metadata; Path::is_dir; normal link-following traversal',
-      'go':'os.ReadFile fresh; os.Open+File.Read reused; os.ReadDir sorted DirEntry; os.Lstat; os.Stat; normal link-following traversal'},
+      'rust':'std::fs::read fresh; File+read_to_end reused; retained FileExt::read_at; std::fs::read_dir+owned OsString sort; symlink_metadata; Path::is_dir; normal link-following traversal',
+      'go':'os.ReadFile fresh; os.Open+File.Read reused; retained File.ReadAt; os.ReadDir sorted DirEntry; os.Lstat; os.Stat; normal link-following traversal'},
     limitation='Trusted stable ASCII fixtures; public native API semantics differ. Not an equal-security ranking. No durability/cold-storage/concurrency claim. Whole-process batches shuffled; allocator state retained between workloads. Timed checksums consume length and endpoint bytes; independent full-content/ordered-name preflight outside timers. Fresh timed reads do not receive a full-content postcheck. VmHWM sampled after all workloads includes validation and retained sinks; not per-operation memory or allocations.',
     samples=samples,batches=batches)
 a.output.parent.mkdir(parents=True,exist_ok=True)

@@ -18,6 +18,15 @@ reused read outputs; sizes 0/64/4096/65536/1048576 bytes. Listings have
 0/1/128/4096 ASCII names. General metadata is explicitly unsupported for Goose
 stdlib; is-directory is a separate workload. Each batch retains its language's
 normal allocator/GC behavior. Whole batches are shuffled with a recorded seed.
+Retained-read cases open once before timing, then read at offset zero into reused
+storage through goose-fs read_at, Rust FileExt::read_at and Go File.ReadAt. Open,
+Context initialization and close are outside those timings; the pinned Goose
+stdlib has no retained File API and receives unsupported rows. Exact-sized stable
+fixtures are intended to permit one successful pread for nonempty inputs, despite
+Go ReadAt's more general fill/EOF contract. Short reads/EINTR remain possible;
+syscall counts are not measured. Zero-sized retained reads may avoid
+syscalls. Context+entry lock and error checks remain in goose-fs timings; these
+are sequential retained calls, not a concurrency or lifecycle-cost measurement.
 
 Results record native-API policies, source/executable/fixture hashes, versions,
 flags, affinity, filesystem, shared-host load, all raw samples, and per-process

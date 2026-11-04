@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 use std::{fs, hint::black_box, io::Read, path::Path, time::Instant};
+use std::os::unix::fs::FileExt;
 fn checksum(bytes: &[u8]) -> u64 {
     bytes.len() as u64 + bytes.first().copied().unwrap_or(0) as u64
         + bytes.last().copied().unwrap_or(0) as u64
@@ -32,6 +33,12 @@ fn main() {
         samples(&format!("read-reuse-{size}"), count, || {
             reused.clear(); fs::File::open(&path).unwrap().read_to_end(&mut reused).unwrap();
             assert_eq!(reused.len(), size); checksum(black_box(&reused))
+        });
+        validate(&reused);
+        let file = fs::File::open(&path).unwrap();
+        samples(&format!("read-retained-{size}"), count, || {
+            assert_eq!(file.read_at(&mut reused, 0).unwrap(), size);
+            checksum(black_box(&reused))
         });
         validate(&reused);
     }
