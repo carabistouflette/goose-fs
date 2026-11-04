@@ -34,6 +34,7 @@ native:
 	mkdir -p .build
 	$(CC) $(CFLAGS) -O2 -shared -fPIC native/fs.c -o .build/fs.so
 	python3 tests/model.py
+	python3 tests/stress.py
 	$(CC) $(CFLAGS) -O2 tests/native.c native/fs.c -o .build/native
 	python3 tests/run.py .build/native
 	$(CC) $(CFLAGS) -O2 tests/failures.c native/fs.c -Wl,--wrap=read -Wl,--wrap=write -Wl,--wrap=close -Wl,--wrap=readdir -Wl,--wrap=closedir -o .build/failures

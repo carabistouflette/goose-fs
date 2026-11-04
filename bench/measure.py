@@ -33,7 +33,7 @@ rows = []
 for line in raw.splitlines():
     workload, sample, ns, checksum = line.split()
     rows.append(dict(workload=workload, sample=int(sample), ns_per_call=int(ns), checksum=int(checksum)))
-assert len(rows) == 70
+assert len(rows) == 112
 metadata = dict(timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),
                 platform=platform.platform(), machine=platform.machine(), cpu=platform.processor(), filesystem=filesystem,
                 cpu_info=Path('/proc/cpuinfo').read_text().split('\n\n')[0],
