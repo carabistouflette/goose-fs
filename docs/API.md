@@ -68,8 +68,15 @@ later calls. Allocation failure follows Goose runtime behavior, not Status.
 Limits are fixed: 1 MiB read/write/list payload, 4096 listing entries, 4095 path
 bytes. Public buffers may retain high-water capacity. Read uses caller storage;
 list additionally stages at most byte_limit bytes, then copies names into owned
-entries. Listing starts with min(byte_limit, 64 KiB) of initialized staging.
-If it fills, native code stops writing but counts to EOF within the caller's
+entries. Existing signatures stage the entire byte_limit and enumerate once.
+The options overloads `list(path, ListOptions, out)`, `list_sorted(path, ListOptions,
+out)`, `list_at(root, path, ListOptions, out)` and `list_sorted_at(root, path,
+ListOptions, out)` use the same limits and result/error contract. ListOptions
+contains byte_limit (default MAX_BYTES), entry_limit (default MAX_ENTRIES) and
+adaptive (default false). Setting adaptive=true starts with min(byte_limit,
+64 KiB) of initialized staging. This reduces initialization for small results
+with oversized budgets, at the cost of another enumeration for large results.
+If that adaptive buffer fills, native code stops writing but counts to EOF within the caller's
 byte/entry limits. After closing every temporary descriptor and releasing Root
 locks, Goose grows to at least the required size and retries. A stable directory
 needs at most two complete passes. Under changes, growth at least doubles,

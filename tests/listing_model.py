@@ -56,8 +56,8 @@ def main():
                 assert invoke('call',1,ps,Slice(None,0),len(names),out,fields=3)==(2,[0,0,0])
                 assert invoke('root_list',ctx,root,ds,out,len(names),fields=3)==(2,[0,0,0])
             for program in sys.argv[1:]:
-                for api in range(4):
-                    for budget,cap,expected in [(size,len(names),0),(1048576,4096,0)]+([(size-1,len(names),2),(1048576,len(names)-1,2)] if names else []):
+                for api in range(12):
+                    for budget,cap,expected in [(size,len(names),0),(1048576,4096,0)]+([(-1,4096,1),(1048577,4096,1),(size,-1,1),(size,4097,1)] if size==65537 else [])+([(size-1,len(names),2),(1048576,len(names)-1,2)] if names else []):
                         result=subprocess.run([str(Path(program).resolve()),str(path),str(budget),str(cap),str(api),str(expected)],capture_output=True,check=True,timeout=30)
                         if expected: assert not result.stdout
                         else:

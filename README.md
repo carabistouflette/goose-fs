@@ -48,6 +48,11 @@ reported failure. Paths and file contents are bytes, without UTF-8 conversion.
 
 The absolute-path APIs require absolute paths, with no NUL, repeated separators, trailing separator,
 `.` or `..` components. `/` is accepted by read/list/metadata and predicates; reading it reports NotRegular.
+Listing also accepts `ListOptions { byte_limit, entry_limit, adaptive }` in place
+of the two limits. Full staging is the default and uses one enumeration. Opting
+into `adaptive: true` reduces initialization for small results with oversized
+budgets, while large results require a second pass.
+
 Fixed limits: 4095 path bytes, 1 MiB read/write/list payload, 4096 entries.
 Root methods accept strict relative paths with a separate 4095-byte argument limit;
 see [directory-relative rules](docs/ROOTS.md).

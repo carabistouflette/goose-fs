@@ -9,6 +9,8 @@ struct Entry { kind: Kind = Kind.Unknown, name: u8[] }
 const MAX_PATH_BYTES = 4095;
 const MAX_BYTES = 1048576;
 const MAX_ENTRIES = 4096;
+// Full staging preserves one-pass behavior; adaptive is an explicit cost tradeoff.
+struct ListOptions { byte_limit: i64 = MAX_BYTES, entry_limit: i64 = MAX_ENTRIES, adaptive: bool = false }
 extern fn native_call(op: i64, path: const u8[:], data: const u8[:], entries: i64,
                       out: u8[:], meta: i64[:]) -> i64 = "gf_call";
 extern fn native_list(path: const u8[:], bytes: i64, out: u8[:], entries: i64, meta: i64[:]) -> i64 = "gf_list";
@@ -57,10 +59,14 @@ fn read(path: const u8[:], limit: i64, out: u8[>..]&) -> Status {
     return status(code, meta[0]);
 }
 fn list(path: const u8[:], byte_limit: i64, entry_limit: i64, out: Entry[>..]&) -> Status {
+    return list(path, ListOptions { byte_limit: byte_limit, entry_limit: entry_limit }, out);
+}
+fn list(path: const u8[:], options: ListOptions, out: Entry[>..]&) -> Status {
+    let byte_limit = options.byte_limit; let entry_limit = options.entry_limit;
     out.clear();
     if !valid_path(path) || byte_limit < 0 || byte_limit > MAX_BYTES ||
        entry_limit < 0 || entry_limit > MAX_ENTRIES { return Status { error: Error.InvalidInput }; }
-    var capacity = if byte_limit < LIST_STAGING_BYTES { byte_limit } else { LIST_STAGING_BYTES };
+    var capacity = if !options.adaptive || byte_limit < LIST_STAGING_BYTES { byte_limit } else { LIST_STAGING_BYTES };
     var packed: u8[>..] = []; packed.resize(capacity, 0);
     var meta:   i64[4]  = [0; 4];
     var code = native_list(path, byte_limit, packed[..], entry_limit, meta[..]);
@@ -166,9 +172,12 @@ fn name_before(a: const u8[:], b: const u8[:]) -> bool {
     return a.len < b.len;
 }
 fn list_sorted(path: const u8[:], byte_limit: i64, entry_limit: i64, out: Entry[>..]&) -> Status {
+    return list_sorted(path, ListOptions { byte_limit: byte_limit, entry_limit: entry_limit }, out);
+}
+fn list_sorted(path: const u8[:], options: ListOptions, out: Entry[>..]&) -> Status {
     out.clear();
     var entries: Entry[>..] = [];
-    let result = list(path, byte_limit, entry_limit, entries);
+    let result = list(path, options, entries);
     if result.error != Error.None { return result; }
     var order: (const Entry&)[>..] = [];
     for entry in entries { order.push(entry); }
@@ -420,10 +429,14 @@ fn read_file_at(root: Root, path: const u8[:], limit: i64, out: u8[>..]&) -> Sta
     return status(code, meta[0]);
 }
 fn list_at(root: Root, path: const u8[:], byte_limit: i64, entry_limit: i64, out: Entry[>..]&) -> Status {
+    return list_at(root, path, ListOptions { byte_limit: byte_limit, entry_limit: entry_limit }, out);
+}
+fn list_at(root: Root, path: const u8[:], options: ListOptions, out: Entry[>..]&) -> Status {
+    let byte_limit = options.byte_limit; let entry_limit = options.entry_limit;
     out.clear();
     if !valid_relative(path) || byte_limit < 0 || byte_limit > MAX_BYTES ||
         entry_limit < 0 || entry_limit > MAX_ENTRIES { return Status { error: Error.InvalidInput }; }
-    var capacity = if byte_limit < LIST_STAGING_BYTES { byte_limit } else { LIST_STAGING_BYTES };
+    var capacity = if !options.adaptive || byte_limit < LIST_STAGING_BYTES { byte_limit } else { LIST_STAGING_BYTES };
     var packed: u8[>..] = []; packed.resize(capacity, 0);
     var meta:   i64[4]  = [0; 4];
     var code = native_root_list(root.context.id, root.id, path, byte_limit, packed[..], entry_limit, meta[..]);
@@ -438,9 +451,12 @@ fn list_at(root: Root, path: const u8[:], byte_limit: i64, entry_limit: i64, out
     return Status { .. };
 }
 fn list_sorted_at(root: Root, path: const u8[:], byte_limit: i64, entry_limit: i64, out: Entry[>..]&) -> Status {
+    return list_sorted_at(root, path, ListOptions { byte_limit: byte_limit, entry_limit: entry_limit }, out);
+}
+fn list_sorted_at(root: Root, path: const u8[:], options: ListOptions, out: Entry[>..]&) -> Status {
     out.clear();
     var entries: Entry[>..] = [];
-    let result = list_at(root, path, byte_limit, entry_limit, entries);
+    let result = list_at(root, path, options, entries);
     if result.error != Error.None { return result; }
     var order: (const Entry&)[>..] = [];
     for entry in entries { order.push(entry); }
