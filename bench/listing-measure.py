@@ -51,9 +51,9 @@ rng=random.Random(61937)
 with tempfile.TemporaryDirectory(prefix='goose-fs-listing-bench-') as temp:
     base=Path(temp);cases=[]
     # One short name costs12 bytes; short4096 uses the same10-byte name family.
-    for label,size in [('empty',0),('one',12),('short4096',49152),('below64k',65535),('at64k',65536),('above64k',65537),('above128k',131073),('above512k',524289),('max1m',1048576)]:
+    for label,size in [('empty',0),('one',12),('short4096',49152),('prefix255',4080*257),('below64k',65535),('at64k',65536),('above64k',65537),('above128k',131073),('above512k',524289),('max1m',1048576)]:
         path=base/label;path.mkdir()
-        names=[f'entry-{i:04d}'.encode() for i in range(4096)] if label=='short4096' else names_for_bytes(size)
+        names=[f'entry-{i:04d}'.encode() for i in range(4096)] if label=='short4096' else [b'x'*250+f'{i:05d}'.encode() for i in range(4080)] if label=='prefix255' else names_for_bytes(size)
         for name in names:
             fd=os.open(os.fsencode(path)+b'/'+name,os.O_CREAT|os.O_EXCL|os.O_WRONLY,0o600);os.close(fd)
         expected=b''.join(n+b'\0' for n in sorted(names))
