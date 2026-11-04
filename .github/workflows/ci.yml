@@ -20,6 +20,7 @@ jobs:
       - run: make check test
         env:
           CC: ${{ matrix.cc }}
+      - run: sudo env FS_HANDLES_LIBRARY="$PWD/.build/fs-handles.so" python3 tests/file_metadata_credentials.py
       - run: make sanitize
         env:
           SANITIZER_CC: ${{ matrix.cc }}
