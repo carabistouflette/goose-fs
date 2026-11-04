@@ -311,6 +311,12 @@ int64_t gf_rename(gf_input from, gf_input to, int64_t flags, gf_meta meta) {
 }
 
 /* Metadata has a separate ABI; legacy operation tuples remain unchanged. */
+_Bool gf_name_before(gf_input a, gf_input b) {
+    if (a.len < 0 || b.len < 0 || (a.len && !a.data) || (b.len && !b.data)) return false;
+    size_t common = (size_t)(a.len < b.len ? a.len : b.len);
+    int order = common ? memcmp(a.data,b.data,common) : 0;
+    return order ? order < 0 : a.len < b.len;
+}
 _Bool gf_missing(int64_t os_error) { return os_error == ENOENT; }
 
 static int64_t kind_of(mode_t mode) {

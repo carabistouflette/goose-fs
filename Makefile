@@ -34,6 +34,7 @@ check:
 	$(GOOSE) check tests/lock_pause_probe.goose
 	$(GOOSE) check tests/metadata.goose
 	$(GOOSE) check tests/sorted_oracle.goose
+	$(GOOSE) check tests/sorted_lifetime.goose
 	$(GOOSE) check examples/read.goose
 	$(GOOSE) check examples/stream.goose
 	$(GOOSE) check examples/root.goose
@@ -54,6 +55,11 @@ test:
 	$(GOOSE) build tests/sorted_oracle.goose --cc $(CC) -O2 -o .build/sorted-oracle
 	$(GOOSE) build tests/sorted_oracle.goose --cc $(CC) --debug --no-bce -o .build/sorted-oracle-debug
 	python3 tests/sorted_model.py .build/sorted-oracle .build/sorted-oracle-debug
+	python3 tests/run.py --api $(abspath $(GOOSE)) run tests/sorted_lifetime.goose --
+	$(GOOSE) build tests/sorted_lifetime.goose --cc $(CC) -O2 -o .build/sorted-lifetime
+	python3 tests/run.py --api .build/sorted-lifetime
+	$(GOOSE) build tests/sorted_lifetime.goose --cc $(CC) --debug --no-bce -o .build/sorted-lifetime-debug
+	python3 tests/run.py --api .build/sorted-lifetime-debug
 	python3 tests/run.py $(abspath $(GOOSE)) run tests/handles.goose --
 	$(GOOSE) build tests/handles.goose --cc $(CC) -O2 -o .build/handles
 	python3 tests/run.py .build/handles
@@ -175,6 +181,8 @@ fallback:
 	FS_NATIVE_LIBRARY=$(abspath .build/fs-denied.so) python3 tests/stress.py
 sanitize:
 	mkdir -p .build
+	SANITIZER_CC=$(SANITIZER_CC) $(GOOSE) build tests/sorted_lifetime.goose --debug --no-bce --cc $(abspath scripts/sanitizer-cc.sh) -o .build/sorted-lifetime-sanitize
+	ASAN_OPTIONS=detect_leaks=1:abort_on_error=1 UBSAN_OPTIONS=halt_on_error=1 python3 tests/run.py --api .build/sorted-lifetime-sanitize
 	$(SANITIZER_CC) $(CFLAGS) -O1 -g -fno-omit-frame-pointer -fsanitize=address,undefined -no-pie tests/file_metadata_native.c native/fs.c $(FILE_META_WRAP) -o .build/file-metadata-native-sanitize
 	ASAN_OPTIONS=detect_leaks=1:abort_on_error=1 UBSAN_OPTIONS=halt_on_error=1 python3 tests/run.py .build/file-metadata-native-sanitize
 	SANITIZER_CC=$(SANITIZER_CC) $(GOOSE) build tests/file_metadata.goose --debug --no-bce --cc $(abspath scripts/sanitizer-cc.sh) -o .build/file-metadata-sanitize

@@ -17,6 +17,7 @@ int64_t gf_list(gf_input path, int64_t bytes, gf_output out, int64_t entries, gf
  * both parent fsyncs accepted, first cleanup errno. flags:1 NoReplace,2 sync. */
 int64_t gf_rename(gf_input from, gf_input to, int64_t flags, gf_meta meta);
 int64_t gf_root_rename(int64_t context, int64_t root, gf_input from, gf_input to, int64_t flags, gf_meta meta);
+_Bool gf_name_before(gf_input a, gf_input b);
 _Bool gf_missing(int64_t os_error);
 /* Retained-resource ABI; meta = errno, count/token/position, eof. */
 int64_t gf_context_create(gf_meta meta);

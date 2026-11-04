@@ -163,14 +163,8 @@ fn is_dir(path: const u8[:]) -> bool, Status {
     if result.error == Error.SystemError && native_missing(result.os_error) { return false, Status { .. }; }
     return result.error == Error.None && info.kind == Kind.Directory, result;
 }
-fn name_before(a: const u8[:], b: const u8[:]) -> bool {
-    var i: i64 = 0;
-    while i < a.len && i < b.len {
-        if a[i] != b[i] { return a[i] < b[i]; }
-        i++;
-    }
-    return a.len < b.len;
-}
+extern fn name_before(a: const u8[:], b: const u8[:]) -> bool = "gf_name_before";
+
 fn list_sorted(path: const u8[:], byte_limit: i64, entry_limit: i64, out: Entry[>..]&) -> Status {
     return list_sorted(path, ListOptions { byte_limit: byte_limit, entry_limit: entry_limit }, out);
 }
@@ -179,32 +173,17 @@ fn list_sorted(path: const u8[:], options: ListOptions, out: Entry[>..]&) -> Sta
     var entries: Entry[>..] = [];
     let result = list(path, options, entries);
     if result.error != Error.None { return result; }
-    var order: (const Entry&)[>..] = [];
-    for entry in entries { order.push(entry); }
+    var order: SortEntry[>..] = [];
+    for entry in entries { order.push(SortEntry { entry: entry }); }
     sort_entries(order);
-    for entry in order { out.push(Entry { kind: entry.kind, name: owned_name(entry.name) }); }
+    for item in order { out.push(Entry { kind: item.entry.kind, name: owned_name(item.entry.name) }); }
     return Status { .. };
 }
 
-fn swap_entries(order: (const Entry&)[:], a: i64, b: i64) {
-    let saved: const Entry& = order[a];
-    order[a] .= order[b];
-    order[b] .= saved;
-}
-fn sift_entries(order: (const Entry&)[:], start: i64, end: i64) {
-    var root = start;
-    while root * 2 + 1 < end {
-        var child = root * 2 + 1;
-        if child + 1 < end && name_before(order[child].name, order[child + 1].name) { child++; }
-        if !name_before(order[root].name, order[child].name) { break; }
-        swap_entries(order, root, child); root = child;
-    }
-}
-fn sort_entries(order: (const Entry&)[:]) {
-    var root = order.len / 2;
-    while root > 0 { root--; sift_entries(order, root, order.len); }
-    var end = order.len;
-    while end > 1 { end--; swap_entries(order, 0, end); sift_entries(order, 0, end); }
+// A distinct internal element type keeps consumer Entry-reference sort overloads out.
+struct SortEntry { entry: const Entry& }
+fn sort_entries(order: SortEntry[:]) {
+    sort(order) { a, b => name_before(a.entry.name, b.entry.name) };
 }
 
 // Tokens own no Goose storage. Copies alias lifetime and the shared file cursor.
@@ -458,10 +437,10 @@ fn list_sorted_at(root: Root, path: const u8[:], options: ListOptions, out: Entr
     var entries: Entry[>..] = [];
     let result = list_at(root, path, options, entries);
     if result.error != Error.None { return result; }
-    var order: (const Entry&)[>..] = [];
-    for entry in entries { order.push(entry); }
+    var order: SortEntry[>..] = [];
+    for entry in entries { order.push(SortEntry { entry: entry }); }
     sort_entries(order);
-    for entry in order { out.push(Entry { kind: entry.kind, name: owned_name(entry.name) }); }
+    for item in order { out.push(Entry { kind: item.entry.kind, name: owned_name(item.entry.name) }); }
     return Status { .. };
 }
 fn create_file_at(root: Root, path: const u8[:], data: const u8[:]) -> Status {

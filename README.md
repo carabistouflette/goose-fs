@@ -60,7 +60,7 @@ Root methods accept strict relative paths with a separate 4095-byte argument lim
 see [directory-relative rules](docs/ROOTS.md).
 Listing payload counts each name plus two bytes of internal framing. Ordinary listing
 order is unspecified and kinds are hints; use metadata for precise type information.
-Sorted listing adds a bounded heap sort and extra owned-name/reference storage.
+Sorted listing uses the pinned standard library's bounded sort and extra owned-name/reference storage.
 Variable-size Entry values support iteration:
 
 ```goose
