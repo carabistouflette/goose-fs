@@ -179,9 +179,25 @@ with tempfile.TemporaryDirectory(prefix='goose-fs-handles-') as temp:
     new=opened(c2,a,2); ok(invoke('file_close',c2,new)); close_context(c2)
     resource.setrlimit(resource.RLIMIT_NOFILE,(soft,hard))
     # Real kernel EMFILE is a SystemError and a failed reservation is reusable.
-    ctx=context(); n=descriptors(); resource.setrlimit(resource.RLIMIT_NOFILE,(n,hard))
-    try: assert open_file(ctx,a)[0:2] == (4,[errno.EMFILE,0,0])
-    finally: resource.setrlimit(resource.RLIMIT_NOFILE,(soft,hard))
+    ctx=context(); occupied=[]
+    fd_limit=max(32,descriptors()+2)
+    if hard != resource.RLIM_INFINITY: fd_limit=min(fd_limit,hard)
+    resource.setrlimit(resource.RLIMIT_NOFILE,(fd_limit,hard))
+    try:
+        # Existing descriptors can have holes or lie above the new soft limit.
+        # Fill actual low slots, then free precisely one for the parent lookup.
+        while True:
+            try: occupied.append(os.open('/dev/null',os.O_RDONLY|os.O_CLOEXEC))
+            except OSError as error:
+                assert error.errno == errno.EMFILE,error
+                break
+        assert occupied,'need one descriptor to release for the parent lookup'
+        os.close(occupied.pop())
+        actual=open_file(ctx,a)
+        assert actual == (4,[errno.EMFILE,0,0]),actual
+    finally:
+        for fd in occupied: os.close(fd)
+        resource.setrlimit(resource.RLIMIT_NOFILE,(soft,hard))
     file=opened(ctx,a)
     # exec must not inherit a retained descriptor, independently of descriptor numbers.
     child='''import os,sys
