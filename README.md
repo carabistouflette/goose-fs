@@ -124,6 +124,8 @@ retain every comparator cell and policy difference; the
 the initialized-buffer optimization.
 Shared/exclusive locks support immediate attempts and polling waits; see the
 [locking contract](docs/LOCKS.md).
+The [uncontended lock comparison](bench/results/2026-11-04-locks/README.md)
+records current overhead against Rust and leaves unsupported APIs visible.
 The [retained File measurements](bench/results/2026-11-04-retained/README.md)
 add positioned reads with open/close outside timing and disclose lifetime-check
 costs, unsupported stdlib operations and remaining comparison limits.
