@@ -20,11 +20,11 @@ check:
 test:
 	python3 scripts/native-manifest.py --check
 	mkdir -p .build
-	python3 tests/run.py $(abspath $(GOOSE)) run tests/api.goose --
+	python3 tests/run.py --api $(abspath $(GOOSE)) run tests/api.goose --
 	$(GOOSE) build tests/api.goose --cc $(CC) -O2 -o .build/api
-	python3 tests/run.py .build/api
+	python3 tests/run.py --api .build/api
 	$(GOOSE) build tests/api.goose --cc $(CC) --debug --no-bce -o .build/api-debug
-	python3 tests/run.py .build/api-debug
+	python3 tests/run.py --api .build/api-debug
 	python3 tests/ownership.py $(abspath $(GOOSE))
 	python3 tests/run.py $(abspath $(GOOSE)) run tests/overloads.goose --
 	$(GOOSE) build tests/overloads.goose --cc $(CC) -O2 -o .build/overloads
@@ -40,6 +40,9 @@ native:
 	python3 tests/run.py .build/failures
 sanitize:
 	mkdir -p .build
+	python3 scripts/native-manifest.py --check
+	SANITIZER_CC=$(SANITIZER_CC) $(GOOSE) build tests/api.goose --debug --no-bce --cc $(abspath scripts/sanitizer-cc.sh) -o .build/api-sanitize
+	ASAN_OPTIONS=detect_leaks=1:abort_on_error=1 UBSAN_OPTIONS=halt_on_error=1 python3 tests/run.py --api .build/api-sanitize
 	$(SANITIZER_CC) $(CFLAGS) -O1 -g -fno-omit-frame-pointer -fsanitize=address,undefined -no-pie tests/native.c native/fs.c -o .build/native-sanitize
 	ASAN_OPTIONS=detect_leaks=1:abort_on_error=1 UBSAN_OPTIONS=halt_on_error=1 python3 tests/run.py .build/native-sanitize
 	$(SANITIZER_CC) $(CFLAGS) -O1 -g -fno-omit-frame-pointer -fsanitize=address,undefined -no-pie tests/failures.c native/fs.c -Wl,--wrap=read -Wl,--wrap=write -Wl,--wrap=close -Wl,--wrap=readdir -Wl,--wrap=closedir -o .build/failures-sanitize
