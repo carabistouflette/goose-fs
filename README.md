@@ -2,7 +2,7 @@
 
 Small, bounded filesystem operations for the
 [Goose programming language](https://github.com/aardappel/goose). Apache-2.0.
-Experimental interface; no release yet. Linux is the initial target.
+Experimental interface; no release yet. 64-bit Linux is the current target.
 
 Read regular files with byte limits, list directories with structured byte-preserving
 names, exclusively create files/directories, and remove individual entries.
@@ -35,16 +35,21 @@ For Git dependencies, pin a reviewed full commit rather than a moving branch. Se
 | `create_dir(path)` | Exclusive creation, mode 0700 subject to umask |
 | `remove_file(path)` | Unlink a non-directory entry, including a final symlink |
 | `remove_empty_dir(path)` | Remove an empty directory |
+| `metadata(path, out)` | Inspect final-entry type, identity, size, permissions and timestamps without following links |
+| `exists(path)`, `is_dir(path)` | Error-preserving, no-follow entry predicates |
+| `list_sorted(path, byte_limit, entry_limit, out)` | Bytewise sorted owned entries |
 
-Functions return `Status { error, os_error }`. Errors distinguish invalid input,
+Operations return `Status { error, os_error }`; predicates return `(bool, Status)`.
+Errors distinguish invalid input,
 limits, nonregular reads, and OS failures. Read/list outputs are empty on any
 reported failure. Paths and file contents are bytes, without UTF-8 conversion.
 
 Paths must be absolute, with no NUL, repeated separators, trailing separator,
-`.` or `..` components. `/` is accepted by read/list; reading it reports NotRegular.
+`.` or `..` components. `/` is accepted by read/list/metadata and predicates; reading it reports NotRegular.
 Fixed limits: 4095 path bytes, 1 MiB read/write/list payload, 4096 entries.
-Listing payload counts each name plus two bytes of internal framing. Listing
-order is unspecified; Kind {Unknown, File, Directory, Symlink, Other} is a hint.
+Listing payload counts each name plus two bytes of internal framing. Ordinary listing
+order is unspecified and kinds are hints; use metadata for precise type information.
+Sorted listing adds a bounded heap sort and extra owned-name/reference storage.
 Variable-size Entry values support iteration:
 
 ```goose
@@ -57,7 +62,10 @@ if result.error == fs::Error.None {
 
 Do not borrow an input path from output storage that the same call clears; Goose
 rejects that lifetime conflict. Names own their bytes and survive later calls
-when copied to separate storage. No retained native pointers or global state.
+when copied to separate storage. No retained native pointers or global state. Metadata predicates describe the
+entry itself: dangling links exist, directory links are not directories, and
+permission errors are not reported as absence. Creation time is optional; changed
+time means inode status change.
 
 This library provides a symlink-resolution policy, not confinement or snapshots.
 Hard links, mounts, and concurrent renames remain possible. Failed creation may

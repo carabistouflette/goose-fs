@@ -1,8 +1,8 @@
 /* SPDX-License-Identifier: Apache-2.0 */
 #define _GNU_SOURCE
 #include "fs.h"
-#if !defined(__linux__)
-#error "goose-fs currently requires Linux"
+#if !defined(__linux__) || UINTPTR_MAX != UINT64_MAX
+#error "goose-fs currently requires 64-bit Linux"
 #endif
 #include <dirent.h>
 #include <errno.h>
@@ -12,6 +12,11 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/syscall.h>
+#include <sys/sysmacros.h>
+#include <linux/stat.h>
+
+/* The optional libc entry point need not exist on older Linux runtimes. */
+extern int statx(int, const char *, int, unsigned int, struct statx *) __attribute__((weak));
 #include <unistd.h>
 
 enum { OK, INVALID, LIMIT, NOT_REGULAR, SYSTEM };
@@ -176,4 +181,62 @@ int64_t gf_call(int64_t op, gf_input path, gf_input data, int64_t entries,
     if (result != OK) meta.data[1] = meta.data[2] = 0;
     meta.data[0] = saved;
     return result;
+}
+
+/* Metadata has a separate ABI; legacy operation tuples remain unchanged. */
+_Bool gf_missing(int64_t os_error) { return os_error == ENOENT; }
+
+static int64_t kind_of(mode_t mode) {
+    return S_ISREG(mode) ? 1 : S_ISDIR(mode) ? 2 : S_ISLNK(mode) ? 3 :
+           S_ISFIFO(mode) ? 5 : S_ISSOCK(mode) ? 6 : S_ISCHR(mode) ? 7 : S_ISBLK(mode) ? 8 : 4;
+}
+static void store_unsigned(int64_t *target, uint64_t value) {
+    memcpy(target, &value, sizeof value);
+}
+int64_t gf_metadata(gf_input path, gf_meta fields) {
+    if (fields.len != 18 || !fields.data ||
+        overlap(fields.data, 18 * (int64_t)sizeof(int64_t), path.data, path.len)) return INVALID;
+    memset(fields.data, 0, 18 * sizeof(int64_t));
+    char text[MAX_PATH + 1];
+    if (!path_copy(path, text)) return INVALID;
+    char *leaf;
+    int dir = parent(text, &leaf);
+    if (dir < 0) { fields.data[0] = errno; return SYSTEM; }
+    int64_t *out = fields.data;
+    struct statx extended;
+    int rc;
+    if (statx) rc = statx(dir, leaf, AT_SYMLINK_NOFOLLOW, STATX_BASIC_STATS | STATX_BTIME, &extended);
+    else { rc = -1; errno = ENOSYS; }
+    int saved = errno;
+    if (!rc && (extended.stx_mask & STATX_BASIC_STATS) == STATX_BASIC_STATS) {
+        out[1] = kind_of(extended.stx_mode);
+        store_unsigned(&out[2], extended.stx_size);
+        out[3] = extended.stx_mode & 07777;
+        out[4] = extended.stx_uid; out[5] = extended.stx_gid;
+        store_unsigned(&out[6], (uint64_t)makedev(extended.stx_dev_major, extended.stx_dev_minor));
+        store_unsigned(&out[7], extended.stx_ino);
+        out[8] = extended.stx_nlink;
+        out[9] = extended.stx_atime.tv_sec; out[10] = extended.stx_atime.tv_nsec;
+        out[11] = extended.stx_mtime.tv_sec; out[12] = extended.stx_mtime.tv_nsec;
+        out[13] = extended.stx_ctime.tv_sec; out[14] = extended.stx_ctime.tv_nsec;
+        if (extended.stx_mask & STATX_BTIME) {
+            out[15] = extended.stx_btime.tv_sec; out[16] = extended.stx_btime.tv_nsec; out[17] = 1;
+        }
+    } else if (!rc || saved == ENOSYS || saved == EPERM) {
+        struct stat basic;
+        rc = fstatat(dir, leaf, &basic, AT_SYMLINK_NOFOLLOW);
+        saved = errno;
+        if (!rc) {
+            out[1] = kind_of(basic.st_mode); store_unsigned(&out[2], (uint64_t)basic.st_size);
+            out[3] = basic.st_mode & 07777; out[4] = basic.st_uid; out[5] = basic.st_gid;
+            store_unsigned(&out[6], (uint64_t)basic.st_dev); store_unsigned(&out[7], (uint64_t)basic.st_ino);
+            store_unsigned(&out[8], (uint64_t)basic.st_nlink);
+            out[9] = basic.st_atim.tv_sec; out[10] = basic.st_atim.tv_nsec;
+            out[11] = basic.st_mtim.tv_sec; out[12] = basic.st_mtim.tv_nsec;
+            out[13] = basic.st_ctim.tv_sec; out[14] = basic.st_ctim.tv_nsec;
+        }
+    }
+    close(dir);
+    if (rc) { out[0] = saved; return SYSTEM; }
+    return OK;
 }

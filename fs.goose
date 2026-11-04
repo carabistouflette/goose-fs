@@ -3,7 +3,7 @@ namespace fs;
 import std;
 
 enum Error { None, InvalidInput, LimitExceeded, NotRegular, SystemError }
-enum Kind { Unknown, File, Directory, Symlink, Other }
+enum Kind { Unknown, File, Directory, Symlink, Other, Fifo, Socket, CharacterDevice, BlockDevice }
 struct Status { error: Error = Error.None, os_error: i64 = 0 }
 struct Entry { kind: Kind = Kind.Unknown, name: u8[] }
 const MAX_PATH_BYTES = 4095;
@@ -81,4 +81,95 @@ fn owned_name(source: const u8[:]) -> u8[] {
     var result: u8[>..] = [];
     result.append(source);
     return result;
+}
+
+struct Timestamp { seconds: i64 = 0, nanoseconds: i64 = 0 }
+struct Metadata {
+    kind:              Kind      = Kind.Unknown,
+    size:              u64       = 0,
+    permissions:       u32       = 0,
+    uid:               u32       = 0,
+    gid:               u32       = 0,
+    device:            u64       = 0,
+    inode:             u64       = 0,
+    links:             u64       = 0,
+    accessed:          Timestamp = Timestamp { .. },
+    modified:          Timestamp = Timestamp { .. },
+    changed:           Timestamp = Timestamp { .. },
+    created:           Timestamp = Timestamp { .. },
+    created_available: bool      = false,
+}
+extern fn native_metadata(path: const u8[:], fields: i64[:]) -> i64 = "gf_metadata";
+extern fn native_missing(os_error: i64) -> bool = "gf_missing";
+
+// Inspect the final entry itself; never follow a final or ancestor symlink.
+fn metadata(path: const u8[:], out: Metadata&) -> Status {
+    out = Metadata { .. };
+    if !valid_path(path) { return Status { error: Error.InvalidInput }; }
+    var fields: i64[18] = [0; 18];
+    let code = native_metadata(path, fields[..]);
+    if code != 0 { return status(code, fields[0]); }
+    let kind = if fields[1] == 1 { Kind.File } else if fields[1] == 2 { Kind.Directory }
+               else if fields[1] == 3 { Kind.Symlink } else if fields[1] == 5 { Kind.Fifo }
+               else if fields[1] == 6 { Kind.Socket } else if fields[1] == 7 { Kind.CharacterDevice }
+               else if fields[1] == 8 { Kind.BlockDevice } else { Kind.Other };
+    out = Metadata { kind: kind, size: fields[2] as! u64, permissions: fields[3] as! u32,
+        uid:      fields[4] as! u32, gid: fields[5] as! u32, device: fields[6] as! u64,
+        inode:    fields[7] as! u64, links: fields[8] as! u64,
+        accessed: Timestamp { fields[9], fields[10] }, modified: Timestamp { fields[11], fields[12] },
+        changed:  Timestamp { fields[13], fields[14] }, created: Timestamp { fields[15], fields[16] },
+        created_available: fields[17] != 0 };
+    return Status { .. };
+}
+fn exists(path: const u8[:]) -> bool, Status {
+    var info = Metadata { .. };
+    let result = metadata(path, info);
+    if result.error == Error.SystemError && native_missing(result.os_error) { return false, Status { .. }; }
+    return result.error == Error.None, result;
+}
+fn is_dir(path: const u8[:]) -> bool, Status {
+    var info = Metadata { .. };
+    let result = metadata(path, info);
+    if result.error == Error.SystemError && native_missing(result.os_error) { return false, Status { .. }; }
+    return result.error == Error.None && info.kind == Kind.Directory, result;
+}
+fn name_before(a: const u8[:], b: const u8[:]) -> bool {
+    var i: i64 = 0;
+    while i < a.len && i < b.len {
+        if a[i] != b[i] { return a[i] < b[i]; }
+        i++;
+    }
+    return a.len < b.len;
+}
+fn list_sorted(path: const u8[:], byte_limit: i64, entry_limit: i64, out: Entry[>..]&) -> Status {
+    out.clear();
+    var entries: Entry[>..] = [];
+    let result = list(path, byte_limit, entry_limit, entries);
+    if result.error != Error.None { return result; }
+    var order: (const Entry&)[>..] = [];
+    for entry in entries { order.push(entry); }
+    sort_entries(order);
+    for entry in order { out.push(Entry { kind: entry.kind, name: owned_name(entry.name) }); }
+    return Status { .. };
+}
+
+fn swap_entries(order: (const Entry&)[:], a: i64, b: i64) {
+    let saved: const Entry& = order[a];
+    order[a] .= order[b];
+    order[b] .= saved;
+}
+fn sift_entries(order: (const Entry&)[:], start: i64, end: i64) {
+    var root = start;
+    while root * 2 + 1 < end {
+        var child = root * 2 + 1;
+        if child + 1 < end && name_before(order[child].name, order[child + 1].name) { child++; }
+        if !name_before(order[root].name, order[child].name) { break; }
+        swap_entries(order, root, child); root = child;
+    }
+}
+fn sort_entries(order: (const Entry&)[:]) {
+    var root = order.len / 2;
+    while root > 0 { root--; sift_entries(order, root, order.len); }
+    var end = order.len;
+    while end > 1 { end--; swap_entries(order, 0, end); sift_entries(order, 0, end); }
 }

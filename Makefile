@@ -17,6 +17,8 @@ check:
 	python3 scripts/native-manifest.py --check
 	$(GOOSE) format --check fs.goose tests examples bench
 	$(GOOSE) check tests/api.goose
+	$(GOOSE) check tests/metadata.goose
+	$(GOOSE) check tests/sorted_oracle.goose
 	$(GOOSE) check examples/read.goose
 	$(GOOSE) check bench/bench.goose
 test:
@@ -27,6 +29,14 @@ test:
 	python3 tests/run.py --api .build/api
 	$(GOOSE) build tests/api.goose --cc $(CC) --debug --no-bce -o .build/api-debug
 	python3 tests/run.py --api .build/api-debug
+	python3 tests/run.py --api $(abspath $(GOOSE)) run tests/metadata.goose --
+	$(GOOSE) build tests/metadata.goose --cc $(CC) -O2 -o .build/metadata
+	python3 tests/run.py --api .build/metadata
+	$(GOOSE) build tests/metadata.goose --cc $(CC) --debug --no-bce -o .build/metadata-debug
+	python3 tests/run.py --api .build/metadata-debug
+	$(GOOSE) build tests/sorted_oracle.goose --cc $(CC) -O2 -o .build/sorted-oracle
+	$(GOOSE) build tests/sorted_oracle.goose --cc $(CC) --debug --no-bce -o .build/sorted-oracle-debug
+	python3 tests/sorted_model.py .build/sorted-oracle .build/sorted-oracle-debug
 	python3 tests/ownership.py $(abspath $(GOOSE))
 	python3 tests/run.py $(abspath $(GOOSE)) run tests/overloads.goose --
 	$(GOOSE) build tests/overloads.goose --cc $(CC) -O2 -o .build/overloads
@@ -36,6 +46,11 @@ native:
 	mkdir -p .build
 	$(CC) $(CFLAGS) -O2 -shared -fPIC native/fs.c -o .build/fs.so
 	python3 tests/model.py
+	python3 tests/metadata_model.py
+	$(CC) $(CFLAGS) -O2 -shared -fPIC native/fs.c -Wl,--wrap=statx -o .build/fs-no-statx.so
+	FS_NATIVE_LIBRARY=$(abspath .build/fs-no-statx.so) python3 tests/metadata_model.py
+	$(CC) $(CFLAGS) -O2 tests/metadata_native.c native/fs.c -Wl,--wrap=statx -Wl,--wrap=fstatat -o .build/metadata-native
+	python3 tests/run.py .build/metadata-native
 	python3 tests/stress.py
 	$(CC) $(CFLAGS) -O2 tests/native.c native/fs.c -o .build/native
 	python3 tests/run.py .build/native
@@ -65,6 +80,10 @@ fallback:
 	FS_NATIVE_LIBRARY=$(abspath .build/fs-denied.so) python3 tests/stress.py
 sanitize:
 	mkdir -p .build
+	SANITIZER_CC=$(SANITIZER_CC) $(GOOSE) build tests/metadata.goose --debug --no-bce --cc $(abspath scripts/sanitizer-cc.sh) -o .build/metadata-sanitize
+	ASAN_OPTIONS=detect_leaks=1:abort_on_error=1 UBSAN_OPTIONS=halt_on_error=1 python3 tests/run.py --api .build/metadata-sanitize
+	$(SANITIZER_CC) $(CFLAGS) -O1 -g -fno-omit-frame-pointer -fsanitize=address,undefined -no-pie tests/metadata_native.c native/fs.c -Wl,--wrap=statx -Wl,--wrap=fstatat -o .build/metadata-native-sanitize
+	ASAN_OPTIONS=detect_leaks=1:abort_on_error=1 UBSAN_OPTIONS=halt_on_error=1 python3 tests/run.py .build/metadata-native-sanitize
 	python3 scripts/native-manifest.py --check
 	SANITIZER_CC=$(SANITIZER_CC) $(GOOSE) build tests/api.goose --debug --no-bce --cc $(abspath scripts/sanitizer-cc.sh) -o .build/api-sanitize
 	ASAN_OPTIONS=detect_leaks=1:abort_on_error=1 UBSAN_OPTIONS=halt_on_error=1 python3 tests/run.py --api .build/api-sanitize
