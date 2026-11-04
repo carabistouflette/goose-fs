@@ -3,16 +3,17 @@ package main
 import (
     "fmt"
     "io"
-    "io/fs"
     "os"
     "path/filepath"
     "strconv"
+    "slices"
     "strings"
     "time"
 )
 var byteSink []byte
 var entrySink []os.DirEntry
 var infoSink os.FileInfo
+var nameSink []string
 func must(err error) { if err != nil { panic(err) } }
 func checksum(data []byte) uint64 {
     value := uint64(len(data))
@@ -46,6 +47,12 @@ func readReuse(path string, storage []byte) []byte {
         if used == len(storage) { file.Close(); panic("fixture exceeds reusable storage") }
     }
     must(file.Close()); return storage[:used]
+}
+func rootNames(root *os.Root) []string {
+    file, err := root.Open("list-128"); must(err)
+    names, readErr := file.Readdirnames(-1)
+    closeErr := file.Close(); must(readErr); must(closeErr)
+    slices.Sort(names); return names
 }
 func main() {
     if len(os.Args)!=3 { panic("root and iterations required") }
@@ -100,7 +107,6 @@ func main() {
         info, err := os.Stat(directory); must(err); if !info.IsDir() { panic("not directory") }; return 1
     })
     held, err := os.OpenRoot(root); must(err)
-    rootFS := held.FS()
     warmRoot, err := held.ReadFile("read-64"); must(err); validate(warmRoot)
     if len(warmRoot)!=64 { panic("root warm read length") }
     samples("root-read-fresh-64",count,func() uint64 {
@@ -113,13 +119,13 @@ func main() {
         if !info.Mode().IsRegular() || info.Size()!=64 { panic("root metadata mismatch") }
         infoSink=info; return 65
     })
-    rootEntries, err := fs.ReadDir(rootFS,"list-128"); must(err)
+    rootEntries := rootNames(held)
     if len(rootEntries)!=128 { panic("root listing length") }
-    for i, entry := range rootEntries { if entry.Name()!=fmt.Sprintf("entry-%04d",i) { panic("root name mismatch") } }
+    for i, name := range rootEntries { if name!=fmt.Sprintf("entry-%04d",i) { panic("root name mismatch") } }
     samples("root-list-sorted-128",count,func() uint64 {
-        entries, err := fs.ReadDir(rootFS,"list-128"); must(err); var sum uint64
-        for _, entry := range entries { sum+=nameValue(entry.Name()) }
-        entrySink=entries; return sum
+        names := rootNames(held); var sum uint64
+        for _, name := range names { sum+=nameValue(name) }
+        nameSink=names; return sum
     })
     must(held.Close())
     status, err := os.ReadFile("/proc/self/status"); must(err)

@@ -109,7 +109,7 @@ metadata=dict(profile='native-public-api-task-costs',timestamp=datetime.datetime
     listing_limits={'goose-fs':{'byte_limit':1048576,'entry_limit':4096}},
     metadata_consumption='All callers test regular kind and size; Rust/Go additionally retain full native metadata objects, Goose may elide unused wrapper fields.',
     locking_policy='goose-fs/Rust retained readonly Files; exclusive try-acquire plus unlock per iteration; untimed warm pair; no contention or polling; Go os/Goose stdlib unsupported.',
-    root_policy='Root open/close excluded. goose-fs strict no-symlink relative paths, bounded fresh read64, nofollow metadata, sorted structured entries with1MiB/4096entrybudget; Go os.Root ReadFile/Lstat and fs.ReadDir(Root.FS()) with permitted in-tree links; Ruststd/Goosestd unsupported. Different lookup contracts, not equal-security ranking.',
+    root_policy='Root open/close excluded. goose-fs strict no-symlink relative paths, bounded fresh read64, nofollow metadata, sorted structured entries with1MiB/4096entrybudget; Go os.Root ReadFile/Lstat and Root.Open+File.Readdirnames+slices.Sort owned names-only (avoids unused eager Root DirEntry metadata), permits in-tree links; Ruststd/Goosestd unsupported. Different lookup/output contracts, not equal-security ranking.',
     unsupported_workloads={name:sorted(values) for name,values in unsupported_cases.items()},
     policies={
       'goose-fs':'absolute strict paths; all-component nofollow; bounded regular reads; clear-on-error; retained read_at holds Context+entry read locks; owned sorted entries plus kind hints; nofollow metadata',
