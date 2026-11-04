@@ -158,6 +158,11 @@ is optional and reports late errors without implying rollback. The
 [rename task measurements](bench/results/2026-11-04-rename/README.md) retain
 all Rust/Go/Goose cells, explicit sync-policy differences and slower cases.
 
+The [held-file setter measurements](bench/results/2026-11-05-file-metadata/README.md)
+include permissions, numeric ownership and exact timestamps, with the unsupported
+APIs and faster Rust cells retained. Their [contract](docs/FILE-METADATA.md)
+explains kernel permissions, same-value side effects and explicit synchronization.
+
 The current version excludes recursive operations, temp-directory lifecycle,
 path normalization, byte publication/installation helpers, streaming directory
 cursors and Windows support.
