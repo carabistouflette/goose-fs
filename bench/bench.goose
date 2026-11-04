@@ -27,7 +27,8 @@ fn listing(label: const u8[:], path: const u8[:], byte_limit: i64, count: i64) {
             assert(fs::list(path, byte_limit, fs::MAX_ENTRIES, out).error == fs::Error.None);
             for e in out { checksum += e.name.len; }
         }
-        print(label, " ", sample, " ", (clock_ns() - start) / count, " ", checksum);
+        let elapsed = clock_ns() - start;
+        print(label, " ", sample, " ", elapsed / count, " ", checksum);
     }
 }
 fn main() {
