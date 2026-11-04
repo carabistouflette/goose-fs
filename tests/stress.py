@@ -75,6 +75,8 @@ with tempfile.TemporaryDirectory(prefix='goose-fs-races-') as temp:
             code, packed, _ = call(1, good)
             assert code == 4 or (code == 0 and b'sentinel' not in packed)
             assert call(2, good/'new', b'created')[0] in (0, 4)
+            # Inspect before cleanup too: unlink could otherwise hide a bad write.
+            assert not (protected/'new').exists()
             assert call(4, good/'new')[0] in (0, 4)
             assert not (protected/'new').exists()
     race(good, alternate, ancestor_probe)
