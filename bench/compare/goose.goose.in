@@ -156,6 +156,49 @@ fn locking(path: const u8[:], count: i64) {
     }
     assert(fs::close_context(context).error == fs::Error.None);
 }
+fn root_fresh_read(root: fs::Root) -> i64 {
+    var bytes: u8[>..] = [];
+    assert(fs::read_file_at(root, "read-64", 64, bytes).error == fs::Error.None && bytes.len == 64);
+    return checksum(bytes);
+}
+fn rooted(path: const u8[:], count: i64) {
+    if !CUSTOM {
+        for label in ["root-read-fresh-64", "root-metadata-file", "root-list-sorted-128"] {
+            for sample in 7 { print(label, "\t", sample, "\t0\t0\tunsupported"); }
+        }
+        return;
+    }
+    let context, created = fs::create_context(); assert(created.error == fs::Error.None);
+    let root, opened = fs::open_root(context, path); assert(opened.error == fs::Error.None);
+    var bytes: u8[>..] = [];
+    assert(fs::read_file_at(root, "read-64", 64, bytes).error == fs::Error.None && bytes.len == 64); check_pattern(bytes);
+    var info = fs::Metadata { .. };
+    assert(fs::metadata_at(root, "read-64", info).error == fs::Error.None && info.size == 64 && info.kind == fs::Kind.File);
+    var entries: fs::Entry[>..] = [];
+    assert(fs::list_sorted_at(root, "list-128", fs::MAX_BYTES, fs::MAX_ENTRIES, entries).error == fs::Error.None);
+    assert(entries.len == 128); for entry, i in entries { assert(entry.name == expected_name(i)); }
+    for operation in 3 {
+        let label: const u8[:] = if operation == 0 { "root-read-fresh-64" }
+            else if operation == 1 { "root-metadata-file" } else { "root-list-sorted-128" };
+        for sample in 7 {
+            var sum: i64 = 0;
+            let start = clock_ns();
+            for _ in count {
+                if operation == 0 { sum += root_fresh_read(root); }
+                else if operation == 1 {
+                    assert(fs::metadata_at(root, "read-64", info).error == fs::Error.None && info.kind == fs::Kind.File && info.size == 64);
+                    sum += 65;
+                } else {
+                    assert(fs::list_sorted_at(root, "list-128", fs::MAX_BYTES, fs::MAX_ENTRIES, entries).error == fs::Error.None);
+                    for entry in entries { sum += entry.name.len; sum += entry.name[0]; sum += entry.name[entry.name.len - 1]; }
+                }
+            }
+            let elapsed = clock_ns() - start;
+            print(label, "\t", sample, "\t", elapsed / count, "\t", sum, "\tok");
+        }
+    }
+    assert(fs::close_context(context).error == fs::Error.None);
+}
 fn main() {
     let argv = args(); assert(argv.len == 3);
     let count, valid = parse_int(argv[2], 10); assert(valid && count > 0 && count <= 1000000);
@@ -169,6 +212,7 @@ fn main() {
     }
     let file = str(argv[1], "/read-64"); metadata_case(file, count); locking(file, count);
     let directory = str(argv[1], "/list-0"); dir_case(directory, count);
+    rooted(argv[1], count);
     var status: u8[>..] = [];
     assert(read_file("/proc/self/status", status));
     var start: i64 = 0;

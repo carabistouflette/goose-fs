@@ -3,6 +3,7 @@ package main
 import (
     "fmt"
     "io"
+    "io/fs"
     "os"
     "path/filepath"
     "strconv"
@@ -98,6 +99,29 @@ func main() {
     samples("is-dir",count,func() uint64 {
         info, err := os.Stat(directory); must(err); if !info.IsDir() { panic("not directory") }; return 1
     })
+    held, err := os.OpenRoot(root); must(err)
+    rootFS := held.FS()
+    warmRoot, err := held.ReadFile("read-64"); must(err); validate(warmRoot)
+    if len(warmRoot)!=64 { panic("root warm read length") }
+    samples("root-read-fresh-64",count,func() uint64 {
+        data, err := held.ReadFile("read-64"); must(err)
+        if len(data)!=64 { panic("root read length") }
+        value:=checksum(data); byteSink=data; return value
+    })
+    samples("root-metadata-file",count,func() uint64 {
+        info, err := held.Lstat("read-64"); must(err)
+        if !info.Mode().IsRegular() || info.Size()!=64 { panic("root metadata mismatch") }
+        infoSink=info; return 65
+    })
+    rootEntries, err := fs.ReadDir(rootFS,"list-128"); must(err)
+    if len(rootEntries)!=128 { panic("root listing length") }
+    for i, entry := range rootEntries { if entry.Name()!=fmt.Sprintf("entry-%04d",i) { panic("root name mismatch") } }
+    samples("root-list-sorted-128",count,func() uint64 {
+        entries, err := fs.ReadDir(rootFS,"list-128"); must(err); var sum uint64
+        for _, entry := range entries { sum+=nameValue(entry.Name()) }
+        entrySink=entries; return sum
+    })
+    must(held.Close())
     status, err := os.ReadFile("/proc/self/status"); must(err)
     for _, line := range strings.Split(string(status),"\n") {
         if strings.HasPrefix(line,"VmHWM:") { fmt.Printf("MEMORY\t%s\n",line) }

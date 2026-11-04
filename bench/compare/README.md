@@ -31,6 +31,14 @@ The uncontended lock case times an exclusive try-acquire/unlock pair through
 goose-fs and Rust File. Both use Linux flock on this host; Go os and the pinned
 Goose stdlib have no portable File locking API and receive unsupported rows.
 It excludes open/close and does not measure contention or polling wakeup costs.
+Root cases open a directory once, then time fresh 64-byte reads, final-entry
+metadata and sorted 128-entry listings through goose-fs Root and Go os.Root.
+Go listings use fs.ReadDir(Root.FS()); goose-fs retains the 1 MiB/4096-entry budget.
+The Go FS adapter is created once outside timing and reused.
+Rust std and the pinned Goose stdlib have no equivalent Root API and receive
+unsupported rows. Root creation/close are outside timing. Go permits in-tree links;
+goose-fs rejects them. These common stable fixtures do not exercise that difference,
+so the results remain task costs with different lookup/ownership policies.
 
 Results record native-API policies, source/executable/fixture hashes, versions,
 flags, affinity, filesystem, shared-host load, all raw samples, and per-process

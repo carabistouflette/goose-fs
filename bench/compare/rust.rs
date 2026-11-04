@@ -67,6 +67,9 @@ fn main() {
     });
     let directory = root.join("list-0");
     samples("is-dir", count, || { assert!(directory.is_dir()); 1 });
+    for label in ["root-read-fresh-64", "root-metadata-file", "root-list-sorted-128"] {
+        for sample in 0..7 { println!("{label}\t{sample}\t0\t0\tunsupported"); }
+    }
     let status = fs::read_to_string("/proc/self/status").unwrap();
     for line in status.lines().filter(|s| s.starts_with("VmHWM:")) { println!("MEMORY\t{line}"); }
 }
