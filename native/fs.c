@@ -59,7 +59,7 @@ static int parent(char *text, char **leaf) {
 }
 
 static int read_regular(int dir, const char *leaf, gf_output out, int64_t *length) {
-    int fd = openat(dir, leaf, O_RDONLY | O_NOFOLLOW | O_NONBLOCK | O_CLOEXEC);
+    int fd = openat(dir, leaf, O_RDONLY | O_NOFOLLOW | O_NONBLOCK | O_NOCTTY | O_CLOEXEC);
     if (fd < 0) return SYSTEM;
     struct stat st;
     int result = OK, saved = 0;

@@ -12,7 +12,8 @@ cwd/umask changes, global mutable state, or retained descriptors.
 This is a path-resolution policy, not confinement: hard links, mount points and
 concurrent renames are possible. Operations use the directories they opened even
 if those directories are subsequently moved. Paths may change during traversal.
-Ordinary filesystem I/O may block indefinitely; there is no deadline guarantee.
+Final read targets are opened before fstat rejects nonregular types; device-open
+callbacks can run even when a read is rejected. Ordinary filesystem I/O may block indefinitely; there is no deadline guarantee.
 
 - `read(path, limit, out)`: require a regular file, replace out with its bytes.
   Accept zero limit for an empty file. Inspect up to limit+1 bytes, independent

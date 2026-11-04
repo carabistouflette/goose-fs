@@ -6,6 +6,7 @@ import errno
 import os
 from pathlib import Path
 import random
+import pty
 import signal
 import socket
 import tempfile
@@ -103,4 +104,31 @@ with tempfile.TemporaryDirectory(prefix='goose-fs-model-') as root:
         result = invoke(0, file, cap=limit)
         assert result[0] == (0 if len(data) <= limit else 2)
         if not result[0]: assert result[1] == data
-print(f'{checks} filesystem oracle calls passed')
+# A rejected TTY read must not acquire a controlling terminal.
+master, slave = pty.openpty()
+tty = os.ttyname(slave)
+pid = os.fork()
+if pid == 0:
+    try:
+        os.close(master); os.close(slave); os.setsid()
+        try:
+            fd = os.open('/dev/tty', os.O_RDONLY | os.O_NOCTTY)
+        except OSError as error:
+            assert error.errno == errno.ENXIO
+        else:
+            os.close(fd); raise AssertionError('session unexpectedly has tty')
+        assert invoke(0, tty, cap=1)[0] == 3
+        try:
+            fd = os.open('/dev/tty', os.O_RDONLY | os.O_NOCTTY)
+        except OSError as error:
+            assert error.errno == errno.ENXIO
+        else:
+            os.close(fd); raise AssertionError('read acquired controlling tty')
+    except BaseException:
+        import traceback
+        traceback.print_exc(); os._exit(1)
+    os._exit(0)
+_, status = os.waitpid(pid, 0)
+os.close(master); os.close(slave)
+assert status == 0, status
+print(f'{checks} filesystem oracle calls and isolated TTY regression passed')

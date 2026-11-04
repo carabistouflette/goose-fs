@@ -5,11 +5,18 @@ import os
 import subprocess
 import sys
 import tempfile
+api = len(sys.argv) > 1 and sys.argv[1] == '--api'
+command = sys.argv[2:] if api else sys.argv[1:]
 with tempfile.TemporaryDirectory(prefix='goose-fs-') as root:
-    if any('api' in x for x in sys.argv[1:]):
+    if api:
         os.mkdir(root+'/adversarial')
+        os.mkdir(root+'/adversarial/subdir')
         with open(root+'/adversarial/target', 'wb') as f: f.write(b'protected')
         os.symlink('target', root+'/adversarial/link')
         os.symlink('adversarial', root+'/ancestor')
         os.mkfifo(root+'/adversarial/fifo')
-    subprocess.run([*sys.argv[1:], root], check=True, timeout=60)
+        os.mkdir(root+'/binary')
+        for name in [b'line\nbreak', b'\xff\xfe', b'x'*255]:
+            with open(os.fsencode(root)+b'/binary/'+name, 'wb') as f: f.write(b'bytes')
+        with open(root+'/maximum', 'wb') as f: f.write(b'\x00\xff'*524288)
+    subprocess.run([*command, root], check=True, timeout=60)

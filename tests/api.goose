@@ -52,10 +52,44 @@ fn main() {
     let ancestor = str(args[1], "/ancestor/target");
     assert(fs::read(ancestor, 100, out).error == fs::Error.SystemError);
     assert(fs::remove_file(ancestor).error == fs::Error.SystemError);
+    ok(fs::list(adversarial, 100, 10, entries));
+    var kinds: i64 = 0;
+    for entry in entries {
+        if entry.name == "link" { assert(entry.kind == fs::Kind.Symlink || entry.kind == fs::Kind.Unknown); kinds |= 1; }
+        else if entry.name == "fifo" { assert(entry.kind == fs::Kind.Other || entry.kind == fs::Kind.Unknown); kinds |= 2; }
+        else if entry.name == "target" { assert(entry.kind == fs::Kind.File || entry.kind == fs::Kind.Unknown); kinds |= 4; }
+        else { assert(entry.name == "subdir" && (entry.kind == fs::Kind.Directory || entry.kind == fs::Kind.Unknown)); kinds |= 8; }
+    }
+    assert(kinds == 15);
     let fifo = str(adversarial, "/fifo");
     assert(fs::read(fifo, 100, out).error == fs::Error.NotRegular);
     ok(fs::remove_file(link));
     let target = str(adversarial, "/target");
     ok(fs::read(target, 9, out)); assert(out == "protected");
+    let binary = str(args[1], "/binary");
+    ok(fs::list(binary, 273, 3, entries)); assert(entries.len == 3);
+    var seen: i64 = 0;
+    for entry in entries {
+        if entry.name == "line\nbreak" { seen |= 1; }
+        else if entry.name.len == 2 {
+            assert(entry.name[0] == 255 && entry.name[1] == 254); seen |= 2;
+        } else {
+            assert(entry.name.len == 255);
+            for c in entry.name { assert(c == 'x'); }
+            seen |= 4;
+        }
+    }
+    assert(seen == 7);
+    assert(fs::list("relative", 100, 10, entries).error == fs::Error.InvalidInput);
+    assert(entries.len == 0);
+    let maximum = str(args[1], "/maximum");
+    ok(fs::read(maximum, fs::MAX_BYTES, out)); assert(out.len == fs::MAX_BYTES);
+    for c, i in out { let expected = if i % 2 == 0 { 0 } else { 255 }; assert(c == expected); }
+    assert(fs::read("relative", 10, out).error == fs::Error.InvalidInput); assert(out.len == 0);
+    ok(fs::list(binary, 273, 3, entries)); assert(entries.len == 3);
+    let raw = str(binary, "/line\nbreak"); ok(fs::read(raw, 5, out)); assert(out == "bytes");
+    var invalid_utf8_path: u8[>..] = []; invalid_utf8_path.append(binary);
+    invalid_utf8_path.push('/'); invalid_utf8_path.push(255); invalid_utf8_path.push(254);
+    ok(fs::read(invalid_utf8_path, 5, out)); assert(out == "bytes");
     print("filesystem API passed");
 }
