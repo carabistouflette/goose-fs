@@ -6,6 +6,7 @@ import datetime
 import hashlib
 import json
 import math
+import os
 from pathlib import Path
 import platform
 import subprocess
@@ -29,6 +30,7 @@ if a.baseline and not a.baseline_revision: p.error('--baseline requires --baseli
 def output(args): return subprocess.check_output(args, cwd=ROOT, text=True, timeout=30).strip()
 binaries = {'candidate': a.binary.resolve()}
 if a.baseline: binaries['baseline'] = a.baseline.resolve()
+load_start = os.getloadavg()
 rows = []
 reference = None
 with tempfile.TemporaryDirectory(prefix='goose-fs-bench-') as temp:
@@ -68,6 +70,8 @@ metadata = dict(timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat
                 source_revision=output(['git','rev-parse','HEAD']), baseline_revision=a.baseline_revision,
                 binary_sha256={name: hashlib.sha256(path.read_bytes()).hexdigest() for name,path in binaries.items()},
                 harness_sha256=hashlib.sha256((ROOT/'bench/bench.goose').read_bytes()).hexdigest(),
+                loadavg_start=load_start, loadavg_end=os.getloadavg(),
+                cpu_affinity=sorted(os.sched_getaffinity(0)),
                 source_dirty=bool(output(['git','status','--porcelain'])), samples=rows)
 a.output.write_text(json.dumps(metadata, indent=2)+'\n')
 print(f'Wrote {len(rows)} samples to {a.output}')

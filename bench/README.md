@@ -14,7 +14,8 @@ call. Maximum-buffer workloads include 1 MiB of initialization per call; right-s
 listing workloads use 12/12000 bytes. No uninitialized storage is exposed to Goose.
 
 Metadata records CPU/OS, temporary filesystem type, compiler, flags, compiler pin,
-source commit, dirty status and executable SHA256. Fixtures are private temporary
+source commit, dirty status, load-average snapshots, CPU affinity and executable
+SHA256. Runs do not isolate CPU frequency or other workloads on the host. Fixtures are private temporary
 directories deleted afterward. These are warm-cache measurements, not storage
 bandwidth, cold I/O, concurrent throughput, allocation-free guarantees, or universal
 cross-library rankings. CI has no timing thresholds.
