@@ -111,6 +111,12 @@ without timing thresholds. See the [measured audit results](bench/results/2026-1
 for all workloads, raw samples and reproduction commands. No universal performance
 claim is made.
 
+Rust `std::fs`, Go `os`, and Goose's standard library define the feature and
+performance comparison targets. See the [Linux coverage record](docs/feature-coverage.md)
+and [versioned comparison research](docs/comparison-research.md). Full Linux
+coverage comes first, followed by macOS and Windows. Current APIs cover a subset;
+cross-library speed claims require measured results and matching safety policies.
+
 The first version excludes recursive operations, locks, temp-directory lifecycle,
 path normalization, atomic publication, streaming and Windows support.
 See [CONTRIBUTING.md](CONTRIBUTING.md) and [SECURITY.md](SECURITY.md).

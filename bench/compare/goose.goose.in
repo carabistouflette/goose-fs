@@ -1,0 +1,130 @@
+// SPDX-License-Identifier: Apache-2.0
+// Rendered twice by build.py; the constant removes the backend branch.
+import fs from "../..";
+import std;
+import os;
+const CUSTOM = @CUSTOM@;
+fn checksum(bytes: const u8[:]) -> i64 {
+    var result = bytes.len;
+    if bytes.len > 0 { result += bytes[0]; result += bytes[bytes.len - 1]; }
+    return result;
+}
+fn read_into(path: const u8[:], size: i64, bytes: u8[>..]&) {
+    if CUSTOM { assert(fs::read(path, size, bytes).error == fs::Error.None); }
+    else { bytes.clear(); assert(read_file(path, bytes)); }
+    assert(bytes.len == size);
+}
+fn check_pattern(bytes: const u8[:]) {
+    for c, i in bytes { assert(c == ((i * 17 + 13) % 251) as u8); }
+}
+fn fresh_read(path: const u8[:], size: i64) -> i64 {
+    var bytes: u8[>..] = [];
+    read_into(path, size, bytes);
+    return checksum(bytes);
+}
+fn reads(path: const u8[:], size: i64, count: i64, fresh: bool) {
+    let label = str(if fresh { "read-fresh-" } else { "read-reuse-" }, size);
+    var bytes: u8[>..] = [];
+    read_into(path, size, bytes); check_pattern(bytes);
+    for sample in 7 {
+        var sum: i64 = 0;
+        let start = clock_ns();
+        if fresh { for _ in count { sum += fresh_read(path, size); } }
+        else { for _ in count { read_into(path, size, bytes); sum += checksum(bytes); } }
+        let elapsed = clock_ns() - start;
+        print(label, "\t", sample, "\t", elapsed / count, "\t", sum, "\tok");
+    }
+    check_pattern(bytes);
+}
+fn expected_name(index: i64) -> u8[>..] {
+    return str("entry-", index / 1000 % 10, index / 100 % 10, index / 10 % 10, index % 10);
+}
+fn listing(path: const u8[:], count: i64, iterations: i64) {
+    let label = str("list-sorted-", count);
+    var entries: fs::Entry[>..] = [];
+    var packed: u8[>..] = [];
+    if CUSTOM {
+        assert(fs::list_sorted(path, fs::MAX_BYTES, fs::MAX_ENTRIES, entries).error == fs::Error.None);
+        assert(entries.len == count);
+        for entry, i in entries { assert(entry.name == expected_name(i)); }
+    } else {
+        assert(list_dir(path, packed));
+        var start: i64 = 0; var found: i64 = 0;
+        for c, i in packed {
+            if c == '\n' { assert(packed[start..i] == expected_name(found)); found++; start = i + 1; }
+        }
+        assert(found == count && start == packed.len);
+    }
+    for sample in 7 {
+        var sum: i64 = 0;
+        let start = clock_ns();
+        for _ in iterations {
+            if CUSTOM {
+                assert(fs::list_sorted(path, fs::MAX_BYTES, fs::MAX_ENTRIES, entries).error == fs::Error.None);
+                for entry in entries {
+                    sum += entry.name.len; sum += entry.name[0]; sum += entry.name[entry.name.len - 1];
+                }
+            } else {
+                packed.clear(); assert(list_dir(path, packed));
+                var begin: i64 = 0;
+                for c, i in packed {
+                    if c == '\n' { sum += i - begin; sum += packed[begin]; sum += packed[i - 1]; begin = i + 1; }
+                }
+            }
+        }
+        let elapsed = clock_ns() - start;
+        print(label, "\t", sample, "\t", elapsed / iterations, "\t", sum, "\tok");
+    }
+}
+fn metadata_case(path: const u8[:], count: i64) {
+    var info = fs::Metadata { .. };
+    for sample in 7 {
+        if CUSTOM {
+            var sum: i64 = 0;
+            let start = clock_ns();
+            for _ in count {
+                assert(fs::metadata(path, info).error == fs::Error.None);
+                assert(info.kind == fs::Kind.File && info.size == 64);
+                sum += 65;
+            }
+            let elapsed = clock_ns() - start;
+            print("metadata-file\t", sample, "\t", elapsed / count, "\t", sum, "\tok");
+        } else { print("metadata-file\t", sample, "\t0\t0\tunsupported"); }
+    }
+}
+fn dir_case(path: const u8[:], count: i64) {
+    for sample in 7 {
+        var sum: i64 = 0;
+        let start = clock_ns();
+        for _ in count {
+            if CUSTOM { let yes, result = fs::is_dir(path); assert(yes && result.error == fs::Error.None); }
+            else { assert(is_dir(path)); }
+            sum++;
+        }
+        let elapsed = clock_ns() - start;
+        print("is-dir\t", sample, "\t", elapsed / count, "\t", sum, "\tok");
+    }
+}
+fn main() {
+    let argv = args(); assert(argv.len == 3);
+    let count, valid = parse_int(argv[2], 10); assert(valid && count > 0 && count <= 1000000);
+    for size in [0, 64, 4096, 65536, 1048576] {
+        let path = str(argv[1], "/read-", size);
+        reads(path, size, count, true); reads(path, size, count, false);
+    }
+    for entries in [0, 1, 128, 4096] {
+        let path = str(argv[1], "/list-", entries); listing(path, entries, count);
+    }
+    let file = str(argv[1], "/read-64"); metadata_case(file, count);
+    let directory = str(argv[1], "/list-0"); dir_case(directory, count);
+    var status: u8[>..] = [];
+    assert(read_file("/proc/self/status", status));
+    var start: i64 = 0;
+    for c, i in status {
+        if c == '\n' {
+            let line: const u8[:] = status[start..i];
+            if line.len >= 6 && line[..6] == "VmHWM:" { print("MEMORY\t", line); }
+            start = i + 1;
+        }
+    }
+}
