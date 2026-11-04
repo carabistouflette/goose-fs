@@ -72,3 +72,7 @@ entry references, and a second owned-name copy while unsorted names remain live.
 Its temporary memory includes those extra names and references; callers may retain
 high-water capacity.  Readdir's internal libc buffering is outside that bound.
 The private C ABI is not a supported public API.
+
+Read reuses an initialized output prefix rather than zeroing it again; growth
+is still initialized. Small files with oversized limits continue paying for
+that growth after each result is shrunk.

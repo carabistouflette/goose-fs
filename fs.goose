@@ -36,12 +36,15 @@ fn status(code: i64, os_error: i64) -> Status {
     return Status { error: error, os_error: os_error };
 }
 fn read(path: const u8[:], limit: i64, out: u8[>..]&) -> Status {
-    out.clear();
-    if !valid_path(path) || limit < 0 || limit > MAX_BYTES { return Status { error: Error.InvalidInput }; }
+    if !valid_path(path) || limit < 0 || limit > MAX_BYTES {
+        out.clear();
+        return Status { error: Error.InvalidInput };
+    }
+    // Existing bytes are initialized already. Only growth needs initialization.
     out.resize(limit, 0);
     var meta: i64[3] = [0, 0, 0];
     let code = native_call(0, path, "", 0, out[..], meta[..]);
-    out.resize(meta[1]);
+    if code == 0 { out.resize(meta[1]); } else { out.clear(); }
     return status(code, meta[0]);
 }
 fn list(path: const u8[:], byte_limit: i64, entry_limit: i64, out: Entry[>..]&) -> Status {
