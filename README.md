@@ -132,6 +132,8 @@ records current overhead against Rust and leaves unsupported APIs visible.
 The [retained File measurements](bench/results/2026-11-04-retained/README.md)
 add positioned reads with open/close outside timing and disclose lifetime-check
 costs, unsupported stdlib operations and remaining comparison limits.
+The [Root task comparison](bench/results/2026-11-04-roots/README.md) includes Go
+os.Root with names-only enumeration and retains its faster metadata/listing cells.
 
 The current version excludes recursive operations, temp-directory lifecycle,
 path normalization, atomic publication, streaming directory cursors and Windows support.
