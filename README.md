@@ -150,7 +150,9 @@ records the selected option, unsupported cells, and mixed Rust/Go/Goose results.
 
 [Rename outcomes](docs/RENAME.md) distinguish an unattempted operation, confirmed
 application (including no-ops), and an uncertain error. Parent synchronization
-is optional and reports late errors without implying rollback.
+is optional and reports late errors without implying rollback. The
+[rename task measurements](bench/results/2026-11-04-rename/README.md) retain
+all Rust/Go/Goose cells, explicit sync-policy differences and slower cases.
 
 The current version excludes recursive operations, temp-directory lifecycle,
 path normalization, byte publication/installation helpers, streaming directory
