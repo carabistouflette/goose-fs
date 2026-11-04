@@ -6,7 +6,8 @@ import subprocess
 import sys
 import tempfile
 api = len(sys.argv) > 1 and sys.argv[1] == '--api'
-command = sys.argv[2:] if api else sys.argv[1:]
+closed_stdio = len(sys.argv) > 1 and sys.argv[1] == '--closed-stdio'
+command = sys.argv[2:] if api or closed_stdio else sys.argv[1:]
 with tempfile.TemporaryDirectory(prefix='goose-fs-') as root:
     if api:
         os.symlink('absent', root+'/dangling')
@@ -24,6 +25,7 @@ with tempfile.TemporaryDirectory(prefix='goose-fs-') as root:
             with open(os.fsencode(root)+b'/binary/'+name, 'wb') as f: f.write(b'bytes')
         with open(root+'/maximum', 'wb') as f: f.write(b'\x00\xff'*524288)
     try:
-        subprocess.run([*command, root], check=True, timeout=60)
+        subprocess.run([*command, root], check=True, timeout=60,
+                       preexec_fn=(lambda: os.closerange(0, 3)) if closed_stdio else None)
     finally:
         if api: os.chmod(root+'/denied', 0o700)

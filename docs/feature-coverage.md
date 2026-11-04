@@ -10,12 +10,12 @@ versions used to define the target. This is a progress record, not a parity clai
 | Whole-file reads | Bounded regular-file reads; caller-owned replacement storage; File streaming for larger inputs | Unbounded convenience calls are outside the current bounded API |
 | Directory enumeration | Unsorted and bytewise sorted owned names with kind hints, Root-relative calls and opt-in adaptive staging | Streaming cursors |
 | Metadata and predicates | No-follow identity, type, size, mode, ownership, timestamps; optional birth time; error-preserving predicates; held-File/Root and relative metadata | Following-link variants with explicit policy |
-| Creation and removal | Exclusive file/directory creation; File create/overwrite/append modes; unlink; empty-directory removal | Rename; recursive operations; one-shot overwrite/append helpers |
+| Creation and removal | Exclusive file/directory creation; File create/overwrite/append modes; unlink; empty-directory removal; entry rename | Recursive operations; one-shot overwrite/append helpers |
 | Retained File operations | Explicit Context ownership; bounded read/write and positioned I/O; independent duplication; seek/truncate/sync/close and metadata | Streaming directory cursors and wider ecosystem adapters |
-| Root/directory capabilities | Strict no-follow Root/child Root ownership; relative File/metadata/read/list/create/remove operations | Following permitted symlinks; relative rename/links/metadata mutations; streaming directory cursors |
+| Root/directory capabilities | Strict no-follow Root/child Root ownership; relative File/metadata/read/list/create/remove operations | Following permitted symlinks; relative links/metadata mutations; streaming directory cursors |
 | Permissions and timestamps | Inspection only | Permission, ownership and time changes |
 | Links and paths | Strict absolute or Root-relative byte paths; rejects parent symlinks | Hard/symbolic links, readlink, canonical and lexical path utilities |
-| Copy and publication | Not implemented | File/selected/tree copy; atomic replacement/install; explicit durability outcomes |
+| Copy and publication | Atomic entry replace/no-replace rename with explicit outcomes and optional checked parent sync | File/selected/tree copy; staged byte publication/installation; durable unlink |
 | Temporary resources | Not implemented | Exclusive temporary file/directory creation and explicit cleanup |
 | Advisory locks | Shared/exclusive try and polling wait; explicit unlock; duplicate/Context lifetime rules | Contention/fairness measurements and other platform backends |
 | Platforms | 64-bit Linux | macOS and Windows backends, policy differences and CI |

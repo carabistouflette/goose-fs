@@ -38,6 +38,7 @@ For Git dependencies, pin a reviewed full commit rather than a moving branch. Se
 | `metadata(path, out)` | Inspect final-entry type, identity, size, permissions and timestamps without following links |
 | `exists(path)`, `is_dir(path)` | Error-preserving, no-follow entry predicates |
 | `list_sorted(path, byte_limit, entry_limit, out)` | Bytewise sorted owned entries |
+| `rename(from, to, options)`, `rename_at(root, from, to, options)` | Move entries with replace/no-replace, explicit outcomes and optional checked parent sync |
 | Root APIs | Held-directory relative reads/listings/metadata/create/remove and child Roots; see [Root contract](docs/ROOTS.md) |
 | Context/File APIs | Explicit resource ownership, bounded streaming/positioned I/O, duplicate/seek/truncate/sync and held-file metadata; see [File contract](docs/HANDLES.md) |
 
@@ -98,7 +99,10 @@ make bench BENCH_ITERATIONS=100
 ```
 
 Builds need Linux headers providing openat2 (5.6+); older runtime kernels use
-the descriptor-walk fallback. ENOSYS/EPERM trigger that fallback without caching
+the descriptor-walk fallback. NoReplace rename also needs runtime renameat2 and
+filesystem support; unsupported requests return an error. The full rename tests
+use a local filesystem supporting NoReplace and directory fsync.
+ENOSYS/EPERM trigger the parent-lookup fallback without caching
 global feature state. Setup requires Git, CMake 3.27+, C/C++20 compilers and Make. Tests require Python
 3.11+, Linux `/proc`, GCC and Clang for the full matrix. The retained-handle capacity
 test needs a hard descriptor limit of at least 5000. GOOSE_REVISION pins the
@@ -144,8 +148,13 @@ keeps full and adaptive strategies separate, including every long-name regressio
 The [adaptive four-library profile](bench/results/2026-11-04-adaptive-native-api/README.md)
 records the selected option, unsupported cells, and mixed Rust/Go/Goose results.
 
+[Rename outcomes](docs/RENAME.md) distinguish an unattempted operation, confirmed
+application (including no-ops), and an uncertain error. Parent synchronization
+is optional and reports late errors without implying rollback.
+
 The current version excludes recursive operations, temp-directory lifecycle,
-path normalization, atomic publication, streaming directory cursors and Windows support.
+path normalization, byte publication/installation helpers, streaming directory
+cursors and Windows support.
 See [CONTRIBUTING.md](CONTRIBUTING.md) and [SECURITY.md](SECURITY.md).
 
 [Apache-2.0](LICENSE). Copyright 2026 goose-fs contributors.

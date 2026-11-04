@@ -495,3 +495,16 @@ int64_t gf_root_metadata_at(int64_t context, int64_t id, gf_input path, gf_meta 
     fields.data[0] = error;
     return error ? GF_SYSTEM : GF_OK;
 }
+
+int64_t gf_root_rename(int64_t context, int64_t id, gf_input from, gf_input to, int64_t flags, gf_meta meta) {
+    if (!gf_rename_arguments(from,to,flags,meta)) return GF_INVALID;
+    char source[GF_MAX_PATH+1], target[GF_MAX_PATH+1];
+    if (!gf_relative_copy(from,source) || !gf_relative_copy(to,target) ||
+        (from.len == 1 && from.data[0] == '.') || (to.len == 1 && to.data[0] == '.')) return GF_INVALID;
+    context_slot *ctx; int error;
+    resource_slot *root = lock_resource(context,id,RESOURCE_ROOT,false,&ctx,&error);
+    if (!root) { meta.data[0] = error; return GF_SYSTEM; }
+    int code = gf_rename_paths(root->fd,true,source,target,flags,meta.data);
+    unlock_resource(ctx,root);
+    return code;
+}

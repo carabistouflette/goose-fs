@@ -15,6 +15,7 @@ permitted in-tree symlinks. See [comparison coverage](feature-coverage.md).
 | `metadata_at(root, relative_path, out)` | Inspect the final entry without following it |
 | `read_file_at(root, relative_path, limit, out)` | Bounded whole-file read, including overflow probe |
 | `list_at`, `list_sorted_at` | Same limits/owned Entry format as list/list_sorted |
+| `rename_at(root, from, to, options)` | Two operands under one Root; [explicit outcomes and parent sync](RENAME.md) |
 | `create_file_at`, `create_dir_at` | Exclusive creation, modes 0600/0700 before umask |
 | `remove_file_at`, `remove_empty_dir_at` | Unlink a non-directory entry or remove an empty directory |
 | `close_root(root)` | Close this Root, invalidating copied aliases |

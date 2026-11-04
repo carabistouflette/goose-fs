@@ -13,6 +13,10 @@ int64_t gf_metadata(gf_input path, gf_meta fields);
  * Only result5 supplies required bytes; written counts are zero on all failures.
  * Byte/entry budget failures return2. Legacy3-slot listing ABIs are unchanged. */
 int64_t gf_list(gf_input path, int64_t bytes, gf_output out, int64_t entries, gf_meta meta);
+/* Rename meta4 = errno, outcome (0 unattempted/1 applied/2 unknown),
+ * both parent fsyncs accepted, first cleanup errno. flags:1 NoReplace,2 sync. */
+int64_t gf_rename(gf_input from, gf_input to, int64_t flags, gf_meta meta);
+int64_t gf_root_rename(int64_t context, int64_t root, gf_input from, gf_input to, int64_t flags, gf_meta meta);
 _Bool gf_missing(int64_t os_error);
 /* Retained-resource ABI; meta = errno, count/token/position, eof. */
 int64_t gf_context_create(gf_meta meta);

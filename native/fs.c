@@ -8,6 +8,8 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <linux/openat2.h>
+#include <linux/fs.h>
+#include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
 #include <sys/stat.h>
@@ -49,18 +51,37 @@ static bool copy_path(gf_input path, char text[GF_MAX_PATH + 1], bool relative) 
 bool gf_path_copy(gf_input path, char text[GF_MAX_PATH + 1]) { return copy_path(path,text,false); }
 bool gf_relative_copy(gf_input path, char text[GF_MAX_PATH + 1]) { return copy_path(path,text,true); }
 
+static int close_walk_fd(int fd, int64_t *cleanup) {
+    if (close(fd) == 0) return 0;
+    int error = errno;
+    if (cleanup && !*cleanup) *cleanup = error;
+    return error;
+}
+/* Consume old exactly once. On failure consume any opened next too; callers
+ * own no descriptor after -1. Linux close is never retried, including EINTR. */
+static int walk_child(int old, const char *part, int64_t *cleanup) {
+    int next = openat(old,part,O_PATH | O_DIRECTORY | O_NOFOLLOW | O_CLOEXEC);
+    int error = next < 0 ? errno : 0;
+    int closed = close_walk_fd(old,cleanup);
+    if (!error) error = closed;
+    if (error) {
+        if (next >= 0) close_walk_fd(next,cleanup);
+        errno = error;
+        return -1;
+    }
+    return next;
+}
+
 /* Return parent descriptor and a leaf in text; every ancestor rejects symlinks. */
-static int parent_walk(char *text, char **leaf) {
+static int parent_walk(char *text, char **leaf, int64_t *cleanup) {
     int fd = open("/", O_PATH | O_DIRECTORY | O_CLOEXEC);
     if (fd < 0) return -1;
     char *part = text + 1, *slash;
     while ((slash = strchr(part, '/'))) {
         *slash = 0;
-        int next = openat(fd, part, O_PATH | O_DIRECTORY | O_NOFOLLOW | O_CLOEXEC);
-        int saved = errno;
-        close(fd); /* Linux: never retry close after EINTR. */
-        if (next < 0) { errno = saved; return -1; }
-        fd = next; part = slash + 1;
+        fd = walk_child(fd,part,cleanup);
+        if (fd < 0) return -1;
+        part = slash + 1;
     }
     *leaf = *part ? part : ".";
     return fd;
@@ -69,7 +90,7 @@ static int parent_walk(char *text, char **leaf) {
 /* A single kernel path walk preserves the same all-component no-symlink policy.
  * No cached feature state: older kernels and seccomp-denied syscalls use the
  * descriptor walker. Other lookup failures are returned unchanged. */
-int gf_parent(char *text, char **leaf) {
+int gf_parent_checked(char *text, char **leaf, int64_t *cleanup) {
     char *separator = strrchr(text, '/'); /* path_copy guarantees an absolute path. */
     *separator = 0;
     const char *directory = separator == text ? "/" : text;
@@ -79,10 +100,12 @@ int gf_parent(char *text, char **leaf) {
     int saved = errno;
     *separator = '/';
     if (fd >= 0) { *leaf = separator[1] ? separator + 1 : "."; return fd; }
-    if (saved == ENOSYS || saved == EPERM) return parent_walk(text, leaf);
+    if (saved == ENOSYS || saved == EPERM) return parent_walk(text, leaf,cleanup);
     errno = saved;
     return -1;
 }
+
+int gf_parent(char *text, char **leaf) { return gf_parent_checked(text,leaf,NULL); }
 
 int gf_read_regular(int dir, const char *leaf, gf_output out, int64_t *length) {
     int fd = openat(dir, leaf, O_RDONLY | O_NOFOLLOW | O_NONBLOCK | O_NOCTTY | O_CLOEXEC);
@@ -229,6 +252,64 @@ int64_t gf_list(gf_input path, int64_t bytes, gf_output out, int64_t entries, gf
     return code;
 }
 
+/* Rename outcomes describe the syscall result, not a source-name absence or
+ * persistence guarantee. In particular, an NFS error can follow an applied move. */
+bool gf_rename_arguments(gf_input from, gf_input to, int64_t flags, gf_meta meta) {
+    if (meta.len != 4 || !meta.data || gf_overlap(meta.data,32,from.data,from.len) ||
+        gf_overlap(meta.data,32,to.data,to.len)) return false;
+    memset(meta.data,0,32);
+    return flags >= 0 && flags <= 3;
+}
+static void rename_close(int fd, int *code, int64_t *meta) {
+    if (fd >= 0 && close(fd) < 0) {
+        int error = errno;
+        if (!meta[3]) meta[3] = error;
+        if (*code == GF_OK) { *code = GF_SYSTEM; meta[0] = error; }
+    }
+}
+int gf_rename_paths(int root, bool relative, char *from, char *to, int64_t flags, int64_t *meta) {
+    int parents[2] = {-1,-1}, syncs[2] = {-1,-1}, code = GF_OK;
+    char *paths[2] = {from,to}, *leaves[2];
+    for (int i = 0; i < 2; ++i) {
+        parents[i] = relative ? gf_parent_relative_checked(root,paths[i],&leaves[i],&meta[3]) : gf_parent_checked(paths[i],&leaves[i],&meta[3]);
+        if (parents[i] < 0) { code = GF_SYSTEM; meta[0] = errno; goto cleanup; }
+    }
+    if (flags & 2) {
+        /* Opening before the move prevents a post-commit permission/open failure
+         * from being mistaken for an unattempted operation. O_PATH cannot fsync. */
+        for (int i = 0; i < 2; ++i) {
+            syncs[i] = openat(parents[i],".",O_RDONLY | O_DIRECTORY | O_NOFOLLOW | O_CLOEXEC);
+            if (syncs[i] < 0) { code = GF_SYSTEM; meta[0] = errno; goto cleanup; }
+        }
+    }
+    meta[1] = 2; /* Unknown once attempted; never retry a failed rename. */
+    int rc = flags & 1 ? (int)syscall(SYS_renameat2,parents[0],leaves[0],parents[1],leaves[1],(unsigned int)RENAME_NOREPLACE) :
+                         renameat(parents[0],leaves[0],parents[1],leaves[1]);
+    if (rc < 0) { code = GF_SYSTEM; meta[0] = errno; goto cleanup; }
+    meta[1] = 1; /* Applied includes successful same-path/same-inode no-ops. */
+    if (flags & 2) {
+        bool synced = true;
+        for (int i = 0; i < 2; ++i) {
+            do { rc = fsync(syncs[i]); } while (rc < 0 && errno == EINTR);
+            if (rc < 0) {
+                synced = false;
+                if (code == GF_OK) { code = GF_SYSTEM; meta[0] = errno; }
+            }
+        }
+        meta[2] = synced;
+    }
+cleanup:
+    for (int i = 0; i < 2; ++i) rename_close(syncs[i],&code,meta);
+    for (int i = 0; i < 2; ++i) rename_close(parents[i],&code,meta);
+    return code;
+}
+int64_t gf_rename(gf_input from, gf_input to, int64_t flags, gf_meta meta) {
+    if (!gf_rename_arguments(from,to,flags,meta)) return GF_INVALID;
+    char source[GF_MAX_PATH+1], target[GF_MAX_PATH+1];
+    if (!gf_path_copy(from,source) || !gf_path_copy(to,target) || from.len == 1 || to.len == 1) return GF_INVALID;
+    return gf_rename_paths(-1,false,source,target,flags,meta.data);
+}
+
 /* Metadata has a separate ABI; legacy operation tuples remain unchanged. */
 _Bool gf_missing(int64_t os_error) { return os_error == ENOENT; }
 
@@ -294,21 +375,20 @@ int gf_metadata_at(int dir, const char *leaf, int flags, int64_t *out) {
 }
 
 /* Every returned parent descriptor is owned, including a duplicated root. */
-static int relative_walk(int root, char *text, char **leaf) {
+static int relative_walk(int root, char *text, char **leaf, int64_t *cleanup) {
     int fd = fcntl(root,F_DUPFD_CLOEXEC,0);
     if (fd < 0) return -1;
     char *part = text, *slash;
     while ((slash = strchr(part,'/'))) {
         *slash = 0;
-        int next = openat(fd,part,O_PATH | O_DIRECTORY | O_NOFOLLOW | O_CLOEXEC);
-        int saved = errno; close(fd);
-        if (next < 0) { errno = saved; return -1; }
-        fd = next; part = slash+1;
+        fd = walk_child(fd,part,cleanup);
+        if (fd < 0) return -1;
+        part = slash+1;
     }
     *leaf = part;
     return fd;
 }
-int gf_parent_relative(int root, char *text, char **leaf) {
+int gf_parent_relative_checked(int root, char *text, char **leaf, int64_t *cleanup) {
     char *separator = strrchr(text,'/');
     if (!separator) { *leaf = text; return fcntl(root,F_DUPFD_CLOEXEC,0); }
     *separator = 0;
@@ -317,6 +397,8 @@ int gf_parent_relative(int root, char *text, char **leaf) {
     int fd = (int)syscall(SYS_openat2,root,text,&how,sizeof how);
     int saved = errno; *separator = '/';
     if (fd >= 0) { *leaf = separator+1; return fd; }
-    if (saved == ENOSYS || saved == EPERM) return relative_walk(root,text,leaf);
+    if (saved == ENOSYS || saved == EPERM) return relative_walk(root,text,leaf,cleanup);
     errno = saved; return -1;
 }
+
+int gf_parent_relative(int root, char *text, char **leaf) { return gf_parent_relative_checked(root,text,leaf,NULL); }

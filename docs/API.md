@@ -94,3 +94,9 @@ The private C ABI is not a supported public API.
 Read reuses an initialized output prefix rather than zeroing it again; growth
 is still initialized. Small files with oversized limits continue paying for
 that growth after each result is shrunk.
+
+
+Entry rename accepts two strict absolute paths, or two relative paths under one
+Root through rename_at. RenameOptions defaults to Replace without parent sync.
+RenameResult preserves uncertain attempts and late errors rather than implying
+that an error means nothing changed. See the [complete rename contract](RENAME.md).

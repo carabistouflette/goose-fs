@@ -484,3 +484,42 @@ fn remove_at(root: Root, path: const u8[:], directory: bool) -> Status {
 }
 fn remove_file_at(root: Root, path: const u8[:]) -> Status { return remove_at(root, path, false); }
 fn remove_empty_dir_at(root: Root, path: const u8[:]) -> Status { return remove_at(root, path, true); }
+
+enum RenamePolicy { Replace, NoReplace }
+enum RenameOutcome { NotAttempted, Applied, Unknown }
+struct RenameOptions { policy: RenamePolicy = RenamePolicy.Replace, sync_parents: bool = false }
+struct RenameResult {
+    status:           Status        = Status { .. },
+    outcome:          RenameOutcome = RenameOutcome.NotAttempted,
+    parents_synced:   bool          = false,
+    cleanup_os_error: i64           = 0,
+}
+extern fn native_rename(from: const u8[:], to: const u8[:], flags: i64, meta: i64[:]) -> i64 = "gf_rename";
+extern fn native_root_rename(context: i64, root: i64, from: const u8[:], to: const u8[:], flags: i64, meta: i64[:]) -> i64 = "gf_root_rename";
+fn rename_flags(options: RenameOptions) -> i64 {
+    if options.policy != RenamePolicy.Replace && options.policy != RenamePolicy.NoReplace { return -1; }
+    return (if options.policy == RenamePolicy.NoReplace { 1 } else { 0 }) + (if options.sync_parents { 2 } else { 0 });
+}
+fn rename_result(code: i64, meta: const i64[:]) -> RenameResult {
+    return RenameResult { status: status(code, meta[0]),
+        outcome: if meta[1] == 1 { RenameOutcome.Applied } else if meta[1] == 2 { RenameOutcome.Unknown } else { RenameOutcome.NotAttempted },
+        parents_synced: meta[2] != 0, cleanup_os_error: meta[3] };
+}
+fn rename(from: const u8[:], to: const u8[:], options: RenameOptions) -> RenameResult {
+    let flags = rename_flags(options);
+    if !valid_path(from) || !valid_path(to) || from.len == 1 || to.len == 1 || flags < 0 {
+        return RenameResult { status: Status { error: Error.InvalidInput } };
+    }
+    var meta: i64[4] = [0; 4];
+    let code = native_rename(from, to, flags, meta[..]);
+    return rename_result(code, meta[..]);
+}
+fn rename_at(root: Root, from: const u8[:], to: const u8[:], options: RenameOptions) -> RenameResult {
+    let flags = rename_flags(options);
+    if !valid_relative(from) || !valid_relative(to) || from == "." || to == "." || flags < 0 {
+        return RenameResult { status: Status { error: Error.InvalidInput } };
+    }
+    var meta: i64[4] = [0; 4];
+    let code = native_root_rename(root.context.id, root.id, from, to, flags, meta[..]);
+    return rename_result(code, meta[..]);
+}
