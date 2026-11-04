@@ -139,6 +139,10 @@ add positioned reads with open/close outside timing and disclose lifetime-check
 costs, unsupported stdlib operations and remaining comparison limits.
 The [Root task comparison](bench/results/2026-11-04-roots/README.md) includes Go
 os.Root with names-only enumeration and retains its faster metadata/listing cells.
+The [explicit staging comparison](bench/results/2026-11-04-listing-staging/README.md)
+keeps full and adaptive strategies separate, including every long-name regression.
+The [adaptive four-library profile](bench/results/2026-11-04-adaptive-native-api/README.md)
+records the selected option, unsupported cells, and mixed Rust/Go/Goose results.
 
 The current version excludes recursive operations, temp-directory lifecycle,
 path normalization, atomic publication, streaming directory cursors and Windows support.

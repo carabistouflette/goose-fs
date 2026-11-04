@@ -8,7 +8,7 @@ versions used to define the target. This is a progress record, not a parity clai
 | Capability | Current goose-fs | Remaining Linux work |
 | --- | --- | --- |
 | Whole-file reads | Bounded regular-file reads; caller-owned replacement storage; File streaming for larger inputs | Unbounded convenience calls are outside the current bounded API |
-| Directory enumeration | Unsorted and bytewise sorted owned names with kind hints, including Root-relative calls | Streaming cursors |
+| Directory enumeration | Unsorted and bytewise sorted owned names with kind hints, Root-relative calls and opt-in adaptive staging | Streaming cursors |
 | Metadata and predicates | No-follow identity, type, size, mode, ownership, timestamps; optional birth time; error-preserving predicates; held-File/Root and relative metadata | Following-link variants with explicit policy |
 | Creation and removal | Exclusive file/directory creation; File create/overwrite/append modes; unlink; empty-directory removal | Rename; recursive operations; one-shot overwrite/append helpers |
 | Retained File operations | Explicit Context ownership; bounded read/write and positioned I/O; independent duplication; seek/truncate/sync/close and metadata | Streaming directory cursors and wider ecosystem adapters |
