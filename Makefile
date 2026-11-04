@@ -149,7 +149,8 @@ sanitize:
 	$(SANITIZER_CC) $(CFLAGS) -O1 -g -fno-omit-frame-pointer -fsanitize=address,undefined -no-pie tests/listing_native.c native/fs.c native/handles.c $(LIST_WRAP) -o .build/listing-native-sanitize
 	ASAN_OPTIONS=detect_leaks=1:abort_on_error=1 UBSAN_OPTIONS=halt_on_error=1 python3 tests/run.py .build/listing-native-sanitize
 	SANITIZER_CC=$(SANITIZER_CC) $(GOOSE) build tests/listing.goose --debug --no-bce --cc $(abspath scripts/sanitizer-cc.sh) -o .build/listing-sanitize
-	ASAN_OPTIONS=detect_leaks=1:abort_on_error=1 UBSAN_OPTIONS=halt_on_error=1 python3 tests/listing_model.py .build/listing-sanitize
+	$(SANITIZER_CC) $(CFLAGS) -O2 -shared -fPIC native/fs.c native/handles.c -o .build/listing-model.so
+	FS_HANDLES_LIBRARY=$(abspath .build/listing-model.so) ASAN_OPTIONS=detect_leaks=1:abort_on_error=1 UBSAN_OPTIONS=halt_on_error=1 python3 tests/listing_model.py .build/listing-sanitize
 	$(SANITIZER_CC) $(CFLAGS) -O1 -g -fno-omit-frame-pointer -fsanitize=address,undefined -no-pie tests/roots_native.c native/fs.c $(ROOT_WRAP) -o .build/roots-native-sanitize
 	ASAN_OPTIONS=detect_leaks=1:abort_on_error=1 UBSAN_OPTIONS=halt_on_error=1 python3 tests/run.py .build/roots-native-sanitize
 	SANITIZER_CC=$(SANITIZER_CC) $(GOOSE) build tests/roots.goose --debug --no-bce --cc $(abspath scripts/sanitizer-cc.sh) -o .build/roots-sanitize
