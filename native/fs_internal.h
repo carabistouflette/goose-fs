@@ -1,0 +1,16 @@
+/* SPDX-License-Identifier: Apache-2.0 */
+#ifndef GOOSE_FS_INTERNAL_H
+#define GOOSE_FS_INTERNAL_H
+#include "fs.h"
+#include <stdbool.h>
+#include <string.h>
+#if !defined(__linux__) || UINTPTR_MAX != UINT64_MAX
+#error "goose-fs currently requires 64-bit Linux"
+#endif
+enum { GF_OK, GF_INVALID, GF_LIMIT, GF_NOT_REGULAR, GF_SYSTEM };
+enum { GF_MAX_PATH = 4095, GF_MAX_BYTES = 1048576, GF_MAX_ENTRIES = 4096 };
+bool gf_overlap(const void *a, int64_t an, const void *b, int64_t bn);
+bool gf_path_copy(gf_input path, char text[GF_MAX_PATH + 1]);
+int gf_parent(char *text, char **leaf);
+int gf_metadata_at(int dir, const char *leaf, int flags, int64_t *out);
+#endif

@@ -112,17 +112,20 @@ fn metadata(path: const u8[:], out: Metadata&) -> Status {
     var fields: i64[18] = [0; 18];
     let code = native_metadata(path, fields[..]);
     if code != 0 { return status(code, fields[0]); }
+    out = decode_metadata(fields[..]);
+    return Status { .. };
+}
+fn decode_metadata(fields: const i64[:]) -> Metadata {
     let kind = if fields[1] == 1 { Kind.File } else if fields[1] == 2 { Kind.Directory }
                else if fields[1] == 3 { Kind.Symlink } else if fields[1] == 5 { Kind.Fifo }
                else if fields[1] == 6 { Kind.Socket } else if fields[1] == 7 { Kind.CharacterDevice }
                else if fields[1] == 8 { Kind.BlockDevice } else { Kind.Other };
-    out = Metadata { kind: kind, size: fields[2] as! u64, permissions: fields[3] as! u32,
+    return Metadata { kind: kind, size: fields[2] as! u64, permissions: fields[3] as! u32,
         uid:      fields[4] as! u32, gid: fields[5] as! u32, device: fields[6] as! u64,
         inode:    fields[7] as! u64, links: fields[8] as! u64,
         accessed: Timestamp { fields[9], fields[10] }, modified: Timestamp { fields[11], fields[12] },
         changed:  Timestamp { fields[13], fields[14] }, created: Timestamp { fields[15], fields[16] },
         created_available: fields[17] != 0 };
-    return Status { .. };
 }
 fn exists(path: const u8[:]) -> bool, Status {
     var info = Metadata { .. };
@@ -175,4 +178,119 @@ fn sort_entries(order: (const Entry&)[:]) {
     while root > 0 { root--; sift_entries(order, root, order.len); }
     var end = order.len;
     while end > 1 { end--; swap_entries(order, 0, end); sift_entries(order, 0, end); }
+}
+
+// Tokens own no Goose storage. Copies alias lifetime and the shared file cursor.
+struct Context { id: i64 = 0 }
+struct File { context: Context = Context { .. }, id: i64 = 0 }
+const MAX_CONTEXTS = 64;
+const MAX_FILES = 4096;
+enum Access { Read, Write, ReadWrite }
+enum Creation { Existing, CreateNew, OpenOrCreate }
+enum SeekOrigin { Start, Current, End }
+struct OpenOptions {
+    access:      Access   = Access.Read,
+    creation:    Creation = Creation.Existing,
+    append:      bool     = false,
+    truncate:    bool     = false,
+    permissions: u32      = 384,
+}
+struct IOResult { status: Status = Status { .. }, bytes: i64 = 0, eof: bool = false }
+extern fn native_context_create(meta: i64[:]) -> i64 = "gf_context_create";
+extern fn native_context_close(context: i64, meta: i64[:]) -> i64 = "gf_context_close";
+extern fn native_file_open(context: i64, path: const u8[:], options: i64, permissions: i64, meta: i64[:]) -> i64 = "gf_file_open";
+extern fn native_file_close(context: i64, file: i64, meta: i64[:]) -> i64 = "gf_file_close";
+extern fn native_file_read(context: i64, file: i64, out: u8[:], offset: i64, positioned: bool, meta: i64[:]) -> i64 = "gf_file_read";
+extern fn native_file_write(context: i64, file: i64, data: const u8[:], offset: i64, positioned: bool, all: bool, meta: i64[:]) -> i64 = "gf_file_write";
+extern fn native_file_seek(context: i64, file: i64, offset: i64, origin: i64, meta: i64[:]) -> i64 = "gf_file_seek";
+extern fn native_file_truncate(context: i64, file: i64, size: i64, meta: i64[:]) -> i64 = "gf_file_truncate";
+extern fn native_file_sync(context: i64, file: i64, data_only: bool, meta: i64[:]) -> i64 = "gf_file_sync";
+extern fn native_file_metadata(context: i64, file: i64, fields: i64[:]) -> i64 = "gf_file_metadata";
+extern fn native_file_duplicate(context: i64, file: i64, meta: i64[:]) -> i64 = "gf_file_duplicate";
+fn create_context() -> Context, Status {
+    var meta: i64[3] = [0; 3];
+    let code = native_context_create(meta[..]);
+    return Context { id: meta[1] }, status(code, meta[0]);
+}
+fn close_context(context: Context) -> Status {
+    var meta: i64[3] = [0; 3];
+    let code = native_context_close(context.id, meta[..]);
+    return status(code, meta[0]);
+}
+fn open_file(context: Context, path: const u8[:], options: OpenOptions) -> File, Status {
+    if !valid_path(path) || options.permissions > 511 ||
+        (options.access != Access.Read && options.access != Access.Write && options.access != Access.ReadWrite) ||
+        (options.creation != Creation.Existing && options.creation != Creation.CreateNew && options.creation != Creation.OpenOrCreate) ||
+        (options.access == Access.Read && (options.append || options.truncate)) {
+        return File { .. }, Status { error: Error.InvalidInput };
+    }
+    let access:   i64 = if options.access == Access.Read { 0 } else if options.access == Access.Write { 1 } else { 2 };
+    let creation: i64 = if options.creation == Creation.Existing { 0 } else if options.creation == Creation.CreateNew { 4 } else { 8 };
+    let flags = access + creation + (if options.append { 16 } else { 0 }) + (if options.truncate { 32 } else { 0 });
+    var meta: i64[3] = [0; 3];
+    let code = native_file_open(context.id, path, flags, options.permissions, meta[..]);
+    let file = if code == 0 { File { context: context, id: meta[1] } } else { File { .. } };
+    return file, status(code, meta[0]);
+}
+fn close_file(file: File) -> Status {
+    var meta: i64[3] = [0; 3];
+    let code = native_file_close(file.context.id, file.id, meta[..]);
+    return status(code, meta[0]);
+}
+fn duplicate_file(file: File) -> File, Status {
+    var meta: i64[3] = [0; 3];
+    let code = native_file_duplicate(file.context.id, file.id, meta[..]);
+    let copy = if code == 0 { File { context: file.context, id: meta[1] } } else { File { .. } };
+    return copy, status(code, meta[0]);
+}
+fn file_read(file: File, offset: i64, limit: i64, positioned: bool, out: u8[>..]&) -> IOResult {
+    if limit < 0 || limit > MAX_BYTES || (positioned && (offset < 0 || offset > 9223372036854775807 - limit)) {
+        out.clear();
+        return IOResult { status: Status { error: Error.InvalidInput } };
+    }
+    out.resize(limit, 0);
+    var meta: i64[3] = [0; 3];
+    let code = native_file_read(file.context.id, file.id, out[..], offset, positioned, meta[..]);
+    if code == 0 { out.resize(meta[1]); } else { out.clear(); }
+    return IOResult { status: status(code, meta[0]), bytes: meta[1], eof: code == 0 && meta[2] != 0 };
+}
+fn read_some(file: File, limit: i64, out: u8[>..]&) -> IOResult { return file_read(file, 0, limit, false, out); }
+fn read_at(file: File, offset: i64, limit: i64, out: u8[>..]&) -> IOResult { return file_read(file, offset, limit, true, out); }
+fn file_write(file: File, data: const u8[:], offset: i64, positioned: bool, all: bool) -> IOResult {
+    if data.len > MAX_BYTES || (positioned && (offset < 0 || offset > 9223372036854775807 - data.len)) {
+        return IOResult { status: Status { error: Error.InvalidInput } };
+    }
+    var meta: i64[3] = [0; 3];
+    let code = native_file_write(file.context.id, file.id, data, offset, positioned, all, meta[..]);
+    return IOResult { status: status(code, meta[0]), bytes: meta[1] };
+}
+fn write_some(file: File, data: const u8[:]) -> IOResult { return file_write(file, data, 0, false, false); }
+fn write_all(file: File, data: const u8[:]) -> IOResult { return file_write(file, data, 0, false, true); }
+fn write_at(file: File, offset: i64, data: const u8[:]) -> IOResult { return file_write(file, data, offset, true, false); }
+fn seek(file: File, offset: i64, origin: SeekOrigin) -> i64, Status {
+    if origin != SeekOrigin.Start && origin != SeekOrigin.Current && origin != SeekOrigin.End {
+        return 0, Status { error: Error.InvalidInput };
+    }
+    let whence: i64 = if origin == SeekOrigin.Start { 0 } else if origin == SeekOrigin.Current { 1 } else { 2 };
+    var meta: i64[3] = [0; 3];
+    let code = native_file_seek(file.context.id, file.id, offset, whence, meta[..]);
+    return meta[1], status(code, meta[0]);
+}
+fn truncate_file(file: File, size: i64) -> Status {
+    var meta: i64[3] = [0; 3];
+    let code = native_file_truncate(file.context.id, file.id, size, meta[..]);
+    return status(code, meta[0]);
+}
+fn sync_file(file: File, data_only: bool) -> Status {
+    var meta: i64[3] = [0; 3];
+    let code = native_file_sync(file.context.id, file.id, data_only, meta[..]);
+    return status(code, meta[0]);
+}
+fn file_metadata(file: File, out: Metadata&) -> Status {
+    out = Metadata { .. };
+    var fields: i64[18] = [0; 18];
+    let code = native_file_metadata(file.context.id, file.id, fields[..]);
+    if code != 0 { return status(code, fields[0]); }
+    out = decode_metadata(fields[..]);
+    return Status { .. };
 }

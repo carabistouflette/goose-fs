@@ -5,9 +5,9 @@ Small, bounded filesystem operations for the
 Experimental interface; no release yet. 64-bit Linux is the current target.
 
 Read regular files with byte limits, list directories with structured byte-preserving
-names, exclusively create files/directories, and remove individual entries.
+names, inspect metadata, exclusively create files/directories, and remove individual entries. Retained Files add bounded streaming/positioned I/O, seek, truncate, sync and independent duplication.
 Every directory component rejects symlinks during traversal. Goose owns validation
-and returned storage; a private C kernel owns short-lived filesystem descriptors.
+and returned storage; a private C kernel owns filesystem descriptors with explicit cleanup.
 
 ```goose
 import fs from "../goose-fs";
@@ -38,6 +38,7 @@ For Git dependencies, pin a reviewed full commit rather than a moving branch. Se
 | `metadata(path, out)` | Inspect final-entry type, identity, size, permissions and timestamps without following links |
 | `exists(path)`, `is_dir(path)` | Error-preserving, no-follow entry predicates |
 | `list_sorted(path, byte_limit, entry_limit, out)` | Bytewise sorted owned entries |
+| Context/File APIs | Explicit resource ownership, bounded streaming/positioned I/O, duplicate/seek/truncate/sync and held-file metadata; see [File contract](docs/HANDLES.md) |
 
 Operations return `Status { error, os_error }`; predicates return `(bool, Status)`.
 Errors distinguish invalid input,
@@ -62,7 +63,7 @@ if result.error == fs::Error.None {
 
 Do not borrow an input path from output storage that the same call clears; Goose
 rejects that lifetime conflict. Names own their bytes and survive later calls
-when copied to separate storage. No retained native pointers or global state. Metadata predicates describe the
+when copied to separate storage. The one-shot API retains no native pointers or descriptors. Retained Files use a synchronized process-wide registry; see the [ownership and I/O contract](docs/HANDLES.md). Metadata predicates describe the
 entry itself: dangling links exist, directory links are not directories, and
 permission errors are not reported as absence. Creation time is optional; changed
 time means inode status change.
@@ -91,7 +92,8 @@ make bench BENCH_ITERATIONS=100
 Builds need Linux headers providing openat2 (5.6+); older runtime kernels use
 the descriptor-walk fallback. ENOSYS/EPERM trigger that fallback without caching
 global feature state. Setup requires Git, CMake 3.27+, C/C++20 compilers and Make. Tests require Python
-3.11+, Linux `/proc`, GCC and Clang for the full matrix. GOOSE_REVISION pins the
+3.11+, Linux `/proc`, GCC and Clang for the full matrix. The retained-handle capacity
+test needs a hard descriptor limit of at least 5000. GOOSE_REVISION pins the
 same compiler as goose-json. An existing matching binary can be selected with
 `make GOOSE=/absolute/path/to/goose ...`. Compatibility with other revisions is
 not guaranteed. Setup refuses modified compiler source and hidden index flags.
@@ -121,8 +123,8 @@ retain every comparator cell and policy difference; the
 [read-reuse measurement](bench/results/2026-11-04-read-reuse/README.md) isolates
 the initialized-buffer optimization.
 
-The first version excludes recursive operations, locks, temp-directory lifecycle,
-path normalization, atomic publication, streaming and Windows support.
+The current version excludes recursive operations, advisory locks, temp-directory lifecycle,
+path normalization, atomic publication, directory-relative traversal and Windows support.
 See [CONTRIBUTING.md](CONTRIBUTING.md) and [SECURITY.md](SECURITY.md).
 
 [Apache-2.0](LICENSE). Copyright 2026 goose-fs contributors.

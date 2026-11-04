@@ -1,7 +1,8 @@
 # Contributing
 
 Keep the interface small, explicit and bounded. Goose owns validation and output;
-the native Linux kernel owns short-lived OS resources. Do not broaden pathname,
+the native Linux kernel owns OS resources. Retained resources require explicit Context ownership and
+the lock-order invariants in native/handles.c; calls into Goose while holding native locks are forbidden. Do not broaden pathname,
 symlink or failure semantics without reviewing the contract and adversarial tests.
 Use focused branches (`feat/...`, `fix/...`) and Conventional Commits with imperative
 subjects: `feat: add ...`, `fix: reject ...`, `test: cover ...`, `docs: clarify ...`.

@@ -3,11 +3,12 @@ CC ?= gcc
 SANITIZER_CC ?= gcc
 BENCH_CC ?= gcc
 BENCH_ITERATIONS ?= 100
-CFLAGS = -std=c11 -Wall -Wextra -Werror
+CFLAGS = -std=c11 -Wall -Wextra -Werror -pthread
 RESOURCE_WRAP = -Wl,--wrap=read -Wl,--wrap=__read_chk
+HANDLE_WRAP = -Wl,--wrap=read -Wl,--wrap=pread -Wl,--wrap=__read_chk -Wl,--wrap=__pread_chk -Wl,--wrap=write -Wl,--wrap=pwrite -Wl,--wrap=close -Wl,--wrap=fstat -Wl,--wrap=ftruncate -Wl,--wrap=fsync -Wl,--wrap=fdatasync -Wl,--wrap=lseek -Wl,--wrap=fcntl
 WRAP_FLAGS = -Wl,--wrap=read -Wl,--wrap=write -Wl,--wrap=close -Wl,--wrap=readdir -Wl,--wrap=closedir -Wl,--wrap=fstat -Wl,--wrap=fdopendir -Wl,--wrap=openat
 .NOTPARALLEL:
-.PHONY: setup format check test native resources fallback sanitize bench
+.PHONY: setup format check test native handles resources fallback sanitize bench
 setup:
 	./scripts/setup-goose.sh
 format:
@@ -17,9 +18,12 @@ check:
 	python3 scripts/native-manifest.py --check
 	$(GOOSE) format --check fs.goose tests examples bench
 	$(GOOSE) check tests/api.goose
+	$(GOOSE) check tests/handles.goose
+	$(GOOSE) check tests/handles_workers.goose
 	$(GOOSE) check tests/metadata.goose
 	$(GOOSE) check tests/sorted_oracle.goose
 	$(GOOSE) check examples/read.goose
+	$(GOOSE) check examples/stream.goose
 	$(GOOSE) check bench/bench.goose
 test:
 	python3 scripts/native-manifest.py --check
@@ -37,11 +41,31 @@ test:
 	$(GOOSE) build tests/sorted_oracle.goose --cc $(CC) -O2 -o .build/sorted-oracle
 	$(GOOSE) build tests/sorted_oracle.goose --cc $(CC) --debug --no-bce -o .build/sorted-oracle-debug
 	python3 tests/sorted_model.py .build/sorted-oracle .build/sorted-oracle-debug
+	python3 tests/run.py $(abspath $(GOOSE)) run tests/handles.goose --
+	$(GOOSE) build tests/handles.goose --cc $(CC) -O2 -o .build/handles
+	python3 tests/run.py .build/handles
+	$(GOOSE) build tests/handles.goose --cc $(CC) --debug --no-bce -o .build/handles-debug
+	python3 tests/run.py .build/handles-debug
+	$(GOOSE) build tests/handles_workers.goose --cc $(CC) -O2 -o .build/handles-workers
+	python3 tests/run.py .build/handles-workers
+	$(GOOSE) build tests/handles_workers.goose --cc $(CC) --debug --no-bce -o .build/handles-workers-debug
+	python3 tests/run.py .build/handles-workers-debug
+	$(MAKE) handles
 	python3 tests/ownership.py $(abspath $(GOOSE))
 	python3 tests/run.py $(abspath $(GOOSE)) run tests/overloads.goose --
 	$(GOOSE) build tests/overloads.goose --cc $(CC) -O2 -o .build/overloads
 	python3 tests/run.py .build/overloads
 	$(MAKE) native
+handles:
+	mkdir -p .build
+	$(CC) $(CFLAGS) -O2 -shared -fPIC native/fs.c native/handles.c -o .build/fs-handles.so
+	python3 tests/handles_model.py
+	$(CC) $(CFLAGS) -O2 -shared -fPIC native/fs.c native/handles.c tests/no-openat2.c -Wl,--wrap=syscall -o .build/fs-handles-fallback.so
+	FS_HANDLES_LIBRARY=$(abspath .build/fs-handles-fallback.so) python3 tests/handles_model.py
+	$(CC) $(CFLAGS) -O2 -shared -fPIC native/fs.c native/handles.c -Wl,--wrap=statx -o .build/fs-handles-no-statx.so
+	FS_HANDLES_LIBRARY=$(abspath .build/fs-handles-no-statx.so) python3 tests/handles_model.py
+	$(CC) $(CFLAGS) -O2 tests/handles_native.c native/fs.c $(HANDLE_WRAP) -o .build/handles-native
+	python3 tests/run.py .build/handles-native
 native:
 	mkdir -p .build
 	$(CC) $(CFLAGS) -O2 -shared -fPIC native/fs.c -o .build/fs.so
@@ -80,6 +104,12 @@ fallback:
 	FS_NATIVE_LIBRARY=$(abspath .build/fs-denied.so) python3 tests/stress.py
 sanitize:
 	mkdir -p .build
+	SANITIZER_CC=$(SANITIZER_CC) $(GOOSE) build tests/handles.goose --debug --no-bce --cc $(abspath scripts/sanitizer-cc.sh) -o .build/handles-sanitize
+	ASAN_OPTIONS=detect_leaks=1:abort_on_error=1 UBSAN_OPTIONS=halt_on_error=1 python3 tests/run.py .build/handles-sanitize
+	SANITIZER_CC=$(SANITIZER_CC) $(GOOSE) build tests/handles_workers.goose --debug --no-bce --cc $(abspath scripts/sanitizer-cc.sh) -o .build/handles-workers-sanitize
+	ASAN_OPTIONS=detect_leaks=1:abort_on_error=1 UBSAN_OPTIONS=halt_on_error=1 python3 tests/run.py .build/handles-workers-sanitize
+	$(SANITIZER_CC) $(CFLAGS) -O1 -g -fno-omit-frame-pointer -fsanitize=address,undefined -no-pie tests/handles_native.c native/fs.c $(HANDLE_WRAP) -o .build/handles-native-sanitize
+	ASAN_OPTIONS=detect_leaks=1:abort_on_error=1 UBSAN_OPTIONS=halt_on_error=1 python3 tests/run.py .build/handles-native-sanitize
 	SANITIZER_CC=$(SANITIZER_CC) $(GOOSE) build tests/metadata.goose --debug --no-bce --cc $(abspath scripts/sanitizer-cc.sh) -o .build/metadata-sanitize
 	ASAN_OPTIONS=detect_leaks=1:abort_on_error=1 UBSAN_OPTIONS=halt_on_error=1 python3 tests/run.py --api .build/metadata-sanitize
 	$(SANITIZER_CC) $(CFLAGS) -O1 -g -fno-omit-frame-pointer -fsanitize=address,undefined -no-pie tests/metadata_native.c native/fs.c -Wl,--wrap=statx -Wl,--wrap=fstatat -o .build/metadata-native-sanitize

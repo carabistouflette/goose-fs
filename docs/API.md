@@ -10,7 +10,8 @@ syscall returns ENOSYS (older kernel) or EPERM (including seccomp denial), a
 component-by-component O_NOFOLLOW/O_DIRECTORY descriptor walk enforces the same
 policy. EPERM is retried by that walker; its final result/errno is returned.
 Other lookup failures are propagated without retry. Reads/listing reject final symlinks too. No process
-cwd/umask changes, global mutable state, or retained descriptors.
+cwd/umask changes. One-shot operations retain no native pointers or descriptors;
+[retained Files](HANDLES.md) use a synchronized registry with explicit Context ownership.
 
 This is a path-resolution policy, not confinement: hard links, mount points and
 concurrent renames are possible. Operations use the directories they opened even

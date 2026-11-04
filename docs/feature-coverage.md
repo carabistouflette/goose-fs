@@ -7,11 +7,11 @@ versions used to define the target. This is a progress record, not a parity clai
 
 | Capability | Current goose-fs | Remaining Linux work |
 | --- | --- | --- |
-| Whole-file reads | Bounded regular-file reads; caller-owned replacement storage | General size/streaming choices through File handles |
+| Whole-file reads | Bounded regular-file reads; caller-owned replacement storage; File streaming for larger inputs | Unbounded convenience calls are outside the current bounded API |
 | Directory enumeration | Unsorted and bytewise sorted owned names with kind hints | Streaming cursors; directory-relative access |
-| Metadata and predicates | No-follow identity, type, size, mode, ownership, timestamps; optional birth time; error-preserving predicates | Handle-relative metadata; following-link variants with explicit policy |
-| Creation and removal | Exclusive file/directory creation; unlink; empty-directory removal | Overwrite/append; rename; recursive operations |
-| Retained File operations | Not implemented | Read/write, positioned I/O, seek, truncate, sync, explicit close and ownership |
+| Metadata and predicates | No-follow identity, type, size, mode, ownership, timestamps; optional birth time; error-preserving predicates; held-File metadata | Directory-relative metadata; following-link variants with explicit policy |
+| Creation and removal | Exclusive file/directory creation; File create/overwrite/append modes; unlink; empty-directory removal | Rename; recursive operations; one-shot overwrite/append helpers |
+| Retained File operations | Explicit Context ownership; bounded read/write and positioned I/O; independent duplication; seek/truncate/sync/close and metadata | Retained directory/root capabilities and wider ecosystem adapters |
 | Root/directory capabilities | Not implemented | Relative traversal and operations through retained directories |
 | Permissions and timestamps | Inspection only | Permission, ownership and time changes |
 | Links and paths | Strict absolute byte paths; rejects parent symlinks | Hard/symbolic links, readlink, canonical and lexical path utilities |
@@ -32,7 +32,7 @@ stale binaries using build-time provenance, validates common fixtures and retain
 all samples. It does not establish equal-security performance or full feature
 parity. A separately labelled hardened-adapter comparison is still required.
 
-Retained-resource design must address both normal return and contained worker
+Retained-resource ownership addresses both normal return and parent-owned cleanup after contained worker
 abort. The pinned Goose runtime does not expose a native lifecycle cleanup hook;
-thread completion can become visible before TLS destructors finish. No retained
-resource API is published until its ownership and cleanup behavior is validated.
+thread completion can become visible before TLS destructors finish. The [File contract](HANDLES.md) requires a surviving owner to close the Context;
+resources created without such an owner cannot be reclaimed automatically after abort.
