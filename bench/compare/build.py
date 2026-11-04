@@ -4,6 +4,7 @@
 import argparse
 import datetime
 import json
+import os
 from pathlib import Path
 import subprocess
 from provenance import ROOT, RUNNERS, capture, sha256, sources, toolchains
@@ -20,11 +21,12 @@ manifest.unlink(missing_ok=True)
 compiler=str(Path(a.goose).resolve())
 before=sources()
 versions=toolchains(compiler,a.cc,a.rust_toolchain)
+goose_env=dict(os.environ,GOOSE_STDLIB=versions['goose_stdlib']['directory'])
 for name, custom in [('goose-fs','true'),('goose-stdlib','false')]:
     source=out/f'{name}.goose'
     source.write_text((ROOT/'bench/compare/goose.goose.in').read_text().replace('@CUSTOM@',custom).replace('@ADAPTIVE@','true' if a.adaptive_listing else 'false'))
     subprocess.run([compiler,'format',str(source)],cwd=ROOT,check=True)
-    subprocess.run([compiler,'build',str(source),'--cc',a.cc,'-O2','-o',str(out/name)],cwd=ROOT,check=True)
+    subprocess.run([compiler,'build',str(source),'--cc',a.cc,'-O2','-o',str(out/name)],cwd=ROOT,env=goose_env,check=True)
 subprocess.run(['rustc',f'+{a.rust_toolchain}','--edition=2024','-C','opt-level=2','-C','codegen-units=1',
                 'bench/compare/rust.rs','-o',str(out/'rust')],cwd=ROOT,check=True)
 subprocess.run(['go','build','-trimpath','-o',str(out/'go'),'bench/compare/go.go'],cwd=ROOT,check=True)

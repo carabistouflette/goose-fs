@@ -23,8 +23,24 @@ def sources():
              *sorted((ROOT/'native').glob('*')), *sorted((ROOT/'bench/compare').glob('*'))]
     return {str(path.relative_to(ROOT)): sha256(path) for path in paths if path.is_file()}
 
+def goose_stdlib(goose):
+    # Match the compiler's environment/executable-relative search order. Require
+    # one complete std/os directory, then bind its source bytes as build inputs.
+    exe=Path(goose).resolve()
+    override=Path(os.environ['GOOSE_STDLIB'] or '/') if 'GOOSE_STDLIB' in os.environ else None
+    candidates=([override if override.is_absolute() else ROOT/override] if override is not None else [])
+    candidates += [parent/'stdlib' for parent in list(exe.parents)[:4]]+[ROOT/'stdlib']
+    for candidate in candidates:
+        if (candidate/'std.goose').is_file():
+            if not (candidate/'os.goose').is_file():
+                raise RuntimeError('benchmarks require std and os in one complete Goose standard library directory')
+            directory=candidate.resolve()
+            return dict(directory=str(directory),sources_sha256={str(p.relative_to(directory)):sha256(p)
+                        for p in sorted(directory.rglob('*.goose')) if p.is_file()})
+    raise RuntimeError('cannot locate Goose standard library; set GOOSE_STDLIB')
+
 def toolchains(goose, cc, rust_toolchain):
-    return dict(goose=capture([goose, '--version']), goose_sha256=sha256(goose),
+    return dict(goose=capture([goose, '--version']), goose_sha256=sha256(goose),goose_stdlib=goose_stdlib(goose),
                 goose_revision=(ROOT/'GOOSE_REVISION').read_text().strip(),
                 native_cc=capture([cc, '--version']),
                 rust=capture(['rustc', f'+{rust_toolchain}', '--version', '--verbose']),

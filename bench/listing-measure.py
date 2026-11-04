@@ -12,6 +12,7 @@ import random
 import subprocess
 import sys
 import tempfile
+from compare.provenance import goose_stdlib
 ROOT=Path(__file__).resolve().parent.parent
 sys.path.insert(0,str(ROOT/'tests'))
 from listing_fixture import names_for_bytes
@@ -33,7 +34,7 @@ def capture(args):return subprocess.check_output(args,cwd=ROOT,text=True,timeout
 def digest(path):return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 def sources():
     paths=[ROOT/'fs.goose',ROOT/'fs.build',ROOT/'GOOSE_REVISION',*sorted((ROOT/'native').glob('*')),
-           ROOT/'bench/listing.goose.in',Path(__file__).resolve(),ROOT/'tests/listing_fixture.py',ROOT/'bench/build-baseline.py',ROOT/'bench/listing-build.py']
+           ROOT/'bench/listing.goose.in',Path(__file__).resolve(),ROOT/'tests/listing_fixture.py',ROOT/'bench/build-baseline.py',ROOT/'bench/listing-build.py',ROOT/'bench/compare/provenance.py']
     return {str(path.relative_to(ROOT)):digest(path) for path in paths if path.is_file()}
 binaries={'baseline':a.baseline.resolve(),'full':a.full.resolve(),'adaptive':a.adaptive.resolve()}
 initial_sources=sources();initial_bins={k:digest(v) for k,v in binaries.items()}
@@ -46,6 +47,7 @@ assert rendered==build['rendered_sources_sha256']
 initial_revision=capture(['git','rev-parse','HEAD']);initial_dirty=bool(capture(['git','status','--porcelain']))
 goose=str(Path(a.goose).resolve());compiler_hash=digest(goose)
 assert build['goose_sha256']==compiler_hash
+assert build['goose_stdlib']==goose_stdlib(goose)
 load_start=os.getloadavg();started=datetime.datetime.now(datetime.timezone.utc).isoformat();rows=[];fixtures={}
 rng=random.Random(61937)
 with tempfile.TemporaryDirectory(prefix='goose-fs-listing-bench-') as temp:
@@ -83,6 +85,7 @@ with tempfile.TemporaryDirectory(prefix='goose-fs-listing-bench-') as temp:
 assert sources()==initial_sources and {k:digest(v) for k,v in binaries.items()}==initial_bins
 assert capture(['git','rev-parse','HEAD'])==initial_revision and digest(goose)==compiler_hash
 assert capture([a.cc,'--version'])==build['cc']
+assert build['goose_stdlib']==goose_stdlib(goose)
 assert {name:digest(a.build_manifest.parent/name) for name in rendered}==rendered
 metadata=dict(started_utc=started,finished_utc=datetime.datetime.now(datetime.timezone.utc).isoformat(),
               platform=platform.platform(),cpu_info=Path('/proc/cpuinfo').read_text().split('\n\n')[0],filesystem=filesystem,
