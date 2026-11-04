@@ -294,3 +294,35 @@ fn file_metadata(file: File, out: Metadata&) -> Status {
     out = decode_metadata(fields[..]);
     return Status { .. };
 }
+
+enum LockMode { Shared, Exclusive }
+extern fn native_file_try_lock(context: i64, file: i64, mode: i64, meta: i64[:]) -> i64 = "gf_file_try_lock";
+extern fn native_lock_contended(os_error: i64) -> bool = "gf_lock_contended";
+extern fn native_lock_pause() -> i64 = "gf_lock_pause";
+fn try_lock_file(file: File, mode: LockMode) -> bool, Status {
+    if mode != LockMode.Shared && mode != LockMode.Exclusive {
+        return false, Status { error: Error.InvalidInput };
+    }
+    let operation: i64 = if mode == LockMode.Shared { 1 } else { 2 };
+    var meta: i64[3] = [0; 3];
+    let code = native_file_try_lock(file.context.id, file.id, operation, meta[..]);
+    if code == 4 && native_lock_contended(meta[0]) { return false, Status { .. }; }
+    return code == 0, status(code, meta[0]);
+}
+fn lock_file(file: File, mode: LockMode) -> Status {
+    let first, initial = try_lock_file(file, mode);
+    var acquired = first;
+    var result = initial;
+    while !acquired && result.error == Error.None {
+        let pause_error = native_lock_pause();
+        if pause_error != 0 { return Status { error: Error.SystemError, os_error: pause_error }; }
+        let next, attempt = try_lock_file(file, mode);
+        acquired = next; result = attempt;
+    }
+    return result;
+}
+fn unlock_file(file: File) -> Status {
+    var meta: i64[3] = [0; 3];
+    let code = native_file_try_lock(file.context.id, file.id, 0, meta[..]);
+    return status(code, meta[0]);
+}

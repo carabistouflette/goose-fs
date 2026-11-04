@@ -109,6 +109,10 @@ creates 4160 locks, allocation scans up to 4096 slots, and context closure scans
 those slots using a 16 KiB native stack index array. No retained-handle speed
 superiority is claimed without separate sequential/concurrent measurements.
 
+File locking is available through `try_lock_file`, `lock_file` and `unlock_file`;
+see [the flock and waiting contract](LOCKS.md) for shared/duplicate state, conversion
+and polling cleanup semantics.
+
 ## Abnormal exits and limits
 
 The pinned runtime exposes no native lifecycle cleanup hook. Goose `defer` runs

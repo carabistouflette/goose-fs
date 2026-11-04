@@ -10,6 +10,8 @@ fn main() {
     let path = str(argv[1], "/handle-file");
     let options = fs::OpenOptions { access: fs::Access.ReadWrite, creation: fs::Creation.CreateNew };
     let file, opened = fs::open_file(context, path, options); ok(opened);
+    let locked, lock_status = fs::try_lock_file(file, fs::LockMode.Shared); ok(lock_status); assert(locked);
+    ok(fs::unlock_file(file));
     io_ok(fs::write_all(file, "abcdef"), 6);
     var info = fs::Metadata { .. }; ok(fs::file_metadata(file, info));
     assert(info.kind == fs::Kind.File && info.size == 6);

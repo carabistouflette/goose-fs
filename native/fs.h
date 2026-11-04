@@ -22,4 +22,7 @@ int64_t gf_file_seek(int64_t context, int64_t file, int64_t offset, int64_t orig
 int64_t gf_file_truncate(int64_t context, int64_t file, int64_t size, gf_meta meta);
 int64_t gf_file_sync(int64_t context, int64_t file, _Bool data_only, gf_meta meta);
 int64_t gf_file_metadata(int64_t context, int64_t file, gf_meta fields);
+int64_t gf_file_try_lock(int64_t context, int64_t file, int64_t mode, gf_meta meta);
+_Bool gf_lock_contended(int64_t error);
+int64_t gf_lock_pause(void);
 #endif

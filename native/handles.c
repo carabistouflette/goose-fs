@@ -7,6 +7,8 @@
 #include <pthread.h>
 #include <stdbool.h>
 #include <sys/stat.h>
+#include <sys/file.h>
+#include <time.h>
 #include <unistd.h>
 
 /* Context -> entry -> allocator. Never wait for another lock with allocator held.
@@ -339,4 +341,28 @@ int64_t gf_file_metadata(int64_t context, int64_t id, gf_meta fields) {
     unlock_file(ctx, file);
     fields.data[0] = error;
     return error ? GF_SYSTEM : GF_OK;
+}
+/* No blocking flock while registry locks are held: it could prevent the
+ * Context's owner from closing the descriptors needed to release contention. */
+int64_t gf_file_try_lock(int64_t context, int64_t id, int64_t mode, gf_meta meta) {
+    if (!meta_valid(meta)) return GF_INVALID;
+    if (mode < 0 || mode > 2) return GF_INVALID;
+    context_slot *ctx; int error;
+    file_slot *file = lock_file(context, id, true, &ctx, &error);
+    if (!file) return result(meta, error);
+    int operation = mode == 0 ? LOCK_UN : (mode == 1 ? LOCK_SH : LOCK_EX) | LOCK_NB;
+    int rc;
+    do { rc = flock(file->fd, operation); } while (rc < 0 && errno == EINTR);
+    if (rc < 0) error = errno;
+    unlock_file(ctx, file);
+    return result(meta, error);
+}
+_Bool gf_lock_contended(int64_t error) { return error == EAGAIN || error == EWOULDBLOCK; }
+/* Called by Goose only after an unsuccessful attempt has released all locks. */
+int64_t gf_lock_pause(void) {
+    struct timespec delay = { .tv_sec = 0, .tv_nsec = 1000000 };
+    while (nanosleep(&delay, &delay) < 0) {
+        if (errno != EINTR) return errno;
+    }
+    return 0;
 }

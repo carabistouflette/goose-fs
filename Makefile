@@ -5,7 +5,7 @@ BENCH_CC ?= gcc
 BENCH_ITERATIONS ?= 100
 CFLAGS = -std=c11 -Wall -Wextra -Werror -pthread
 RESOURCE_WRAP = -Wl,--wrap=read -Wl,--wrap=__read_chk
-HANDLE_WRAP = -Wl,--wrap=read -Wl,--wrap=pread -Wl,--wrap=__read_chk -Wl,--wrap=__pread_chk -Wl,--wrap=write -Wl,--wrap=pwrite -Wl,--wrap=close -Wl,--wrap=fstat -Wl,--wrap=ftruncate -Wl,--wrap=fsync -Wl,--wrap=fdatasync -Wl,--wrap=lseek -Wl,--wrap=fcntl
+HANDLE_WRAP = -Wl,--wrap=read -Wl,--wrap=pread -Wl,--wrap=__read_chk -Wl,--wrap=__pread_chk -Wl,--wrap=write -Wl,--wrap=pwrite -Wl,--wrap=close -Wl,--wrap=fstat -Wl,--wrap=ftruncate -Wl,--wrap=fsync -Wl,--wrap=fdatasync -Wl,--wrap=lseek -Wl,--wrap=fcntl -Wl,--wrap=flock -Wl,--wrap=nanosleep
 WRAP_FLAGS = -Wl,--wrap=read -Wl,--wrap=write -Wl,--wrap=close -Wl,--wrap=readdir -Wl,--wrap=closedir -Wl,--wrap=fstat -Wl,--wrap=fdopendir -Wl,--wrap=openat
 .NOTPARALLEL:
 .PHONY: setup format check test native handles resources fallback sanitize bench
@@ -20,6 +20,8 @@ check:
 	$(GOOSE) check tests/api.goose
 	$(GOOSE) check tests/handles.goose
 	$(GOOSE) check tests/handles_workers.goose
+	$(GOOSE) check tests/locks.goose
+	$(GOOSE) check tests/lock_pause_probe.goose
 	$(GOOSE) check tests/metadata.goose
 	$(GOOSE) check tests/sorted_oracle.goose
 	$(GOOSE) check examples/read.goose
@@ -50,6 +52,14 @@ test:
 	python3 tests/run.py .build/handles-workers
 	$(GOOSE) build tests/handles_workers.goose --cc $(CC) --debug --no-bce -o .build/handles-workers-debug
 	python3 tests/run.py .build/handles-workers-debug
+	$(GOOSE) build tests/locks.goose --cc $(CC) -O2 -o .build/locks
+	python3 tests/run.py .build/locks
+	$(GOOSE) build tests/locks.goose --cc $(CC) --debug --no-bce -o .build/locks-debug
+	python3 tests/run.py .build/locks-debug
+	$(GOOSE) build tests/lock_pause_probe.goose --cc $(CC) -O2 -o .build/lock-pause-probe
+	python3 tests/run.py .build/lock-pause-probe
+	$(GOOSE) build tests/lock_pause_probe.goose --cc $(CC) --debug --no-bce -o .build/lock-pause-probe-debug
+	python3 tests/run.py .build/lock-pause-probe-debug
 	$(MAKE) handles
 	python3 tests/ownership.py $(abspath $(GOOSE))
 	python3 tests/run.py $(abspath $(GOOSE)) run tests/overloads.goose --
@@ -60,6 +70,7 @@ handles:
 	mkdir -p .build
 	$(CC) $(CFLAGS) -O2 -shared -fPIC native/fs.c native/handles.c -o .build/fs-handles.so
 	python3 tests/handles_model.py
+	python3 tests/locks_model.py
 	$(CC) $(CFLAGS) -O2 -shared -fPIC native/fs.c native/handles.c tests/no-openat2.c -Wl,--wrap=syscall -o .build/fs-handles-fallback.so
 	FS_HANDLES_LIBRARY=$(abspath .build/fs-handles-fallback.so) python3 tests/handles_model.py
 	$(CC) $(CFLAGS) -O2 -shared -fPIC native/fs.c native/handles.c -Wl,--wrap=statx -o .build/fs-handles-no-statx.so
@@ -104,6 +115,10 @@ fallback:
 	FS_NATIVE_LIBRARY=$(abspath .build/fs-denied.so) python3 tests/stress.py
 sanitize:
 	mkdir -p .build
+	SANITIZER_CC=$(SANITIZER_CC) $(GOOSE) build tests/lock_pause_probe.goose --debug --no-bce --cc $(abspath scripts/sanitizer-cc.sh) -o .build/lock-pause-probe-sanitize
+	ASAN_OPTIONS=detect_leaks=1:abort_on_error=1 UBSAN_OPTIONS=halt_on_error=1 python3 tests/run.py .build/lock-pause-probe-sanitize
+	SANITIZER_CC=$(SANITIZER_CC) $(GOOSE) build tests/locks.goose --debug --no-bce --cc $(abspath scripts/sanitizer-cc.sh) -o .build/locks-sanitize
+	ASAN_OPTIONS=detect_leaks=1:abort_on_error=1 UBSAN_OPTIONS=halt_on_error=1 python3 tests/run.py .build/locks-sanitize
 	SANITIZER_CC=$(SANITIZER_CC) $(GOOSE) build tests/handles.goose --debug --no-bce --cc $(abspath scripts/sanitizer-cc.sh) -o .build/handles-sanitize
 	ASAN_OPTIONS=detect_leaks=1:abort_on_error=1 UBSAN_OPTIONS=halt_on_error=1 python3 tests/run.py .build/handles-sanitize
 	SANITIZER_CC=$(SANITIZER_CC) $(GOOSE) build tests/handles_workers.goose --debug --no-bce --cc $(abspath scripts/sanitizer-cc.sh) -o .build/handles-workers-sanitize

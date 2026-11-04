@@ -11,6 +11,8 @@
 
 static int fault_read, fault_write, fault_close, fault_stat, fault_truncate;
 static int fault_sync, fault_seek, fault_dup, calls_read, calls_write, calls_close;
+static int fault_lock, calls_lock;
+static int fault_sleep, calls_sleep;
 static pthread_mutex_t gate = PTHREAD_MUTEX_INITIALIZER;
 static pthread_cond_t wake = PTHREAD_COND_INITIALIZER;
 static bool block_read, entered_read, release_read;
@@ -29,6 +31,24 @@ int __real_fsync(int);
 int __real_fdatasync(int);
 off_t __real_lseek(int, off_t, int);
 int __real_fcntl(int, int, ...);
+int __real_flock(int, int);
+int __real_nanosleep(const struct timespec *, struct timespec *);
+int __wrap_nanosleep(const struct timespec *delay, struct timespec *remaining) {
+    ++calls_sleep;
+    if (fault_sleep == EINTR) {
+        fault_sleep = 0; *remaining = *delay; remaining->tv_nsec /= 2;
+        errno = EINTR; return -1;
+    }
+    if (fault_sleep) { errno = fault_sleep; return -1; }
+    return __real_nanosleep(delay,remaining);
+}
+int __wrap_flock(int fd, int operation) {
+    ++calls_lock;
+    assert((operation & LOCK_UN) || (operation & LOCK_NB));
+    if (fault_lock == EINTR) { fault_lock = 0; errno = EINTR; return -1; }
+    if (fault_lock) { errno = fault_lock; return -1; }
+    return __real_flock(fd,operation);
+}
 static ssize_t read_fault(int fd, void *out, size_t n, off_t off, bool positioned) {
     pthread_mutex_lock(&gate);
     if (block_read) {
@@ -122,6 +142,21 @@ int main(int argc, char **argv) {
     int fd = open(path,O_CREAT|O_EXCL|O_WRONLY|O_CLOEXEC,0600); assert(fd >= 0);
     assert(__real_write(fd,"abcdef",6) == 6); assert(!__real_close(fd));
     int64_t ctx=make_context(), out[3], file=open_handle(ctx,path); uint8_t data[8];
+    fault_lock=EINTR; calls_lock=0;
+    assert(!gf_file_try_lock(ctx,file,2,meta(out)) && calls_lock == 2);
+    assert(!gf_file_try_lock(ctx,file,0,meta(out)));
+    int errors[] = { EAGAIN, EACCES, ENOLCK, EIO };
+    for (size_t i=0; i<sizeof errors/sizeof *errors; ++i) {
+        fault_lock=errors[i]; calls_lock=0;
+        assert(gf_file_try_lock(ctx,file,1,meta(out)) == GF_SYSTEM);
+        assert(out[0] == errors[i] && !out[1] && !out[2] && calls_lock == 1);
+    }
+    fault_lock=0;
+    fault_sleep=EINTR; calls_sleep=0;
+    assert(!gf_lock_pause() && calls_sleep == 2);
+    fault_sleep=EPERM; calls_sleep=0;
+    assert(gf_lock_pause() == EPERM && calls_sleep == 1);
+    fault_sleep=0;
     for (int positioned = 0; positioned < 2; ++positioned) {
         fault_read=1; calls_read=0;
         assert(!gf_file_read(ctx,file,(gf_output){data,6},0,positioned,meta(out)));

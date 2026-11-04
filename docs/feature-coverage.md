@@ -17,7 +17,7 @@ versions used to define the target. This is a progress record, not a parity clai
 | Links and paths | Strict absolute byte paths; rejects parent symlinks | Hard/symbolic links, readlink, canonical and lexical path utilities |
 | Copy and publication | Not implemented | File/selected/tree copy; atomic replacement/install; explicit durability outcomes |
 | Temporary resources | Not implemented | Exclusive temporary file/directory creation and explicit cleanup |
-| Advisory locks | Not implemented | Shared/exclusive, blocking/nonblocking and release |
+| Advisory locks | Shared/exclusive try and polling wait; explicit unlock; duplicate/Context lifetime rules | Contention/fairness measurements and other platform backends |
 | Platforms | 64-bit Linux | macOS and Windows backends, policy differences and CI |
 
 The safety contract deliberately differs from ordinary std::fs/os calls: strict
