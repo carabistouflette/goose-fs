@@ -208,6 +208,54 @@ fn rooted(path: const u8[:], count: i64) {
     }
     assert(fs::close_context(context).error == fs::Error.None);
 }
+fn rename_one(from: const u8[:], to: const u8[:], root: fs::Root, rooted: bool, options: fs::RenameOptions) {
+    if CUSTOM {
+        let result = if rooted { fs::rename_at(root, from, to, options) } else { fs::rename(from, to, options) };
+        assert(result.status.error == fs::Error.None && result.outcome == fs::RenameOutcome.Applied);
+        assert(result.parents_synced == options.sync_parents && result.cleanup_os_error == 0);
+    } else { assert(rename_file(from, to)); }
+}
+fn rename_pair(from: const u8[:], to: const u8[:], root: fs::Root, rooted: bool, options: fs::RenameOptions) {
+    rename_one(from, to, root, rooted, options);
+    rename_one(to, from, root, rooted, options);
+}
+fn rename_case(path: const u8[:], count: i64, rooted: bool, mode: i64) {
+    let suffix: const u8[:] = if mode == 0 { "rename-replace-pair" } else if mode == 1 { "rename-parents-sync-pair" } else { "rename-noreplace-pair" };
+    let label = str(if rooted { "root-" } else { "" }, suffix);
+    if !CUSTOM && (rooted || mode != 0) {
+        for sample in 7 { print(label, "\t", sample, "\t0\t0\tunsupported"); }
+        return;
+    }
+    let from = str(path, "/left"); let to = str(path, "/right");
+    var context = fs::Context { .. }; var root = fs::Root { .. };
+    if CUSTOM && rooted {
+        let c, ce = fs::create_context(); assert(ce.error == fs::Error.None); context = c;
+        let r, re = fs::open_root(context, path); assert(re.error == fs::Error.None); root = r;
+    }
+    let options = fs::RenameOptions { policy: if mode == 2 { fs::RenamePolicy.NoReplace } else { fs::RenamePolicy.Replace }, sync_parents: mode == 1 };
+    var bytes: u8[>..] = []; assert(read_file(from, bytes) && bytes == "rename fixture");
+    if CUSTOM { let found, e = fs::exists(to); assert(e.error == fs::Error.None && !found); }
+    else { assert(!file_exists(to)); }
+    let call_from: const u8[:] = if rooted { "left" } else { from };
+    let call_to: const u8[:] = if rooted { "right" } else { to };
+    rename_one(call_from, call_to, root, rooted, options);
+    bytes.clear(); assert(read_file(to, bytes) && bytes == "rename fixture");
+    if CUSTOM { let found, e = fs::exists(from); assert(e.error == fs::Error.None && !found); }
+    else { assert(!file_exists(from)); }
+    rename_one(call_to, call_from, root, rooted, options);
+    rename_pair(call_from, call_to, root, rooted, options);
+    for sample in 7 {
+        var sum: i64 = 0;
+        let start = clock_ns();
+        for _ in count { rename_pair(call_from, call_to, root, rooted, options); sum++; }
+        let elapsed = clock_ns() - start;
+        print(label, "\t", sample, "\t", elapsed / count, "\t", sum, "\tok");
+    }
+    bytes.clear(); assert(read_file(from, bytes) && bytes == "rename fixture");
+    if CUSTOM { let found, e = fs::exists(to); assert(e.error == fs::Error.None && !found); }
+    else { assert(!file_exists(to)); }
+    if CUSTOM && rooted { assert(fs::close_context(context).error == fs::Error.None); }
+}
 fn main() {
     let argv = args(); assert(argv.len == 3);
     let count, valid = parse_int(argv[2], 10); assert(valid && count > 0 && count <= 1000000);
@@ -222,6 +270,8 @@ fn main() {
     let file = str(argv[1], "/read-64"); metadata_case(file, count); locking(file, count);
     let directory = str(argv[1], "/list-0"); dir_case(directory, count);
     rooted(argv[1], count);
+    let rename_path = str(argv[1], "/rename");
+    for mode in 3 { rename_case(rename_path, count, false, mode); rename_case(rename_path, count, true, mode); }
     var status: u8[>..] = [];
     assert(read_file("/proc/self/status", status));
     var start: i64 = 0;

@@ -54,6 +54,69 @@ func rootNames(root *os.Root) []string {
     closeErr := file.Close(); must(readErr); must(closeErr)
     slices.Sort(names); return names
 }
+func finishRename(a, b *os.File, renameErr error) error {
+    var firstSync, secondSync error
+    if renameErr == nil { firstSync=a.Sync(); secondSync=b.Sync() }
+    firstClose, secondClose := a.Close(), b.Close()
+    for _, err := range []error{renameErr,firstSync,secondSync,firstClose,secondClose} {
+        if err != nil { return err }
+    }
+    return nil
+}
+func renameChecked(from, to string) error {
+    a, err := os.Open(filepath.Dir(from)); if err != nil { return err }
+    b, err := os.Open(filepath.Dir(to)); if err != nil { a.Close(); return err }
+    return finishRename(a,b,os.Rename(from,to))
+}
+func rootRenameChecked(root *os.Root, from, to string) error {
+    a, err := root.Open("."); if err != nil { return err }
+    b, err := root.Open("."); if err != nil { a.Close(); return err }
+    return finishRename(a,b,root.Rename(from,to))
+}
+func renameCases(path string, count int) {
+    from, to := filepath.Join(path,"left"), filepath.Join(path,"right")
+    for _, checked := range []bool{false,true} {
+        warm, err := os.ReadFile(from); must(err)
+        if string(warm)!="rename fixture" { panic("rename preflight") }
+        if _, err:=os.Lstat(to); !os.IsNotExist(err) { panic("rename target present") }
+        label:="rename-replace-pair"; if checked { label="rename-parents-sync-pair" }
+        if checked { must(renameChecked(from,to)) } else { must(os.Rename(from,to)) }
+        moved, err:=os.ReadFile(to); must(err)
+        if string(moved)!="rename fixture" { panic("rename did not move content") }
+        if _, err:=os.Lstat(from); !os.IsNotExist(err) { panic("rename did not remove source") }
+        if checked { must(renameChecked(to,from)) } else { must(os.Rename(to,from)) }
+        samples(label,count,func() uint64 {
+            if checked { must(renameChecked(from,to)); must(renameChecked(to,from)) } else { must(os.Rename(from,to)); must(os.Rename(to,from)) }
+            return 1
+        })
+        after, err := os.ReadFile(from); must(err)
+        if string(after)!="rename fixture" { panic("rename postflight") }
+        if _, err:=os.Lstat(to); !os.IsNotExist(err) { panic("rename target remains") }
+    }
+    root, err := os.OpenRoot(path); must(err)
+    for _, checked := range []bool{false,true} {
+        label:="root-rename-replace-pair"; if checked { label="root-rename-parents-sync-pair" }
+        warm, err:=root.ReadFile("left"); must(err)
+        if string(warm)!="rename fixture" { panic("root rename preflight") }
+        if _, err:=root.Lstat("right"); !os.IsNotExist(err) { panic("root rename target present") }
+        if checked { must(rootRenameChecked(root,"left","right")) } else { must(root.Rename("left","right")) }
+        moved, err:=root.ReadFile("right"); must(err)
+        if string(moved)!="rename fixture" { panic("root rename did not move content") }
+        if _, err:=root.Lstat("left"); !os.IsNotExist(err) { panic("root rename did not remove source") }
+        if checked { must(rootRenameChecked(root,"right","left")) } else { must(root.Rename("right","left")) }
+        samples(label,count,func() uint64 {
+            if checked { must(rootRenameChecked(root,"left","right")); must(rootRenameChecked(root,"right","left")) } else { must(root.Rename("left","right")); must(root.Rename("right","left")) }
+            return 1
+        })
+        after, err:=root.ReadFile("left"); must(err)
+        if string(after)!="rename fixture" { panic("root rename postflight") }
+        if _, err:=root.Lstat("right"); !os.IsNotExist(err) { panic("root rename target remains") }
+    }
+    must(root.Close())
+    for _, label:=range []string{"rename-noreplace-pair","root-rename-noreplace-pair"} {
+        for sample:=0;sample<7;sample++ { fmt.Printf("%s\t%d\t0\t0\tunsupported\n",label,sample) }
+    }
+}
 func main() {
     if len(os.Args)!=3 { panic("root and iterations required") }
     root := os.Args[1]; count, err := strconv.Atoi(os.Args[2]); must(err)
@@ -128,6 +191,7 @@ func main() {
         nameSink=names; return sum
     })
     must(held.Close())
+    renameCases(filepath.Join(root,"rename"),count)
     status, err := os.ReadFile("/proc/self/status"); must(err)
     for _, line := range strings.Split(string(status),"\n") {
         if strings.HasPrefix(line,"VmHWM:") { fmt.Printf("MEMORY\t%s\n",line) }

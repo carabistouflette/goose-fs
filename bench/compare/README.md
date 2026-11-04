@@ -80,3 +80,30 @@ are rejected. The default remains full one-pass staging. Comparator APIs and all
 other workloads are unchanged. Adaptive mode trades lower small-result buffer
 initialization for a second pass when accepted packed names exceed 64 KiB; use the
 paired long-name profile in [the benchmark guide](../README.md) to see that cost.
+
+
+Rename rows report nanoseconds per **pair**, meaning left→right and right→left
+(two namespace operations). Each leg starts with its destination absent. Replace
+is the policy name; these rows do not measure overwriting an existing inode.
+Complete preflight checks observe the intermediate move/content/source absence;
+postflight verifies the restored entry/content and absent destination. Fixture
+creation, validation, Root/Context setup and formatting are outside timing.
+
+`rename-replace-pair` uses each native API. Pinned Goose rename_file always makes
+a best-effort destination-parent sync after each rename; Rust/Go/fs basic calls
+request no sync. That differing durability work is intentionally disclosed, not
+ranked as equal behavior. `rename-parents-sync-pair` composes two readable-parent
+opens before each rename, both checked sync calls and cleanup for Rust/Go; fs uses
+RenameOptions.sync_parents=true. Rust File::Drop cannot report close errors.
+Goose's API cannot report checked parent sync and is unsupported in that row.
+Root checked-sync uses two readable Root.Open(".") handles for Go. Root lifecycle
+is excluded from all Root rows. NoReplace is unsupported outside fs in this native
+API profile; link+unlink is not substituted for atomic generic entry rename.
+The build/run profile retains every existing workload and unsupported cell. These
+warm local fixtures do not measure crash recovery, remote filesystems, existing-
+target overwrite latency or equal-security performance.
+
+Absolute Rust/Go checked compositions re-resolve pathname parents in the rename
+call; their preopened sync handles are not a concurrent-parent identity promise.
+The fixtures stay stable. goose-fs renames through the exact held parent FDs.
+This difference is another reason the rows are not an equal-security ranking.

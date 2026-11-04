@@ -18,6 +18,40 @@ fn samples<F: FnMut() -> u64>(label: &str, count: u64, mut operation: F) {
         println!("{label}\t{sample}\t{elapsed}\t{sum}\tok");
     }
 }
+fn absent(path: &Path) {
+    match fs::symlink_metadata(path) {
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => (),
+        other => panic!("expected absent entry: {other:?}"),
+    }
+}
+fn rename_checked(from: &Path, to: &Path) -> std::io::Result<()> {
+    let a = fs::File::open(from.parent().unwrap())?;
+    let b = fs::File::open(to.parent().unwrap())?;
+    fs::rename(from, to)?;
+    let first = a.sync_all();
+    let second = b.sync_all();
+    first?; second?; Ok(())
+}
+fn rename_cases(path: &Path, count: u64) {
+    let from = path.join("left"); let to = path.join("right");
+    for checked in [false, true] {
+        assert_eq!(fs::read(&from).unwrap(), b"rename fixture"); absent(&to);
+        let label = if checked { "rename-parents-sync-pair" } else { "rename-replace-pair" };
+        if checked { rename_checked(&from, &to).unwrap(); } else { fs::rename(&from, &to).unwrap(); }
+        absent(&from); assert_eq!(fs::read(&to).unwrap(), b"rename fixture");
+        if checked { rename_checked(&to, &from).unwrap(); } else { fs::rename(&to, &from).unwrap(); }
+        absent(&to); assert_eq!(fs::read(&from).unwrap(), b"rename fixture");
+        samples(label, count, || {
+            if checked { rename_checked(&from, &to).unwrap(); rename_checked(&to, &from).unwrap(); }
+            else { fs::rename(&from, &to).unwrap(); fs::rename(&to, &from).unwrap(); }
+            1
+        });
+        assert_eq!(fs::read(&from).unwrap(), b"rename fixture"); absent(&to);
+    }
+    for label in ["rename-noreplace-pair", "root-rename-replace-pair", "root-rename-parents-sync-pair", "root-rename-noreplace-pair"] {
+        for sample in 0..7 { println!("{label}\t{sample}\t0\t0\tunsupported"); }
+    }
+}
 fn main() {
     let args: Vec<_> = std::env::args().collect();
     assert_eq!(args.len(), 3);
@@ -70,6 +104,7 @@ fn main() {
     for label in ["root-read-fresh-64", "root-metadata-file", "root-list-sorted-128"] {
         for sample in 0..7 { println!("{label}\t{sample}\t0\t0\tunsupported"); }
     }
+    rename_cases(&root.join("rename"), count);
     let status = fs::read_to_string("/proc/self/status").unwrap();
     for line in status.lines().filter(|s| s.starts_with("VmHWM:")) { println!("MEMORY\t{line}"); }
 }
