@@ -68,8 +68,16 @@ later calls. Allocation failure follows Goose runtime behavior, not Status.
 Limits are fixed: 1 MiB read/write/list payload, 4096 listing entries, 4095 path
 bytes. Public buffers may retain high-water capacity. Read uses caller storage;
 list additionally stages at most byte_limit bytes, then copies names into owned
-entries. Work is linear in path bytes and payload/entries inspected, except OS
-costs and repeated EINTR. Sorted listing instead adds O(entries × log(entries))
+entries. Listing starts with min(byte_limit, 64 KiB) of initialized staging.
+If it fills, native code stops writing but counts to EOF within the caller's
+byte/entry limits. After closing every temporary descriptor and releasing Root
+locks, Goose grows to at least the required size and retries. A stable directory
+needs at most two complete passes. Under changes, growth at least doubles,
+bounded to five attempts with a 1 MiB budget; the final successful pass supplies
+all published entries. Retries may observe different names or directory identity
+and provide no snapshot guarantee. Limit and OS/cleanup errors stop immediately.
+Work is linear in path bytes and payload/entries inspected across these passes,
+except OS costs and repeated EINTR. Sorted listing instead adds O(entries × log(entries))
 byte-name comparisons (each bounded by the longer compared name), an array of
 entry references, and a second owned-name copy while unsorted names remain live.
 Its temporary memory includes those extra names and references; callers may retain

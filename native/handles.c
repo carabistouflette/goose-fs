@@ -449,6 +449,26 @@ int64_t gf_root_read(int64_t context, int64_t root, gf_input path, gf_output out
 int64_t gf_root_list(int64_t context, int64_t root, gf_input path, gf_output out, int64_t entries, gf_meta meta) {
     return root_call(context,root,ROOT_LIST,path,(gf_input){NULL,0},out,entries,meta);
 }
+int64_t gf_root_list_sized(int64_t context, int64_t id, gf_input path, int64_t bytes,
+                            gf_output out, int64_t entries, gf_meta meta) {
+    if (!gf_list_arguments(path,out,bytes,entries,meta)) return GF_INVALID;
+    char text[GF_MAX_PATH+1];
+    if (!gf_relative_copy(path,text)) return GF_INVALID;
+    context_slot *ctx; int error;
+    resource_slot *root = lock_resource(context,id,RESOURCE_ROOT,false,&ctx,&error);
+    if (!root) { meta.data[0] = error; return GF_SYSTEM; }
+    char *leaf;
+    int dir = gf_parent_relative(root->fd,text,&leaf);
+    if (dir < 0) { error = errno; unlock_resource(ctx,root); meta.data[0] = error; return GF_SYSTEM; }
+    int code = gf_list_dir_sized(dir,leaf,out,bytes,entries,&meta.data[1],&meta.data[2],&meta.data[3]);
+    error = code == GF_SYSTEM ? errno : 0;
+    if (close(dir) < 0 && (code == GF_OK || code == GF_NEED_SPACE)) { code = GF_SYSTEM; error = errno; }
+    unlock_resource(ctx,root);
+    if (code != GF_OK) meta.data[1] = meta.data[2] = 0;
+    if (code != GF_NEED_SPACE) meta.data[3] = 0;
+    meta.data[0] = error;
+    return code;
+}
 int64_t gf_root_create(int64_t context, int64_t root, gf_input path, gf_input data, gf_meta meta) {
     return root_call(context,root,ROOT_CREATE,path,data,(gf_output){NULL,0},0,meta);
 }

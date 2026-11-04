@@ -11,6 +11,8 @@ const MAX_BYTES = 1048576;
 const MAX_ENTRIES = 4096;
 extern fn native_call(op: i64, path: const u8[:], data: const u8[:], entries: i64,
                       out: u8[:], meta: i64[:]) -> i64 = "gf_call";
+extern fn native_list(path: const u8[:], bytes: i64, out: u8[:], entries: i64, meta: i64[:]) -> i64 = "gf_list";
+const LIST_STAGING_BYTES = 65536;
 
 fn valid_components(path: const u8[:], beginning: i64) -> bool {
     var start = beginning;
@@ -58,11 +60,17 @@ fn list(path: const u8[:], byte_limit: i64, entry_limit: i64, out: Entry[>..]&) 
     out.clear();
     if !valid_path(path) || byte_limit < 0 || byte_limit > MAX_BYTES ||
        entry_limit < 0 || entry_limit > MAX_ENTRIES { return Status { error: Error.InvalidInput }; }
-    var packed: u8[>..] = [];
-    packed.resize(byte_limit, 0);
-    var meta: i64[3] = [0, 0, 0];
-    let code = native_call(1, path, "", entry_limit, packed[..], meta[..]);
-    if code != 0 { return status(code, meta[0]); }
+    var capacity = if byte_limit < LIST_STAGING_BYTES { byte_limit } else { LIST_STAGING_BYTES };
+    var packed: u8[>..] = []; packed.resize(capacity, 0);
+    var meta:   i64[4]  = [0; 4];
+    var code = native_list(path, byte_limit, packed[..], entry_limit, meta[..]);
+    while code == 5 && capacity < byte_limit {
+        let growth = if capacity * 2 > meta[3] { capacity * 2 } else { meta[3] };
+        capacity = if growth < byte_limit { growth } else { byte_limit };
+        packed.resize(capacity, 0);
+        code = native_list(path, byte_limit, packed[..], entry_limit, meta[..]);
+    }
+    if code != 0 { return status(if code == 5 { 2 } else { code }, meta[0]); }
     unpack_entries(packed[..meta[1]], meta[2], out);
     return Status { .. };
 }
@@ -351,7 +359,7 @@ extern fn native_root_close(context: i64, root: i64, meta: i64[:]) -> i64 = "gf_
 extern fn native_root_metadata(context: i64, root: i64, fields: i64[:]) -> i64 = "gf_root_metadata";
 extern fn native_root_metadata_at(context: i64, root: i64, path: const u8[:], fields: i64[:]) -> i64 = "gf_root_metadata_at";
 extern fn native_root_read(context: i64, root: i64, path: const u8[:], out: u8[:], meta: i64[:]) -> i64 = "gf_root_read";
-extern fn native_root_list(context: i64, root: i64, path: const u8[:], out: u8[:], entries: i64, meta: i64[:]) -> i64 = "gf_root_list";
+extern fn native_root_list(context: i64, root: i64, path: const u8[:], bytes: i64, out: u8[:], entries: i64, meta: i64[:]) -> i64 = "gf_root_list_sized";
 extern fn native_root_create(context: i64, root: i64, path: const u8[:], data: const u8[:], meta: i64[:]) -> i64 = "gf_root_create";
 extern fn native_root_mkdir(context: i64, root: i64, path: const u8[:], meta: i64[:]) -> i64 = "gf_root_mkdir";
 extern fn native_root_unlink(context: i64, root: i64, path: const u8[:], directory: bool, meta: i64[:]) -> i64 = "gf_root_unlink";
@@ -415,10 +423,17 @@ fn list_at(root: Root, path: const u8[:], byte_limit: i64, entry_limit: i64, out
     out.clear();
     if !valid_relative(path) || byte_limit < 0 || byte_limit > MAX_BYTES ||
         entry_limit < 0 || entry_limit > MAX_ENTRIES { return Status { error: Error.InvalidInput }; }
-    var packed: u8[>..] = []; packed.resize(byte_limit, 0);
-    var meta:   i64[3]  = [0; 3];
-    let code = native_root_list(root.context.id, root.id, path, packed[..], entry_limit, meta[..]);
-    if code != 0 { return status(code, meta[0]); }
+    var capacity = if byte_limit < LIST_STAGING_BYTES { byte_limit } else { LIST_STAGING_BYTES };
+    var packed: u8[>..] = []; packed.resize(capacity, 0);
+    var meta:   i64[4]  = [0; 4];
+    var code = native_root_list(root.context.id, root.id, path, byte_limit, packed[..], entry_limit, meta[..]);
+    while code == 5 && capacity < byte_limit {
+        let growth = if capacity * 2 > meta[3] { capacity * 2 } else { meta[3] };
+        capacity = if growth < byte_limit { growth } else { byte_limit };
+        packed.resize(capacity, 0);
+        code = native_root_list(root.context.id, root.id, path, byte_limit, packed[..], entry_limit, meta[..]);
+    }
+    if code != 0 { return status(if code == 5 { 2 } else { code }, meta[0]); }
     unpack_entries(packed[..meta[1]], meta[2], out);
     return Status { .. };
 }

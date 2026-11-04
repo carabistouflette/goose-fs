@@ -9,6 +9,10 @@ typedef struct { int64_t *data; int64_t len; } gf_meta;
 int64_t gf_call(int64_t op, gf_input path, gf_input data, int64_t entries,
                 gf_output out, gf_meta meta);
 int64_t gf_metadata(gf_input path, gf_meta fields);
+/* Staging meta4 = errno, written bytes, written entries, required bytes.
+ * Only result5 supplies required bytes; written counts are zero on all failures.
+ * Byte/entry budget failures return2. Legacy3-slot listing ABIs are unchanged. */
+int64_t gf_list(gf_input path, int64_t bytes, gf_output out, int64_t entries, gf_meta meta);
 _Bool gf_missing(int64_t os_error);
 /* Retained-resource ABI; meta = errno, count/token/position, eof. */
 int64_t gf_context_create(gf_meta meta);
@@ -33,6 +37,7 @@ int64_t gf_root_close(int64_t context, int64_t root, gf_meta meta);
 int64_t gf_root_metadata(int64_t context, int64_t root, gf_meta fields);
 int64_t gf_root_read(int64_t context, int64_t root, gf_input path, gf_output out, gf_meta meta);
 int64_t gf_root_list(int64_t context, int64_t root, gf_input path, gf_output out, int64_t entries, gf_meta meta);
+int64_t gf_root_list_sized(int64_t context, int64_t root, gf_input path, int64_t bytes, gf_output out, int64_t entries, gf_meta meta);
 int64_t gf_root_create(int64_t context, int64_t root, gf_input path, gf_input data, gf_meta meta);
 int64_t gf_root_mkdir(int64_t context, int64_t root, gf_input path, gf_meta meta);
 int64_t gf_root_unlink(int64_t context, int64_t root, gf_input path, _Bool directory, gf_meta meta);

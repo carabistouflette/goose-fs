@@ -111,29 +111,57 @@ int gf_read_regular(int dir, const char *leaf, gf_output out, int64_t *length) {
     return result;
 }
 
-int gf_list_dir(int dir, const char *leaf, gf_output out, int64_t cap, int64_t *length, int64_t *count) {
+/* Sizing passes never retain a DIR or pointers into Goose storage. After a
+ * spill, stop writing permanently but charge every remaining record to limits. */
+int gf_list_dir_sized(int dir, const char *leaf, gf_output out, int64_t bytes,
+                      int64_t cap, int64_t *length, int64_t *count, int64_t *needed) {
+    *length = *count = *needed = 0;
     int fd = openat(dir, leaf, O_RDONLY | O_DIRECTORY | O_NOFOLLOW | O_CLOEXEC);
     if (fd < 0) return GF_SYSTEM;
     DIR *stream = fdopendir(fd);
     if (!stream) { int saved = errno; close(fd); errno = saved; return GF_SYSTEM; }
     int result = GF_OK, saved = 0;
+    int64_t seen_bytes = 0, seen_entries = 0;
+    bool spilled = false;
     for (;;) {
         errno = 0;
         struct dirent *entry = readdir(stream);
         if (!entry) { if (errno) { result = GF_SYSTEM; saved = errno; } break; }
         if (!strcmp(entry->d_name, ".") || !strcmp(entry->d_name, "..")) continue;
         size_t n = strlen(entry->d_name);
-        if (*count == cap || (int64_t)n + 2 > out.len - *length) { result = GF_LIMIT; break; }
-        uint8_t kind = entry->d_type == DT_REG ? 1 : entry->d_type == DT_DIR ? 2 :
-                       entry->d_type == DT_LNK ? 3 : entry->d_type == DT_UNKNOWN ? 0 : 4;
-        out.data[(*length)++] = kind;
-        memcpy(out.data + *length, entry->d_name, n + 1);
-        *length += (int64_t)n + 1;
-        ++*count;
+        if (seen_entries == cap || n > (size_t)(bytes - seen_bytes) ||
+            (int64_t)n + 2 > bytes - seen_bytes) { result = GF_LIMIT; break; }
+        int64_t record = (int64_t)n + 2;
+        if (record > out.len - seen_bytes) spilled = true;
+        if (!spilled) {
+            uint8_t kind = entry->d_type == DT_REG ? 1 : entry->d_type == DT_DIR ? 2 :
+                           entry->d_type == DT_LNK ? 3 : entry->d_type == DT_UNKNOWN ? 0 : 4;
+            out.data[seen_bytes] = kind;
+            memcpy(out.data + seen_bytes + 1, entry->d_name, n + 1);
+        }
+        seen_bytes += record;
+        ++seen_entries;
     }
     if (closedir(stream) < 0 && result == GF_OK) { result = GF_SYSTEM; saved = errno; }
+    if (result == GF_OK) {
+        if (spilled) { *needed = seen_bytes; result = GF_NEED_SPACE; }
+        else { *length = seen_bytes; *count = seen_entries; }
+    }
     errno = saved;
     return result;
+}
+int gf_list_dir(int dir, const char *leaf, gf_output out, int64_t cap, int64_t *length, int64_t *count) {
+    int64_t needed;
+    return gf_list_dir_sized(dir,leaf,out,out.len,cap,length,count,&needed);
+}
+
+bool gf_list_arguments(gf_input path, gf_output out, int64_t bytes, int64_t entries, gf_meta meta) {
+    if (meta.len != 4 || !meta.data || gf_overlap(meta.data,32,path.data,path.len) ||
+        gf_overlap(meta.data,32,out.data,out.len)) return false;
+    memset(meta.data,0,32);
+    return bytes >= 0 && bytes <= GF_MAX_BYTES && out.len >= 0 && out.len <= bytes &&
+        (!out.len || out.data) && entries >= 0 && entries <= GF_MAX_ENTRIES &&
+        !gf_overlap(out.data,out.len,path.data,path.len);
 }
 
 int gf_create_file(int dir, const char *leaf, gf_input data) {
@@ -182,6 +210,23 @@ int64_t gf_call(int64_t op, gf_input path, gf_input data, int64_t entries,
     if (result != GF_OK) meta.data[1] = meta.data[2] = 0;
     meta.data[0] = saved;
     return result;
+}
+
+/* Separate staging ABI: only clean, complete sizing passes return NEED_SPACE. */
+int64_t gf_list(gf_input path, int64_t bytes, gf_output out, int64_t entries, gf_meta meta) {
+    if (!gf_list_arguments(path,out,bytes,entries,meta)) return GF_INVALID;
+    char text[GF_MAX_PATH+1];
+    if (!gf_path_copy(path,text)) return GF_INVALID;
+    char *leaf;
+    int dir = gf_parent(text,&leaf);
+    if (dir < 0) { meta.data[0] = errno; return GF_SYSTEM; }
+    int code = gf_list_dir_sized(dir,leaf,out,bytes,entries,&meta.data[1],&meta.data[2],&meta.data[3]);
+    int saved = code == GF_SYSTEM ? errno : 0;
+    if (close(dir) < 0 && (code == GF_OK || code == GF_NEED_SPACE)) { code = GF_SYSTEM; saved = errno; }
+    if (code != GF_OK) meta.data[1] = meta.data[2] = 0;
+    if (code != GF_NEED_SPACE) meta.data[3] = 0;
+    meta.data[0] = saved;
+    return code;
 }
 
 /* Metadata has a separate ABI; legacy operation tuples remain unchanged. */
