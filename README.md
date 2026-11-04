@@ -116,6 +116,10 @@ performance comparison targets. See the [Linux coverage record](docs/feature-cov
 and [versioned comparison research](docs/comparison-research.md). Full Linux
 coverage comes first, followed by macOS and Windows. Current APIs cover a subset;
 cross-library speed claims require measured results and matching safety policies.
+The [native API task measurements](bench/results/2026-11-04-native-api/README.md)
+retain every comparator cell and policy difference; the
+[read-reuse measurement](bench/results/2026-11-04-read-reuse/README.md) isolates
+the initialized-buffer optimization.
 
 The first version excludes recursive operations, locks, temp-directory lifecycle,
 path normalization, atomic publication, streaming and Windows support.
