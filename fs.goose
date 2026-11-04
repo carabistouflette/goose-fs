@@ -12,23 +12,30 @@ const MAX_ENTRIES = 4096;
 extern fn native_call(op: i64, path: const u8[:], data: const u8[:], entries: i64,
                       out: u8[:], meta: i64[:]) -> i64 = "gf_call";
 
-fn valid_path(path: const u8[:]) -> bool {
-    if path.len < 1 || path.len > MAX_PATH_BYTES || path[0] != '/' { return false; }
-    var start: i64 = 1;
+fn valid_components(path: const u8[:], beginning: i64) -> bool {
+    var start = beginning;
     for c, i in path {
         if c == 0 { return false; }
-        if i > 0 && c == '/' {
+        if i >= beginning && c == '/' {
             let n = i - start;
             if n == 0 || (n == 1 && path[start] == '.') ||
-               (n == 2 && path[start] == '.' && path[start + 1] == '.') { return false; }
+                (n == 2 && path[start] == '.' && path[start + 1] == '.') { return false; }
             start = i + 1;
         }
     }
-    if path.len == 1 { return true; }
     let n = path.len - start;
     return n > 0 && !(n == 1 && path[start] == '.') &&
-           !(n == 2 && path[start] == '.' && path[start + 1] == '.');
+        !(n == 2 && path[start] == '.' && path[start + 1] == '.');
 }
+fn valid_path(path: const u8[:]) -> bool {
+    if path.len < 1 || path.len > MAX_PATH_BYTES || path[0] != '/' { return false; }
+    return path.len == 1 || valid_components(path, 1);
+}
+fn valid_relative(path: const u8[:]) -> bool {
+    if path.len < 1 || path.len > MAX_PATH_BYTES || path[0] == '/' { return false; }
+    return path == "." || valid_components(path, 0);
+}
+
 fn status(code: i64, os_error: i64) -> Status {
     let error = if code == 0 { Error.None } else if code == 1 { Error.InvalidInput }
                 else if code == 2 { Error.LimitExceeded } else if code == 3 { Error.NotRegular }
@@ -56,17 +63,20 @@ fn list(path: const u8[:], byte_limit: i64, entry_limit: i64, out: Entry[>..]&) 
     var meta: i64[3] = [0, 0, 0];
     let code = native_call(1, path, "", entry_limit, packed[..], meta[..]);
     if code != 0 { return status(code, meta[0]); }
+    unpack_entries(packed[..meta[1]], meta[2], out);
+    return Status { .. };
+}
+fn unpack_entries(packed: const u8[:], count: i64, out: Entry[>..]&) {
     var pos: i64 = 0;
-    for _ in meta[2] {
+    for _ in count {
         let tag = packed[pos]; pos++;
         let kind = if tag == 1 { Kind.File } else if tag == 2 { Kind.Directory }
                    else if tag == 3 { Kind.Symlink } else if tag == 4 { Kind.Other } else { Kind.Unknown };
         let start = pos;
-        while pos < meta[1] && packed[pos] != 0 { pos++; }
+        while pos < packed.len && packed[pos] != 0 { pos++; }
         out.push(Entry { kind: kind, name: owned_name(packed[start..pos]) });
         pos++;
     }
-    return Status { .. };
 }
 fn mutate(op: i64, path: const u8[:], data: const u8[:]) -> Status {
     if !valid_path(path) || path.len == 1 || data.len > MAX_BYTES { return Status { error: Error.InvalidInput }; }
@@ -184,7 +194,8 @@ fn sort_entries(order: (const Entry&)[:]) {
 struct Context { id: i64 = 0 }
 struct File { context: Context = Context { .. }, id: i64 = 0 }
 const MAX_CONTEXTS = 64;
-const MAX_FILES = 4096;
+const MAX_RESOURCES = 4096;
+const MAX_FILES = MAX_RESOURCES;
 enum Access { Read, Write, ReadWrite }
 enum Creation { Existing, CreateNew, OpenOrCreate }
 enum SeekOrigin { Start, Current, End }
@@ -217,21 +228,26 @@ fn close_context(context: Context) -> Status {
     let code = native_context_close(context.id, meta[..]);
     return status(code, meta[0]);
 }
-fn open_file(context: Context, path: const u8[:], options: OpenOptions) -> File, Status {
-    if !valid_path(path) || options.permissions > 511 ||
+fn option_bits(options: OpenOptions) -> i64 {
+    if options.permissions > 511 ||
         (options.access != Access.Read && options.access != Access.Write && options.access != Access.ReadWrite) ||
         (options.creation != Creation.Existing && options.creation != Creation.CreateNew && options.creation != Creation.OpenOrCreate) ||
         (options.access == Access.Read && (options.append || options.truncate)) {
-        return File { .. }, Status { error: Error.InvalidInput };
+        return -1;
     }
     let access:   i64 = if options.access == Access.Read { 0 } else if options.access == Access.Write { 1 } else { 2 };
     let creation: i64 = if options.creation == Creation.Existing { 0 } else if options.creation == Creation.CreateNew { 4 } else { 8 };
-    let flags = access + creation + (if options.append { 16 } else { 0 }) + (if options.truncate { 32 } else { 0 });
+    return access + creation + (if options.append { 16 } else { 0 }) + (if options.truncate { 32 } else { 0 });
+}
+fn open_file(context: Context, path: const u8[:], options: OpenOptions) -> File, Status {
+    let flags = option_bits(options);
+    if !valid_path(path) || flags < 0 { return File { .. }, Status { error: Error.InvalidInput }; }
     var meta: i64[3] = [0; 3];
     let code = native_file_open(context.id, path, flags, options.permissions, meta[..]);
     let file = if code == 0 { File { context: context, id: meta[1] } } else { File { .. } };
     return file, status(code, meta[0]);
 }
+
 fn close_file(file: File) -> Status {
     var meta: i64[3] = [0; 3];
     let code = native_file_close(file.context.id, file.id, meta[..]);
@@ -326,3 +342,114 @@ fn unlock_file(file: File) -> Status {
     let code = native_file_try_lock(file.context.id, file.id, 0, meta[..]);
     return status(code, meta[0]);
 }
+
+struct Root { context: Context = Context { .. }, id: i64 = 0 }
+extern fn native_root_open(context: i64, path: const u8[:], meta: i64[:]) -> i64 = "gf_root_open";
+extern fn native_root_open_at(context: i64, root: i64, path: const u8[:], meta: i64[:]) -> i64 = "gf_root_open_at";
+extern fn native_file_open_at(context: i64, root: i64, path: const u8[:], options: i64, permissions: i64, meta: i64[:]) -> i64 = "gf_file_open_at";
+extern fn native_root_close(context: i64, root: i64, meta: i64[:]) -> i64 = "gf_root_close";
+extern fn native_root_metadata(context: i64, root: i64, fields: i64[:]) -> i64 = "gf_root_metadata";
+extern fn native_root_metadata_at(context: i64, root: i64, path: const u8[:], fields: i64[:]) -> i64 = "gf_root_metadata_at";
+extern fn native_root_read(context: i64, root: i64, path: const u8[:], out: u8[:], meta: i64[:]) -> i64 = "gf_root_read";
+extern fn native_root_list(context: i64, root: i64, path: const u8[:], out: u8[:], entries: i64, meta: i64[:]) -> i64 = "gf_root_list";
+extern fn native_root_create(context: i64, root: i64, path: const u8[:], data: const u8[:], meta: i64[:]) -> i64 = "gf_root_create";
+extern fn native_root_mkdir(context: i64, root: i64, path: const u8[:], meta: i64[:]) -> i64 = "gf_root_mkdir";
+extern fn native_root_unlink(context: i64, root: i64, path: const u8[:], directory: bool, meta: i64[:]) -> i64 = "gf_root_unlink";
+fn open_root(context: Context, path: const u8[:]) -> Root, Status {
+    if !valid_path(path) { return Root { .. }, Status { error: Error.InvalidInput }; }
+    var meta: i64[3] = [0; 3];
+    let code = native_root_open(context.id, path, meta[..]);
+    let root = if code == 0 { Root { context: context, id: meta[1] } } else { Root { .. } };
+    return root, status(code, meta[0]);
+}
+fn open_root_at(root: Root, path: const u8[:]) -> Root, Status {
+    if !valid_relative(path) { return Root { .. }, Status { error: Error.InvalidInput }; }
+    var meta: i64[3] = [0; 3];
+    let code = native_root_open_at(root.context.id, root.id, path, meta[..]);
+    let child = if code == 0 { Root { context: root.context, id: meta[1] } } else { Root { .. } };
+    return child, status(code, meta[0]);
+}
+fn open_file_at(root: Root, path: const u8[:], options: OpenOptions) -> File, Status {
+    let flags = option_bits(options);
+    if !valid_relative(path) || flags < 0 || (path == "." && flags != 0) {
+        return File { .. }, Status { error: Error.InvalidInput };
+    }
+    var meta: i64[3] = [0; 3];
+    let code = native_file_open_at(root.context.id, root.id, path, flags, options.permissions, meta[..]);
+    let file = if code == 0 { File { context: root.context, id: meta[1] } } else { File { .. } };
+    return file, status(code, meta[0]);
+}
+fn close_root(root: Root) -> Status {
+    var meta: i64[3] = [0; 3];
+    let code = native_root_close(root.context.id, root.id, meta[..]);
+    return status(code, meta[0]);
+}
+fn root_metadata(root: Root, out: Metadata&) -> Status {
+    out = Metadata { .. };
+    var fields: i64[18] = [0; 18];
+    let code = native_root_metadata(root.context.id, root.id, fields[..]);
+    if code != 0 { return status(code, fields[0]); }
+    out = decode_metadata(fields[..]);
+    return Status { .. };
+}
+fn metadata_at(root: Root, path: const u8[:], out: Metadata&) -> Status {
+    out = Metadata { .. };
+    if !valid_relative(path) { return Status { error: Error.InvalidInput }; }
+    var fields: i64[18] = [0; 18];
+    let code = native_root_metadata_at(root.context.id, root.id, path, fields[..]);
+    if code != 0 { return status(code, fields[0]); }
+    out = decode_metadata(fields[..]);
+    return Status { .. };
+}
+fn read_file_at(root: Root, path: const u8[:], limit: i64, out: u8[>..]&) -> Status {
+    if !valid_relative(path) || limit < 0 || limit > MAX_BYTES {
+        out.clear(); return Status { error: Error.InvalidInput };
+    }
+    out.resize(limit, 0);
+    var meta: i64[3] = [0; 3];
+    let code = native_root_read(root.context.id, root.id, path, out[..], meta[..]);
+    if code == 0 { out.resize(meta[1]); } else { out.clear(); }
+    return status(code, meta[0]);
+}
+fn list_at(root: Root, path: const u8[:], byte_limit: i64, entry_limit: i64, out: Entry[>..]&) -> Status {
+    out.clear();
+    if !valid_relative(path) || byte_limit < 0 || byte_limit > MAX_BYTES ||
+        entry_limit < 0 || entry_limit > MAX_ENTRIES { return Status { error: Error.InvalidInput }; }
+    var packed: u8[>..] = []; packed.resize(byte_limit, 0);
+    var meta:   i64[3]  = [0; 3];
+    let code = native_root_list(root.context.id, root.id, path, packed[..], entry_limit, meta[..]);
+    if code != 0 { return status(code, meta[0]); }
+    unpack_entries(packed[..meta[1]], meta[2], out);
+    return Status { .. };
+}
+fn list_sorted_at(root: Root, path: const u8[:], byte_limit: i64, entry_limit: i64, out: Entry[>..]&) -> Status {
+    out.clear();
+    var entries: Entry[>..] = [];
+    let result = list_at(root, path, byte_limit, entry_limit, entries);
+    if result.error != Error.None { return result; }
+    var order: (const Entry&)[>..] = [];
+    for entry in entries { order.push(entry); }
+    sort_entries(order);
+    for entry in order { out.push(Entry { kind: entry.kind, name: owned_name(entry.name) }); }
+    return Status { .. };
+}
+fn create_file_at(root: Root, path: const u8[:], data: const u8[:]) -> Status {
+    if !valid_relative(path) || path == "." || data.len > MAX_BYTES { return Status { error: Error.InvalidInput }; }
+    var meta: i64[3] = [0; 3];
+    let code = native_root_create(root.context.id, root.id, path, data, meta[..]);
+    return status(code, meta[0]);
+}
+fn create_dir_at(root: Root, path: const u8[:]) -> Status {
+    if !valid_relative(path) || path == "." { return Status { error: Error.InvalidInput }; }
+    var meta: i64[3] = [0; 3];
+    let code = native_root_mkdir(root.context.id, root.id, path, meta[..]);
+    return status(code, meta[0]);
+}
+fn remove_at(root: Root, path: const u8[:], directory: bool) -> Status {
+    if !valid_relative(path) || path == "." { return Status { error: Error.InvalidInput }; }
+    var meta: i64[3] = [0; 3];
+    let code = native_root_unlink(root.context.id, root.id, path, directory, meta[..]);
+    return status(code, meta[0]);
+}
+fn remove_file_at(root: Root, path: const u8[:]) -> Status { return remove_at(root, path, false); }
+fn remove_empty_dir_at(root: Root, path: const u8[:]) -> Status { return remove_at(root, path, true); }

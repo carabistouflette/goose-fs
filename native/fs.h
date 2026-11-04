@@ -25,4 +25,16 @@ int64_t gf_file_metadata(int64_t context, int64_t file, gf_meta fields);
 int64_t gf_file_try_lock(int64_t context, int64_t file, int64_t mode, gf_meta meta);
 _Bool gf_lock_contended(int64_t error);
 int64_t gf_lock_pause(void);
+/* Root tokens use the same registry with strict kind checks. */
+int64_t gf_root_open(int64_t context, gf_input path, gf_meta meta);
+int64_t gf_root_open_at(int64_t context, int64_t root, gf_input path, gf_meta meta);
+int64_t gf_file_open_at(int64_t context, int64_t root, gf_input path, int64_t options, int64_t permissions, gf_meta meta);
+int64_t gf_root_close(int64_t context, int64_t root, gf_meta meta);
+int64_t gf_root_metadata(int64_t context, int64_t root, gf_meta fields);
+int64_t gf_root_read(int64_t context, int64_t root, gf_input path, gf_output out, gf_meta meta);
+int64_t gf_root_list(int64_t context, int64_t root, gf_input path, gf_output out, int64_t entries, gf_meta meta);
+int64_t gf_root_create(int64_t context, int64_t root, gf_input path, gf_input data, gf_meta meta);
+int64_t gf_root_mkdir(int64_t context, int64_t root, gf_input path, gf_meta meta);
+int64_t gf_root_unlink(int64_t context, int64_t root, gf_input path, _Bool directory, gf_meta meta);
+int64_t gf_root_metadata_at(int64_t context, int64_t root, gf_input path, gf_meta fields);
 #endif

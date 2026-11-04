@@ -27,24 +27,27 @@ bool gf_overlap(const void *a, int64_t an, const void *b, int64_t bn) {
     return x <= y ? y - x < (uint64_t)an : x - y < (uint64_t)bn;
 }
 
-/* Validate before copying; no normalization that could change path meaning. */
-bool gf_path_copy(gf_input path, char text[GF_MAX_PATH + 1]) {
-    if (path.len < 1 || path.len > GF_MAX_PATH || !path.data || path.data[0] != '/' ||
-        memchr(path.data, 0, (size_t)path.len)) return false;
-    if (path.len != 1) {
-        size_t start = 1;
-        for (size_t i = 1; i <= (size_t)path.len; ++i) {
+/* Validate before copying; never normalize a path into a different meaning. */
+static bool copy_path(gf_input path, char text[GF_MAX_PATH + 1], bool relative) {
+    if (path.len < 1 || path.len > GF_MAX_PATH || !path.data ||
+        (relative ? path.data[0] == '/' : path.data[0] != '/') ||
+        memchr(path.data,0,(size_t)path.len)) return false;
+    bool self = path.len == 1 && (relative ? path.data[0] == '.' : path.data[0] == '/');
+    if (!self) {
+        size_t start = relative ? 0 : 1;
+        for (size_t i=start; i<=(size_t)path.len; ++i) {
             if (i != (size_t)path.len && path.data[i] != '/') continue;
-            size_t n = i - start;
+            size_t n = i-start;
             if (!n || (n == 1 && path.data[start] == '.') ||
-                (n == 2 && path.data[start] == '.' && path.data[start + 1] == '.')) return false;
-            start = i + 1;
+                (n == 2 && path.data[start] == '.' && path.data[start+1] == '.')) return false;
+            start = i+1;
         }
     }
-    memcpy(text, path.data, (size_t)path.len);
-    text[path.len] = 0;
+    memcpy(text,path.data,(size_t)path.len); text[path.len] = 0;
     return true;
 }
+bool gf_path_copy(gf_input path, char text[GF_MAX_PATH + 1]) { return copy_path(path,text,false); }
+bool gf_relative_copy(gf_input path, char text[GF_MAX_PATH + 1]) { return copy_path(path,text,true); }
 
 /* Return parent descriptor and a leaf in text; every ancestor rejects symlinks. */
 static int parent_walk(char *text, char **leaf) {
@@ -81,7 +84,7 @@ int gf_parent(char *text, char **leaf) {
     return -1;
 }
 
-static int read_regular(int dir, const char *leaf, gf_output out, int64_t *length) {
+int gf_read_regular(int dir, const char *leaf, gf_output out, int64_t *length) {
     int fd = openat(dir, leaf, O_RDONLY | O_NOFOLLOW | O_NONBLOCK | O_NOCTTY | O_CLOEXEC);
     if (fd < 0) return GF_SYSTEM;
     struct stat st;
@@ -108,7 +111,7 @@ static int read_regular(int dir, const char *leaf, gf_output out, int64_t *lengt
     return result;
 }
 
-static int list_dir(int dir, const char *leaf, gf_output out, int64_t cap, int64_t *length, int64_t *count) {
+int gf_list_dir(int dir, const char *leaf, gf_output out, int64_t cap, int64_t *length, int64_t *count) {
     int fd = openat(dir, leaf, O_RDONLY | O_DIRECTORY | O_NOFOLLOW | O_CLOEXEC);
     if (fd < 0) return GF_SYSTEM;
     DIR *stream = fdopendir(fd);
@@ -133,7 +136,7 @@ static int list_dir(int dir, const char *leaf, gf_output out, int64_t cap, int64
     return result;
 }
 
-static int create_file(int dir, const char *leaf, gf_input data) {
+int gf_create_file(int dir, const char *leaf, gf_input data) {
     int fd = openat(dir, leaf, O_WRONLY | O_CREAT | O_EXCL | O_NOFOLLOW | O_CLOEXEC, 0600);
     if (fd < 0) return GF_SYSTEM;
     int result = GF_OK, saved = 0;
@@ -167,9 +170,9 @@ int64_t gf_call(int64_t op, gf_input path, gf_input data, int64_t entries,
     int dir = gf_parent(text, &leaf);
     if (dir < 0) { meta.data[0] = errno; return GF_SYSTEM; }
     int result;
-    if (op == READ) result = read_regular(dir, leaf, out, &meta.data[1]);
-    else if (op == LIST) result = list_dir(dir, leaf, out, entries, &meta.data[1], &meta.data[2]);
-    else if (op == CREATE) result = create_file(dir, leaf, data);
+    if (op == READ) result = gf_read_regular(dir, leaf, out, &meta.data[1]);
+    else if (op == LIST) result = gf_list_dir(dir, leaf, out, entries, &meta.data[1], &meta.data[2]);
+    else if (op == CREATE) result = gf_create_file(dir, leaf, data);
     else {
         int rc = op == MKDIR ? mkdirat(dir, leaf, 0700) : unlinkat(dir, leaf, op == RMDIR ? AT_REMOVEDIR : 0);
         result = rc < 0 ? GF_SYSTEM : GF_OK;
@@ -243,4 +246,32 @@ int gf_metadata_at(int dir, const char *leaf, int flags, int64_t *out) {
     }
     errno = saved;
     return rc;
+}
+
+/* Every returned parent descriptor is owned, including a duplicated root. */
+static int relative_walk(int root, char *text, char **leaf) {
+    int fd = fcntl(root,F_DUPFD_CLOEXEC,0);
+    if (fd < 0) return -1;
+    char *part = text, *slash;
+    while ((slash = strchr(part,'/'))) {
+        *slash = 0;
+        int next = openat(fd,part,O_PATH | O_DIRECTORY | O_NOFOLLOW | O_CLOEXEC);
+        int saved = errno; close(fd);
+        if (next < 0) { errno = saved; return -1; }
+        fd = next; part = slash+1;
+    }
+    *leaf = part;
+    return fd;
+}
+int gf_parent_relative(int root, char *text, char **leaf) {
+    char *separator = strrchr(text,'/');
+    if (!separator) { *leaf = text; return fcntl(root,F_DUPFD_CLOEXEC,0); }
+    *separator = 0;
+    struct open_how how = { .flags = O_PATH | O_DIRECTORY | O_CLOEXEC,
+                            .resolve = RESOLVE_BENEATH | RESOLVE_NO_SYMLINKS };
+    int fd = (int)syscall(SYS_openat2,root,text,&how,sizeof how);
+    int saved = errno; *separator = '/';
+    if (fd >= 0) { *leaf = separator+1; return fd; }
+    if (saved == ENOSYS || saved == EPERM) return relative_walk(root,text,leaf);
+    errno = saved; return -1;
 }

@@ -2,9 +2,11 @@
 
 Experimental 64-bit Linux interface; byte-oriented paths and contents. No release yet.
 
-All paths are absolute, at most 4095 bytes, with no NUL, empty, `.` or `..`
+The absolute-path APIs require paths of at most 4095 bytes, with no NUL, empty, `.` or `..`
 components, and no trailing slash. `/` is accepted by read/list/metadata and predicates (read reports
 NotRegular under ordinary accessible-root permissions). Component size limits are enforced by the OS. Invalid UTF-8 is allowed.
+Those paths start with `/`. [Root methods](ROOTS.md) instead accept strict relative
+arguments, with their own root-self and lifecycle rules.
 Parent directories are resolved with Linux openat2 RESOLVE_NO_SYMLINKS. If the
 syscall returns ENOSYS (older kernel) or EPERM (including seccomp denial), a
 component-by-component O_NOFOLLOW/O_DIRECTORY descriptor walk enforces the same

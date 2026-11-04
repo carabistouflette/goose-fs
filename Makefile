@@ -4,6 +4,7 @@ SANITIZER_CC ?= gcc
 BENCH_CC ?= gcc
 BENCH_ITERATIONS ?= 100
 CFLAGS = -std=c11 -Wall -Wextra -Werror -pthread
+ROOT_WRAP = -Wl,--wrap=syscall -Wl,--wrap=openat -Wl,--wrap=fcntl -Wl,--wrap=fstat -Wl,--wrap=ftruncate -Wl,--wrap=close
 RESOURCE_WRAP = -Wl,--wrap=read -Wl,--wrap=__read_chk
 HANDLE_WRAP = -Wl,--wrap=read -Wl,--wrap=pread -Wl,--wrap=__read_chk -Wl,--wrap=__pread_chk -Wl,--wrap=write -Wl,--wrap=pwrite -Wl,--wrap=close -Wl,--wrap=fstat -Wl,--wrap=ftruncate -Wl,--wrap=fsync -Wl,--wrap=fdatasync -Wl,--wrap=lseek -Wl,--wrap=fcntl -Wl,--wrap=flock -Wl,--wrap=nanosleep
 WRAP_FLAGS = -Wl,--wrap=read -Wl,--wrap=write -Wl,--wrap=close -Wl,--wrap=readdir -Wl,--wrap=closedir -Wl,--wrap=fstat -Wl,--wrap=fdopendir -Wl,--wrap=openat
@@ -18,6 +19,9 @@ check:
 	python3 scripts/native-manifest.py --check
 	$(GOOSE) format --check fs.goose tests examples bench
 	$(GOOSE) check tests/api.goose
+	$(GOOSE) check tests/path_grammar.goose
+	$(GOOSE) check tests/roots.goose
+	$(GOOSE) check tests/roots_workers.goose
 	$(GOOSE) check tests/handles.goose
 	$(GOOSE) check tests/handles_workers.goose
 	$(GOOSE) check tests/locks.goose
@@ -26,6 +30,7 @@ check:
 	$(GOOSE) check tests/sorted_oracle.goose
 	$(GOOSE) check examples/read.goose
 	$(GOOSE) check examples/stream.goose
+	$(GOOSE) check examples/root.goose
 	$(GOOSE) check bench/bench.goose
 test:
 	python3 scripts/native-manifest.py --check
@@ -60,6 +65,19 @@ test:
 	python3 tests/run.py .build/lock-pause-probe
 	$(GOOSE) build tests/lock_pause_probe.goose --cc $(CC) --debug --no-bce -o .build/lock-pause-probe-debug
 	python3 tests/run.py .build/lock-pause-probe-debug
+	python3 tests/run.py --api $(abspath $(GOOSE)) run tests/roots.goose --
+	$(GOOSE) build tests/roots.goose --cc $(CC) -O2 -o .build/roots
+	python3 tests/run.py --api .build/roots
+	$(GOOSE) build tests/roots.goose --cc $(CC) --debug --no-bce -o .build/roots-debug
+	python3 tests/run.py --api .build/roots-debug
+	$(GOOSE) build tests/roots_workers.goose --cc $(CC) -O2 -o .build/roots-workers
+	python3 tests/run.py .build/roots-workers
+	$(GOOSE) build tests/roots_workers.goose --cc $(CC) --debug --no-bce -o .build/roots-workers-debug
+	python3 tests/run.py .build/roots-workers-debug
+	$(GOOSE) build tests/path_grammar.goose --cc $(CC) -O2 -o .build/path-grammar
+	$(GOOSE) build tests/path_grammar.goose --cc $(CC) --debug --no-bce -o .build/path-grammar-debug
+	$(CC) $(CFLAGS) -O2 -shared -fPIC native/fs.c -o .build/path-grammar-native.so
+	python3 tests/path_grammar.py .build/path-grammar .build/path-grammar-debug .build/path-grammar-native.so
 	$(MAKE) handles
 	python3 tests/ownership.py $(abspath $(GOOSE))
 	python3 tests/run.py $(abspath $(GOOSE)) run tests/overloads.goose --
@@ -71,12 +89,17 @@ handles:
 	$(CC) $(CFLAGS) -O2 -shared -fPIC native/fs.c native/handles.c -o .build/fs-handles.so
 	python3 tests/handles_model.py
 	python3 tests/locks_model.py
+	python3 tests/roots_model.py
 	$(CC) $(CFLAGS) -O2 -shared -fPIC native/fs.c native/handles.c tests/no-openat2.c -Wl,--wrap=syscall -o .build/fs-handles-fallback.so
 	FS_HANDLES_LIBRARY=$(abspath .build/fs-handles-fallback.so) python3 tests/handles_model.py
+	FS_HANDLES_LIBRARY=$(abspath .build/fs-handles-fallback.so) python3 tests/roots_model.py
 	$(CC) $(CFLAGS) -O2 -shared -fPIC native/fs.c native/handles.c -Wl,--wrap=statx -o .build/fs-handles-no-statx.so
 	FS_HANDLES_LIBRARY=$(abspath .build/fs-handles-no-statx.so) python3 tests/handles_model.py
+	FS_HANDLES_LIBRARY=$(abspath .build/fs-handles-no-statx.so) python3 tests/roots_model.py
 	$(CC) $(CFLAGS) -O2 tests/handles_native.c native/fs.c $(HANDLE_WRAP) -o .build/handles-native
 	python3 tests/run.py .build/handles-native
+	$(CC) $(CFLAGS) -O2 tests/roots_native.c native/fs.c $(ROOT_WRAP) -o .build/roots-native
+	python3 tests/run.py .build/roots-native
 native:
 	mkdir -p .build
 	$(CC) $(CFLAGS) -O2 -shared -fPIC native/fs.c -o .build/fs.so
@@ -115,6 +138,12 @@ fallback:
 	FS_NATIVE_LIBRARY=$(abspath .build/fs-denied.so) python3 tests/stress.py
 sanitize:
 	mkdir -p .build
+	$(SANITIZER_CC) $(CFLAGS) -O1 -g -fno-omit-frame-pointer -fsanitize=address,undefined -no-pie tests/roots_native.c native/fs.c $(ROOT_WRAP) -o .build/roots-native-sanitize
+	ASAN_OPTIONS=detect_leaks=1:abort_on_error=1 UBSAN_OPTIONS=halt_on_error=1 python3 tests/run.py .build/roots-native-sanitize
+	SANITIZER_CC=$(SANITIZER_CC) $(GOOSE) build tests/roots.goose --debug --no-bce --cc $(abspath scripts/sanitizer-cc.sh) -o .build/roots-sanitize
+	ASAN_OPTIONS=detect_leaks=1:abort_on_error=1 UBSAN_OPTIONS=halt_on_error=1 python3 tests/run.py --api .build/roots-sanitize
+	SANITIZER_CC=$(SANITIZER_CC) $(GOOSE) build tests/roots_workers.goose --debug --no-bce --cc $(abspath scripts/sanitizer-cc.sh) -o .build/roots-workers-sanitize
+	ASAN_OPTIONS=detect_leaks=1:abort_on_error=1 UBSAN_OPTIONS=halt_on_error=1 python3 tests/run.py .build/roots-workers-sanitize
 	SANITIZER_CC=$(SANITIZER_CC) $(GOOSE) build tests/lock_pause_probe.goose --debug --no-bce --cc $(abspath scripts/sanitizer-cc.sh) -o .build/lock-pause-probe-sanitize
 	ASAN_OPTIONS=detect_leaks=1:abort_on_error=1 UBSAN_OPTIONS=halt_on_error=1 python3 tests/run.py .build/lock-pause-probe-sanitize
 	SANITIZER_CC=$(SANITIZER_CC) $(GOOSE) build tests/locks.goose --debug --no-bce --cc $(abspath scripts/sanitizer-cc.sh) -o .build/locks-sanitize

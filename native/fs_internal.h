@@ -12,5 +12,10 @@ enum { GF_MAX_PATH = 4095, GF_MAX_BYTES = 1048576, GF_MAX_ENTRIES = 4096 };
 bool gf_overlap(const void *a, int64_t an, const void *b, int64_t bn);
 bool gf_path_copy(gf_input path, char text[GF_MAX_PATH + 1]);
 int gf_parent(char *text, char **leaf);
+bool gf_relative_copy(gf_input path, char text[GF_MAX_PATH + 1]);
+int gf_parent_relative(int root, char *text, char **leaf);
+int gf_read_regular(int dir, const char *leaf, gf_output out, int64_t *length);
+int gf_list_dir(int dir, const char *leaf, gf_output out, int64_t cap, int64_t *length, int64_t *count);
+int gf_create_file(int dir, const char *leaf, gf_input data);
 int gf_metadata_at(int dir, const char *leaf, int flags, int64_t *out);
 #endif

@@ -22,15 +22,17 @@ creates an independently closable close-on-exec descriptor in the same Context;
 it shares the OS file cursor, append state and underlying inode with its source.
 Both forms are safe to pass to compiled Goose workers. Tokens are not an access
 control boundary against deliberately forged values or trusted native FFI code.
+Keep the Context alive when returning a File or Root to a caller; closing that
+Context in the producing scope would return an already-invalid token.
 
 `close_context` waits for all of its active opens/I/O/closes, invalidates the
-Context and every owned File, attempts every close, and returns the first close
+Context and every owned File/Root, attempts every close, and returns the first close
 error. Context and File identities are never reused within a loaded registry lifetime. A stale or wrong-context
 token returns `SystemError`/EBADF; it cannot close a newly reused descriptor slot.
 Linux close is never retried after EINTR, and tokens remain invalid after a close
 error. There is no fsync implied by closing either resource.
 
-The process-wide registry holds at most 64 Contexts and 4096 Files, including
+The process-wide registry holds at most 64 Contexts and 4096 combined Files/Roots, including
 duplicates; capacities are shared across compiled workers. Registry capacity or
 identity-space exhaustion reports `LimitExceeded` with zero OS error before
 creation/truncation/duplication effects. Actual kernel descriptor exhaustion
@@ -108,6 +110,9 @@ allocator mutex is used only for allocation/close bookkeeping. Initialization
 creates 4160 locks, allocation scans up to 4096 slots, and context closure scans
 those slots using a 16 KiB native stack index array. No retained-handle speed
 superiority is claimed without separate sequential/concurrent measurements.
+
+Directory-relative [Root operations](ROOTS.md) share the same Context and resource
+capacity; Files and Roots use distinct native kind checks.
 
 File locking is available through `try_lock_file`, `lock_file` and `unlock_file`;
 see [the flock and waiting contract](LOCKS.md) for shared/duplicate state, conversion

@@ -8,20 +8,20 @@ versions used to define the target. This is a progress record, not a parity clai
 | Capability | Current goose-fs | Remaining Linux work |
 | --- | --- | --- |
 | Whole-file reads | Bounded regular-file reads; caller-owned replacement storage; File streaming for larger inputs | Unbounded convenience calls are outside the current bounded API |
-| Directory enumeration | Unsorted and bytewise sorted owned names with kind hints | Streaming cursors; directory-relative access |
-| Metadata and predicates | No-follow identity, type, size, mode, ownership, timestamps; optional birth time; error-preserving predicates; held-File metadata | Directory-relative metadata; following-link variants with explicit policy |
+| Directory enumeration | Unsorted and bytewise sorted owned names with kind hints, including Root-relative calls | Streaming cursors |
+| Metadata and predicates | No-follow identity, type, size, mode, ownership, timestamps; optional birth time; error-preserving predicates; held-File/Root and relative metadata | Following-link variants with explicit policy |
 | Creation and removal | Exclusive file/directory creation; File create/overwrite/append modes; unlink; empty-directory removal | Rename; recursive operations; one-shot overwrite/append helpers |
-| Retained File operations | Explicit Context ownership; bounded read/write and positioned I/O; independent duplication; seek/truncate/sync/close and metadata | Retained directory/root capabilities and wider ecosystem adapters |
-| Root/directory capabilities | Not implemented | Relative traversal and operations through retained directories |
+| Retained File operations | Explicit Context ownership; bounded read/write and positioned I/O; independent duplication; seek/truncate/sync/close and metadata | Streaming directory cursors and wider ecosystem adapters |
+| Root/directory capabilities | Strict no-follow Root/child Root ownership; relative File/metadata/read/list/create/remove operations | Following permitted symlinks; relative rename/links/metadata mutations; streaming directory cursors |
 | Permissions and timestamps | Inspection only | Permission, ownership and time changes |
-| Links and paths | Strict absolute byte paths; rejects parent symlinks | Hard/symbolic links, readlink, canonical and lexical path utilities |
+| Links and paths | Strict absolute or Root-relative byte paths; rejects parent symlinks | Hard/symbolic links, readlink, canonical and lexical path utilities |
 | Copy and publication | Not implemented | File/selected/tree copy; atomic replacement/install; explicit durability outcomes |
 | Temporary resources | Not implemented | Exclusive temporary file/directory creation and explicit cleanup |
 | Advisory locks | Shared/exclusive try and polling wait; explicit unlock; duplicate/Context lifetime rules | Contention/fairness measurements and other platform backends |
 | Platforms | 64-bit Linux | macOS and Windows backends, policy differences and CI |
 
 The safety contract deliberately differs from ordinary std::fs/os calls: strict
-absolute paths, no-follow parent traversal, bounded storage, regular-file reads
+absolute or Root-relative paths, no-follow parent traversal, bounded storage, regular-file reads
 and clear-on-error outputs. Those restrictions must remain visible rather than
 being presented as interchangeable native APIs. Broader APIs need equally explicit
 lookup, partial-I/O, ownership and durability contracts.

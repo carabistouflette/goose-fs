@@ -38,6 +38,7 @@ For Git dependencies, pin a reviewed full commit rather than a moving branch. Se
 | `metadata(path, out)` | Inspect final-entry type, identity, size, permissions and timestamps without following links |
 | `exists(path)`, `is_dir(path)` | Error-preserving, no-follow entry predicates |
 | `list_sorted(path, byte_limit, entry_limit, out)` | Bytewise sorted owned entries |
+| Root APIs | Held-directory relative reads/listings/metadata/create/remove and child Roots; see [Root contract](docs/ROOTS.md) |
 | Context/File APIs | Explicit resource ownership, bounded streaming/positioned I/O, duplicate/seek/truncate/sync and held-file metadata; see [File contract](docs/HANDLES.md) |
 
 Operations return `Status { error, os_error }`; predicates return `(bool, Status)`.
@@ -45,9 +46,11 @@ Errors distinguish invalid input,
 limits, nonregular reads, and OS failures. Read/list outputs are empty on any
 reported failure. Paths and file contents are bytes, without UTF-8 conversion.
 
-Paths must be absolute, with no NUL, repeated separators, trailing separator,
+The absolute-path APIs require absolute paths, with no NUL, repeated separators, trailing separator,
 `.` or `..` components. `/` is accepted by read/list/metadata and predicates; reading it reports NotRegular.
 Fixed limits: 4095 path bytes, 1 MiB read/write/list payload, 4096 entries.
+Root methods accept strict relative paths with a separate 4095-byte argument limit;
+see [directory-relative rules](docs/ROOTS.md).
 Listing payload counts each name plus two bytes of internal framing. Ordinary listing
 order is unspecified and kinds are hints; use metadata for precise type information.
 Sorted listing adds a bounded heap sort and extra owned-name/reference storage.
@@ -131,7 +134,7 @@ add positioned reads with open/close outside timing and disclose lifetime-check
 costs, unsupported stdlib operations and remaining comparison limits.
 
 The current version excludes recursive operations, temp-directory lifecycle,
-path normalization, atomic publication, directory-relative traversal and Windows support.
+path normalization, atomic publication, streaming directory cursors and Windows support.
 See [CONTRIBUTING.md](CONTRIBUTING.md) and [SECURITY.md](SECURITY.md).
 
 [Apache-2.0](LICENSE). Copyright 2026 goose-fs contributors.

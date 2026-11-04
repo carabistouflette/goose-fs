@@ -17,6 +17,15 @@ CASES = {
     'sorted-path': '''var entries: fs::Entry[>..] = [];
         entries.push(fs::Entry { kind: fs::Kind.File, name: "/tmp/path" });
         for entry in entries { let s = fs::list_sorted(entry.name, 100, 10, entries); print(s.os_error); }''',
+    'root-read-path': '''var out = str("file"); let root = fs::Root { .. };
+        let view: const u8[:] = out[..];
+        let s = fs::read_file_at(root,view,100,out); print(s.os_error);''',
+    'root-list-path': '''var entries: fs::Entry[>..] = []; let root = fs::Root { .. };
+        entries.push(fs::Entry { name: "file" });
+        for entry in entries { let s = fs::list_at(root,entry.name,100,10,entries); print(s.os_error); }''',
+    'root-sorted-path': '''var entries: fs::Entry[>..] = []; let root = fs::Root { .. };
+        entries.push(fs::Entry { name: "file" });
+        for entry in entries { let s = fs::list_sorted_at(root,entry.name,100,10,entries); print(s.os_error); }''',
     'constant': '''let bound .= fs::MAX_BYTES; bound = 1;''',
 }
 for name, body in CASES.items():
@@ -28,4 +37,4 @@ for name, body in CASES.items():
         assert '§5.1' in result.stderr and ('shrinks' in result.stderr or 'cannot clear' in result.stderr or 'cannot resize' in result.stderr), result.stderr
     else:
         assert 'const' in result.stderr, result.stderr
-print('4 ownership/constant rejection cases passed')
+print(f'{len(CASES)} ownership/constant rejection cases passed')
