@@ -1,0 +1,5085 @@
+{
+  "timestamp": "2026-11-04T08:40:47.831080+00:00",
+  "platform": "Linux-7.2.11-arch1-1-x86_64-with-glibc2.44",
+  "machine": "x86_64",
+  "cpu": "",
+  "filesystem": "tmpfs",
+  "cpu_info": "processor\t: 0\nvendor_id\t: GenuineIntel\ncpu family\t: 6\nmodel\t\t: 189\nmodel name\t: Intel(R) Core(TM) Ultra 7 258V\nstepping\t: 1\nmicrocode\t: 0x128\ncpu MHz\t\t: 1500.000\ncache size\t: 12288 KB\nphysical id\t: 0\nsiblings\t: 8\ncore id\t\t: 0\ncpu cores\t: 8\napicid\t\t: 0\ninitial apicid\t: 0\nfpu\t\t: yes\nfpu_exception\t: yes\ncpuid level\t: 35\nwp\t\t: yes\nflags\t\t: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf tsc_known_freq pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb ssbd ibrs ibpb stibp ibrs_enhanced tpr_shadow flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid rdt_a rdseed adx smap clflushopt clwb intel_pt sha_ni xsaveopt xsavec xgetbv1 xsaves split_lock_detect user_shstk avx_vnni lass lam wbnoinvd dtherm ida arat pln pts hwp hwp_notify hwp_act_window hwp_epp hwp_pkg_req hfi vnmi umip pku ospke waitpkg gfni vaes vpclmulqdq rdpid bus_lock_detect movdiri movdir64b fsrm md_clear serialize pconfig arch_lbr ibt flush_l1d arch_capabilities\nvmx flags\t: vnmi preemption_timer posted_intr invvpid ept_x_only ept_ad ept_1gb flexpriority apicv tsc_offset vtpr mtf vapic ept vpid unrestricted_guest vapic_reg vid ple shadow_vmcs pml ept_violation_ve ept_mode_based_exec tsc_scaling usr_wait_pause notify_vm_exiting ipi_virt\nbugs\t\t: monitor spectre_v1 spectre_v2 spec_store_bypass swapgs bhi spectre_v2_user vmscape\nbogomips\t: 6604.80\nclflush size\t: 64\ncache_alignment\t: 64\naddress sizes\t: 42 bits physical, 48 bits virtual\npower management:",
+  "goose": "goose eadca40 (runtime 3025e5810379)",
+  "goose_revision": "eadca409f68210893f366e60d0c2f0dc29a339be",
+  "cc": "gcc (GCC) 16.2.1 20260810\nCopyright (C) 2026 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.",
+  "flags": [
+    "-O2"
+  ],
+  "iterations": 2000,
+  "source_revision": "3c863ca2171a347d878b4708f189597eb2244e2d",
+  "baseline_revision": "6b8c079ba0414115713b16ae216327197fceb27d",
+  "binary_sha256": {
+    "candidate": "c55d439bb980807d10a0a8e9fba70ca57d0930549d08842d8a5787d6d04acf01",
+    "baseline": "169dec3c8da79c572de6411ae3b203bb80a773d8f57d20c09978edf87e54057f"
+  },
+  "harness_sha256": "f881673c0cf26fad30a1476f9f44f3b2c942c9b7cf285ba94e97482292295517",
+  "loadavg_start": [
+    10.51171875,
+    8.2802734375,
+    5.36181640625
+  ],
+  "loadavg_end": [
+    8.8408203125,
+    8.23876953125,
+    5.5458984375
+  ],
+  "cpu_affinity": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "source_dirty": false,
+  "samples": [
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "read-empty",
+      "sample": 0,
+      "ns_per_call": 6459,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "read-empty",
+      "sample": 1,
+      "ns_per_call": 6202,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "read-empty",
+      "sample": 2,
+      "ns_per_call": 6597,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "read-empty",
+      "sample": 3,
+      "ns_per_call": 5073,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "read-empty",
+      "sample": 4,
+      "ns_per_call": 5131,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "read-empty",
+      "sample": 5,
+      "ns_per_call": 5644,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "read-empty",
+      "sample": 6,
+      "ns_per_call": 5052,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "read-empty-max-buffer",
+      "sample": 0,
+      "ns_per_call": 56753,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "read-empty-max-buffer",
+      "sample": 1,
+      "ns_per_call": 46747,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "read-empty-max-buffer",
+      "sample": 2,
+      "ns_per_call": 46079,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "read-empty-max-buffer",
+      "sample": 3,
+      "ns_per_call": 62483,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "read-empty-max-buffer",
+      "sample": 4,
+      "ns_per_call": 58961,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "read-empty-max-buffer",
+      "sample": 5,
+      "ns_per_call": 54702,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "read-empty-max-buffer",
+      "sample": 6,
+      "ns_per_call": 48261,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "read-small",
+      "sample": 0,
+      "ns_per_call": 5282,
+      "checksum": 368000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "read-small",
+      "sample": 1,
+      "ns_per_call": 4968,
+      "checksum": 736000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "read-small",
+      "sample": 2,
+      "ns_per_call": 4767,
+      "checksum": 1104000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "read-small",
+      "sample": 3,
+      "ns_per_call": 5013,
+      "checksum": 1472000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "read-small",
+      "sample": 4,
+      "ns_per_call": 5038,
+      "checksum": 1840000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "read-small",
+      "sample": 5,
+      "ns_per_call": 4869,
+      "checksum": 2208000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "read-small",
+      "sample": 6,
+      "ns_per_call": 4926,
+      "checksum": 2576000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "read-small-max-buffer",
+      "sample": 0,
+      "ns_per_call": 45647,
+      "checksum": 368000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "read-small-max-buffer",
+      "sample": 1,
+      "ns_per_call": 46356,
+      "checksum": 736000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "read-small-max-buffer",
+      "sample": 2,
+      "ns_per_call": 48369,
+      "checksum": 1104000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "read-small-max-buffer",
+      "sample": 3,
+      "ns_per_call": 45636,
+      "checksum": 1472000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "read-small-max-buffer",
+      "sample": 4,
+      "ns_per_call": 49253,
+      "checksum": 1840000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "read-small-max-buffer",
+      "sample": 5,
+      "ns_per_call": 46031,
+      "checksum": 2208000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "read-small-max-buffer",
+      "sample": 6,
+      "ns_per_call": 45793,
+      "checksum": 2576000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "read-missing",
+      "sample": 0,
+      "ns_per_call": 4312,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "read-missing",
+      "sample": 1,
+      "ns_per_call": 4355,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "read-missing",
+      "sample": 2,
+      "ns_per_call": 4315,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "read-missing",
+      "sample": 3,
+      "ns_per_call": 4187,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "read-missing",
+      "sample": 4,
+      "ns_per_call": 4263,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "read-missing",
+      "sample": 5,
+      "ns_per_call": 4249,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "read-missing",
+      "sample": 6,
+      "ns_per_call": 4303,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "read-64k",
+      "sample": 0,
+      "ns_per_call": 13473,
+      "checksum": 131312000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "read-64k",
+      "sample": 1,
+      "ns_per_call": 12210,
+      "checksum": 262624000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "read-64k",
+      "sample": 2,
+      "ns_per_call": 12734,
+      "checksum": 393936000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "read-64k",
+      "sample": 3,
+      "ns_per_call": 12093,
+      "checksum": 525248000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "read-64k",
+      "sample": 4,
+      "ns_per_call": 14012,
+      "checksum": 656560000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "read-64k",
+      "sample": 5,
+      "ns_per_call": 12220,
+      "checksum": 787872000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "read-64k",
+      "sample": 6,
+      "ns_per_call": 12063,
+      "checksum": 919184000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "read-1m",
+      "sample": 0,
+      "ns_per_call": 147190,
+      "checksum": 2097392000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "read-1m",
+      "sample": 1,
+      "ns_per_call": 145659,
+      "checksum": 4194784000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "read-1m",
+      "sample": 2,
+      "ns_per_call": 142397,
+      "checksum": 6292176000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "read-1m",
+      "sample": 3,
+      "ns_per_call": 141164,
+      "checksum": 8389568000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "read-1m",
+      "sample": 4,
+      "ns_per_call": 142524,
+      "checksum": 10486960000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "read-1m",
+      "sample": 5,
+      "ns_per_call": 140763,
+      "checksum": 12584352000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "read-1m",
+      "sample": 6,
+      "ns_per_call": 141868,
+      "checksum": 14681744000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "read-overflow",
+      "sample": 0,
+      "ns_per_call": 5027,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "read-overflow",
+      "sample": 1,
+      "ns_per_call": 5195,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "read-overflow",
+      "sample": 2,
+      "ns_per_call": 5185,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "read-overflow",
+      "sample": 3,
+      "ns_per_call": 5165,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "read-overflow",
+      "sample": 4,
+      "ns_per_call": 5154,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "read-overflow",
+      "sample": 5,
+      "ns_per_call": 5174,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "read-overflow",
+      "sample": 6,
+      "ns_per_call": 5077,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "read-deep",
+      "sample": 0,
+      "ns_per_call": 16442,
+      "checksum": 368000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "read-deep",
+      "sample": 1,
+      "ns_per_call": 16167,
+      "checksum": 736000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "read-deep",
+      "sample": 2,
+      "ns_per_call": 16215,
+      "checksum": 1104000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "read-deep",
+      "sample": 3,
+      "ns_per_call": 16388,
+      "checksum": 1472000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "read-deep",
+      "sample": 4,
+      "ns_per_call": 16254,
+      "checksum": 1840000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "read-deep",
+      "sample": 5,
+      "ns_per_call": 15835,
+      "checksum": 2208000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "read-deep",
+      "sample": 6,
+      "ns_per_call": 15902,
+      "checksum": 2576000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "list-one",
+      "sample": 0,
+      "ns_per_call": 5954,
+      "checksum": 20000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "list-one",
+      "sample": 1,
+      "ns_per_call": 5893,
+      "checksum": 40000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "list-one",
+      "sample": 2,
+      "ns_per_call": 5872,
+      "checksum": 60000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "list-one",
+      "sample": 3,
+      "ns_per_call": 6014,
+      "checksum": 80000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "list-one",
+      "sample": 4,
+      "ns_per_call": 5946,
+      "checksum": 100000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "list-one",
+      "sample": 5,
+      "ns_per_call": 5974,
+      "checksum": 120000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "list-one",
+      "sample": 6,
+      "ns_per_call": 5913,
+      "checksum": 140000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "list-one-max-buffer",
+      "sample": 0,
+      "ns_per_call": 47338,
+      "checksum": 20000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "list-one-max-buffer",
+      "sample": 1,
+      "ns_per_call": 47504,
+      "checksum": 40000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "list-one-max-buffer",
+      "sample": 2,
+      "ns_per_call": 47029,
+      "checksum": 60000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "list-one-max-buffer",
+      "sample": 3,
+      "ns_per_call": 48520,
+      "checksum": 80000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "list-one-max-buffer",
+      "sample": 4,
+      "ns_per_call": 47041,
+      "checksum": 100000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "list-one-max-buffer",
+      "sample": 5,
+      "ns_per_call": 47659,
+      "checksum": 120000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "list-one-max-buffer",
+      "sample": 6,
+      "ns_per_call": 47571,
+      "checksum": 140000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "create-remove-file",
+      "sample": 0,
+      "ns_per_call": 13588,
+      "checksum": 2000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "create-remove-file",
+      "sample": 1,
+      "ns_per_call": 13498,
+      "checksum": 4000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "create-remove-file",
+      "sample": 2,
+      "ns_per_call": 13335,
+      "checksum": 6000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "create-remove-file",
+      "sample": 3,
+      "ns_per_call": 13465,
+      "checksum": 8000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "create-remove-file",
+      "sample": 4,
+      "ns_per_call": 13329,
+      "checksum": 10000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "create-remove-file",
+      "sample": 5,
+      "ns_per_call": 15198,
+      "checksum": 12000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "create-remove-file",
+      "sample": 6,
+      "ns_per_call": 13567,
+      "checksum": 14000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "create-remove-dir",
+      "sample": 0,
+      "ns_per_call": 11741,
+      "checksum": 2000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "create-remove-dir",
+      "sample": 1,
+      "ns_per_call": 12211,
+      "checksum": 4000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "create-remove-dir",
+      "sample": 2,
+      "ns_per_call": 10302,
+      "checksum": 6000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "create-remove-dir",
+      "sample": 3,
+      "ns_per_call": 10019,
+      "checksum": 8000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "create-remove-dir",
+      "sample": 4,
+      "ns_per_call": 10067,
+      "checksum": 10000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "create-remove-dir",
+      "sample": 5,
+      "ns_per_call": 10049,
+      "checksum": 12000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "create-remove-dir",
+      "sample": 6,
+      "ns_per_call": 9908,
+      "checksum": 14000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "list-1000",
+      "sample": 0,
+      "ns_per_call": 180601,
+      "checksum": 20000000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "list-1000",
+      "sample": 1,
+      "ns_per_call": 229813,
+      "checksum": 40000000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "list-1000",
+      "sample": 2,
+      "ns_per_call": 186432,
+      "checksum": 60000000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "list-1000",
+      "sample": 3,
+      "ns_per_call": 181377,
+      "checksum": 80000000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "list-1000",
+      "sample": 4,
+      "ns_per_call": 178062,
+      "checksum": 100000000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "list-1000",
+      "sample": 5,
+      "ns_per_call": 178636,
+      "checksum": 120000000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "list-1000",
+      "sample": 6,
+      "ns_per_call": 177385,
+      "checksum": 140000000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "list-1000-max-buffer",
+      "sample": 0,
+      "ns_per_call": 223385,
+      "checksum": 20000000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "list-1000-max-buffer",
+      "sample": 1,
+      "ns_per_call": 239915,
+      "checksum": 40000000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "list-1000-max-buffer",
+      "sample": 2,
+      "ns_per_call": 225822,
+      "checksum": 60000000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "list-1000-max-buffer",
+      "sample": 3,
+      "ns_per_call": 227366,
+      "checksum": 80000000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "list-1000-max-buffer",
+      "sample": 4,
+      "ns_per_call": 232373,
+      "checksum": 100000000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "list-1000-max-buffer",
+      "sample": 5,
+      "ns_per_call": 228659,
+      "checksum": 120000000
+    },
+    {
+      "variant": "baseline",
+      "round": 0,
+      "workload": "list-1000-max-buffer",
+      "sample": 6,
+      "ns_per_call": 227997,
+      "checksum": 140000000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "read-empty",
+      "sample": 0,
+      "ns_per_call": 3499,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "read-empty",
+      "sample": 1,
+      "ns_per_call": 3432,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "read-empty",
+      "sample": 2,
+      "ns_per_call": 3284,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "read-empty",
+      "sample": 3,
+      "ns_per_call": 3371,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "read-empty",
+      "sample": 4,
+      "ns_per_call": 3499,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "read-empty",
+      "sample": 5,
+      "ns_per_call": 3351,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "read-empty",
+      "sample": 6,
+      "ns_per_call": 3421,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "read-empty-max-buffer",
+      "sample": 0,
+      "ns_per_call": 46229,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "read-empty-max-buffer",
+      "sample": 1,
+      "ns_per_call": 54614,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "read-empty-max-buffer",
+      "sample": 2,
+      "ns_per_call": 53681,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "read-empty-max-buffer",
+      "sample": 3,
+      "ns_per_call": 62854,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "read-empty-max-buffer",
+      "sample": 4,
+      "ns_per_call": 59609,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "read-empty-max-buffer",
+      "sample": 5,
+      "ns_per_call": 54098,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "read-empty-max-buffer",
+      "sample": 6,
+      "ns_per_call": 48885,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "read-small",
+      "sample": 0,
+      "ns_per_call": 3366,
+      "checksum": 368000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "read-small",
+      "sample": 1,
+      "ns_per_call": 3303,
+      "checksum": 736000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "read-small",
+      "sample": 2,
+      "ns_per_call": 3274,
+      "checksum": 1104000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "read-small",
+      "sample": 3,
+      "ns_per_call": 3355,
+      "checksum": 1472000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "read-small",
+      "sample": 4,
+      "ns_per_call": 3355,
+      "checksum": 1840000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "read-small",
+      "sample": 5,
+      "ns_per_call": 3293,
+      "checksum": 2208000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "read-small",
+      "sample": 6,
+      "ns_per_call": 3173,
+      "checksum": 2576000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "read-small-max-buffer",
+      "sample": 0,
+      "ns_per_call": 45513,
+      "checksum": 368000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "read-small-max-buffer",
+      "sample": 1,
+      "ns_per_call": 44504,
+      "checksum": 736000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "read-small-max-buffer",
+      "sample": 2,
+      "ns_per_call": 42393,
+      "checksum": 1104000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "read-small-max-buffer",
+      "sample": 3,
+      "ns_per_call": 44826,
+      "checksum": 1472000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "read-small-max-buffer",
+      "sample": 4,
+      "ns_per_call": 44052,
+      "checksum": 1840000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "read-small-max-buffer",
+      "sample": 5,
+      "ns_per_call": 50157,
+      "checksum": 2208000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "read-small-max-buffer",
+      "sample": 6,
+      "ns_per_call": 47769,
+      "checksum": 2576000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "read-missing",
+      "sample": 0,
+      "ns_per_call": 2653,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "read-missing",
+      "sample": 1,
+      "ns_per_call": 2642,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "read-missing",
+      "sample": 2,
+      "ns_per_call": 2553,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "read-missing",
+      "sample": 3,
+      "ns_per_call": 3245,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "read-missing",
+      "sample": 4,
+      "ns_per_call": 2656,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "read-missing",
+      "sample": 5,
+      "ns_per_call": 2623,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "read-missing",
+      "sample": 6,
+      "ns_per_call": 2695,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "read-64k",
+      "sample": 0,
+      "ns_per_call": 10575,
+      "checksum": 131312000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "read-64k",
+      "sample": 1,
+      "ns_per_call": 10459,
+      "checksum": 262624000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "read-64k",
+      "sample": 2,
+      "ns_per_call": 10345,
+      "checksum": 393936000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "read-64k",
+      "sample": 3,
+      "ns_per_call": 10437,
+      "checksum": 525248000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "read-64k",
+      "sample": 4,
+      "ns_per_call": 10428,
+      "checksum": 656560000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "read-64k",
+      "sample": 5,
+      "ns_per_call": 10306,
+      "checksum": 787872000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "read-64k",
+      "sample": 6,
+      "ns_per_call": 10099,
+      "checksum": 919184000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "read-1m",
+      "sample": 0,
+      "ns_per_call": 144674,
+      "checksum": 2097392000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "read-1m",
+      "sample": 1,
+      "ns_per_call": 142614,
+      "checksum": 4194784000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "read-1m",
+      "sample": 2,
+      "ns_per_call": 143972,
+      "checksum": 6292176000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "read-1m",
+      "sample": 3,
+      "ns_per_call": 140994,
+      "checksum": 8389568000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "read-1m",
+      "sample": 4,
+      "ns_per_call": 146112,
+      "checksum": 10486960000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "read-1m",
+      "sample": 5,
+      "ns_per_call": 144257,
+      "checksum": 12584352000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "read-1m",
+      "sample": 6,
+      "ns_per_call": 149963,
+      "checksum": 14681744000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "read-overflow",
+      "sample": 0,
+      "ns_per_call": 3687,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "read-overflow",
+      "sample": 1,
+      "ns_per_call": 3719,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "read-overflow",
+      "sample": 2,
+      "ns_per_call": 3546,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "read-overflow",
+      "sample": 3,
+      "ns_per_call": 3685,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "read-overflow",
+      "sample": 4,
+      "ns_per_call": 3633,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "read-overflow",
+      "sample": 5,
+      "ns_per_call": 3584,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "read-overflow",
+      "sample": 6,
+      "ns_per_call": 3497,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "read-deep",
+      "sample": 0,
+      "ns_per_call": 3748,
+      "checksum": 368000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "read-deep",
+      "sample": 1,
+      "ns_per_call": 4161,
+      "checksum": 736000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "read-deep",
+      "sample": 2,
+      "ns_per_call": 4241,
+      "checksum": 1104000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "read-deep",
+      "sample": 3,
+      "ns_per_call": 4136,
+      "checksum": 1472000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "read-deep",
+      "sample": 4,
+      "ns_per_call": 4168,
+      "checksum": 1840000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "read-deep",
+      "sample": 5,
+      "ns_per_call": 4272,
+      "checksum": 2208000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "read-deep",
+      "sample": 6,
+      "ns_per_call": 4563,
+      "checksum": 2576000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "list-one",
+      "sample": 0,
+      "ns_per_call": 4726,
+      "checksum": 20000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "list-one",
+      "sample": 1,
+      "ns_per_call": 4798,
+      "checksum": 40000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "list-one",
+      "sample": 2,
+      "ns_per_call": 4558,
+      "checksum": 60000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "list-one",
+      "sample": 3,
+      "ns_per_call": 4686,
+      "checksum": 80000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "list-one",
+      "sample": 4,
+      "ns_per_call": 4586,
+      "checksum": 100000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "list-one",
+      "sample": 5,
+      "ns_per_call": 4652,
+      "checksum": 120000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "list-one",
+      "sample": 6,
+      "ns_per_call": 4671,
+      "checksum": 140000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "list-one-max-buffer",
+      "sample": 0,
+      "ns_per_call": 59583,
+      "checksum": 20000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "list-one-max-buffer",
+      "sample": 1,
+      "ns_per_call": 53615,
+      "checksum": 40000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "list-one-max-buffer",
+      "sample": 2,
+      "ns_per_call": 60914,
+      "checksum": 60000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "list-one-max-buffer",
+      "sample": 3,
+      "ns_per_call": 56654,
+      "checksum": 80000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "list-one-max-buffer",
+      "sample": 4,
+      "ns_per_call": 57934,
+      "checksum": 100000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "list-one-max-buffer",
+      "sample": 5,
+      "ns_per_call": 47337,
+      "checksum": 120000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "list-one-max-buffer",
+      "sample": 6,
+      "ns_per_call": 45313,
+      "checksum": 140000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "create-remove-file",
+      "sample": 0,
+      "ns_per_call": 9928,
+      "checksum": 2000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "create-remove-file",
+      "sample": 1,
+      "ns_per_call": 9313,
+      "checksum": 4000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "create-remove-file",
+      "sample": 2,
+      "ns_per_call": 9770,
+      "checksum": 6000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "create-remove-file",
+      "sample": 3,
+      "ns_per_call": 9420,
+      "checksum": 8000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "create-remove-file",
+      "sample": 4,
+      "ns_per_call": 9818,
+      "checksum": 10000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "create-remove-file",
+      "sample": 5,
+      "ns_per_call": 9693,
+      "checksum": 12000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "create-remove-file",
+      "sample": 6,
+      "ns_per_call": 9506,
+      "checksum": 14000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "create-remove-dir",
+      "sample": 0,
+      "ns_per_call": 6119,
+      "checksum": 2000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "create-remove-dir",
+      "sample": 1,
+      "ns_per_call": 6256,
+      "checksum": 4000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "create-remove-dir",
+      "sample": 2,
+      "ns_per_call": 6377,
+      "checksum": 6000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "create-remove-dir",
+      "sample": 3,
+      "ns_per_call": 6233,
+      "checksum": 8000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "create-remove-dir",
+      "sample": 4,
+      "ns_per_call": 6640,
+      "checksum": 10000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "create-remove-dir",
+      "sample": 5,
+      "ns_per_call": 6253,
+      "checksum": 12000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "create-remove-dir",
+      "sample": 6,
+      "ns_per_call": 6113,
+      "checksum": 14000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "list-1000",
+      "sample": 0,
+      "ns_per_call": 176390,
+      "checksum": 20000000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "list-1000",
+      "sample": 1,
+      "ns_per_call": 175646,
+      "checksum": 40000000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "list-1000",
+      "sample": 2,
+      "ns_per_call": 176408,
+      "checksum": 60000000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "list-1000",
+      "sample": 3,
+      "ns_per_call": 174525,
+      "checksum": 80000000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "list-1000",
+      "sample": 4,
+      "ns_per_call": 175690,
+      "checksum": 100000000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "list-1000",
+      "sample": 5,
+      "ns_per_call": 172723,
+      "checksum": 120000000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "list-1000",
+      "sample": 6,
+      "ns_per_call": 184932,
+      "checksum": 140000000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "list-1000-max-buffer",
+      "sample": 0,
+      "ns_per_call": 215436,
+      "checksum": 20000000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "list-1000-max-buffer",
+      "sample": 1,
+      "ns_per_call": 215925,
+      "checksum": 40000000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "list-1000-max-buffer",
+      "sample": 2,
+      "ns_per_call": 254400,
+      "checksum": 60000000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "list-1000-max-buffer",
+      "sample": 3,
+      "ns_per_call": 283532,
+      "checksum": 80000000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "list-1000-max-buffer",
+      "sample": 4,
+      "ns_per_call": 269691,
+      "checksum": 100000000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "list-1000-max-buffer",
+      "sample": 5,
+      "ns_per_call": 307962,
+      "checksum": 120000000
+    },
+    {
+      "variant": "candidate",
+      "round": 0,
+      "workload": "list-1000-max-buffer",
+      "sample": 6,
+      "ns_per_call": 241879,
+      "checksum": 140000000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "read-empty",
+      "sample": 0,
+      "ns_per_call": 3739,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "read-empty",
+      "sample": 1,
+      "ns_per_call": 3531,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "read-empty",
+      "sample": 2,
+      "ns_per_call": 3455,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "read-empty",
+      "sample": 3,
+      "ns_per_call": 3967,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "read-empty",
+      "sample": 4,
+      "ns_per_call": 4956,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "read-empty",
+      "sample": 5,
+      "ns_per_call": 4050,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "read-empty",
+      "sample": 6,
+      "ns_per_call": 8858,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "read-empty-max-buffer",
+      "sample": 0,
+      "ns_per_call": 52249,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "read-empty-max-buffer",
+      "sample": 1,
+      "ns_per_call": 52342,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "read-empty-max-buffer",
+      "sample": 2,
+      "ns_per_call": 52176,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "read-empty-max-buffer",
+      "sample": 3,
+      "ns_per_call": 51541,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "read-empty-max-buffer",
+      "sample": 4,
+      "ns_per_call": 44080,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "read-empty-max-buffer",
+      "sample": 5,
+      "ns_per_call": 44144,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "read-empty-max-buffer",
+      "sample": 6,
+      "ns_per_call": 43740,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "read-small",
+      "sample": 0,
+      "ns_per_call": 3450,
+      "checksum": 368000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "read-small",
+      "sample": 1,
+      "ns_per_call": 3396,
+      "checksum": 736000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "read-small",
+      "sample": 2,
+      "ns_per_call": 3364,
+      "checksum": 1104000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "read-small",
+      "sample": 3,
+      "ns_per_call": 3457,
+      "checksum": 1472000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "read-small",
+      "sample": 4,
+      "ns_per_call": 3337,
+      "checksum": 1840000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "read-small",
+      "sample": 5,
+      "ns_per_call": 3267,
+      "checksum": 2208000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "read-small",
+      "sample": 6,
+      "ns_per_call": 3381,
+      "checksum": 2576000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "read-small-max-buffer",
+      "sample": 0,
+      "ns_per_call": 44485,
+      "checksum": 368000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "read-small-max-buffer",
+      "sample": 1,
+      "ns_per_call": 57162,
+      "checksum": 736000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "read-small-max-buffer",
+      "sample": 2,
+      "ns_per_call": 54670,
+      "checksum": 1104000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "read-small-max-buffer",
+      "sample": 3,
+      "ns_per_call": 54322,
+      "checksum": 1472000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "read-small-max-buffer",
+      "sample": 4,
+      "ns_per_call": 54149,
+      "checksum": 1840000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "read-small-max-buffer",
+      "sample": 5,
+      "ns_per_call": 57130,
+      "checksum": 2208000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "read-small-max-buffer",
+      "sample": 6,
+      "ns_per_call": 60231,
+      "checksum": 2576000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "read-missing",
+      "sample": 0,
+      "ns_per_call": 2713,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "read-missing",
+      "sample": 1,
+      "ns_per_call": 2663,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "read-missing",
+      "sample": 2,
+      "ns_per_call": 2731,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "read-missing",
+      "sample": 3,
+      "ns_per_call": 3073,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "read-missing",
+      "sample": 4,
+      "ns_per_call": 2722,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "read-missing",
+      "sample": 5,
+      "ns_per_call": 2730,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "read-missing",
+      "sample": 6,
+      "ns_per_call": 2903,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "read-64k",
+      "sample": 0,
+      "ns_per_call": 13108,
+      "checksum": 131312000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "read-64k",
+      "sample": 1,
+      "ns_per_call": 12686,
+      "checksum": 262624000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "read-64k",
+      "sample": 2,
+      "ns_per_call": 12783,
+      "checksum": 393936000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "read-64k",
+      "sample": 3,
+      "ns_per_call": 12855,
+      "checksum": 525248000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "read-64k",
+      "sample": 4,
+      "ns_per_call": 12645,
+      "checksum": 656560000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "read-64k",
+      "sample": 5,
+      "ns_per_call": 12562,
+      "checksum": 787872000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "read-64k",
+      "sample": 6,
+      "ns_per_call": 13089,
+      "checksum": 919184000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "read-1m",
+      "sample": 0,
+      "ns_per_call": 212119,
+      "checksum": 2097392000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "read-1m",
+      "sample": 1,
+      "ns_per_call": 198200,
+      "checksum": 4194784000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "read-1m",
+      "sample": 2,
+      "ns_per_call": 149343,
+      "checksum": 6292176000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "read-1m",
+      "sample": 3,
+      "ns_per_call": 157580,
+      "checksum": 8389568000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "read-1m",
+      "sample": 4,
+      "ns_per_call": 141561,
+      "checksum": 10486960000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "read-1m",
+      "sample": 5,
+      "ns_per_call": 141012,
+      "checksum": 12584352000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "read-1m",
+      "sample": 6,
+      "ns_per_call": 141350,
+      "checksum": 14681744000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "read-overflow",
+      "sample": 0,
+      "ns_per_call": 3436,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "read-overflow",
+      "sample": 1,
+      "ns_per_call": 3371,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "read-overflow",
+      "sample": 2,
+      "ns_per_call": 3492,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "read-overflow",
+      "sample": 3,
+      "ns_per_call": 3322,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "read-overflow",
+      "sample": 4,
+      "ns_per_call": 3280,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "read-overflow",
+      "sample": 5,
+      "ns_per_call": 3377,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "read-overflow",
+      "sample": 6,
+      "ns_per_call": 3323,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "read-deep",
+      "sample": 0,
+      "ns_per_call": 3829,
+      "checksum": 368000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "read-deep",
+      "sample": 1,
+      "ns_per_call": 3997,
+      "checksum": 736000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "read-deep",
+      "sample": 2,
+      "ns_per_call": 3875,
+      "checksum": 1104000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "read-deep",
+      "sample": 3,
+      "ns_per_call": 3905,
+      "checksum": 1472000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "read-deep",
+      "sample": 4,
+      "ns_per_call": 3918,
+      "checksum": 1840000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "read-deep",
+      "sample": 5,
+      "ns_per_call": 3760,
+      "checksum": 2208000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "read-deep",
+      "sample": 6,
+      "ns_per_call": 3744,
+      "checksum": 2576000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "list-one",
+      "sample": 0,
+      "ns_per_call": 4062,
+      "checksum": 20000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "list-one",
+      "sample": 1,
+      "ns_per_call": 4202,
+      "checksum": 40000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "list-one",
+      "sample": 2,
+      "ns_per_call": 4220,
+      "checksum": 60000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "list-one",
+      "sample": 3,
+      "ns_per_call": 4302,
+      "checksum": 80000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "list-one",
+      "sample": 4,
+      "ns_per_call": 4168,
+      "checksum": 100000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "list-one",
+      "sample": 5,
+      "ns_per_call": 4320,
+      "checksum": 120000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "list-one",
+      "sample": 6,
+      "ns_per_call": 4179,
+      "checksum": 140000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "list-one-max-buffer",
+      "sample": 0,
+      "ns_per_call": 45454,
+      "checksum": 20000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "list-one-max-buffer",
+      "sample": 1,
+      "ns_per_call": 45541,
+      "checksum": 40000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "list-one-max-buffer",
+      "sample": 2,
+      "ns_per_call": 45631,
+      "checksum": 60000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "list-one-max-buffer",
+      "sample": 3,
+      "ns_per_call": 45862,
+      "checksum": 80000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "list-one-max-buffer",
+      "sample": 4,
+      "ns_per_call": 45317,
+      "checksum": 100000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "list-one-max-buffer",
+      "sample": 5,
+      "ns_per_call": 44423,
+      "checksum": 120000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "list-one-max-buffer",
+      "sample": 6,
+      "ns_per_call": 44998,
+      "checksum": 140000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "create-remove-file",
+      "sample": 0,
+      "ns_per_call": 10110,
+      "checksum": 2000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "create-remove-file",
+      "sample": 1,
+      "ns_per_call": 9868,
+      "checksum": 4000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "create-remove-file",
+      "sample": 2,
+      "ns_per_call": 9846,
+      "checksum": 6000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "create-remove-file",
+      "sample": 3,
+      "ns_per_call": 9883,
+      "checksum": 8000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "create-remove-file",
+      "sample": 4,
+      "ns_per_call": 9496,
+      "checksum": 10000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "create-remove-file",
+      "sample": 5,
+      "ns_per_call": 9631,
+      "checksum": 12000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "create-remove-file",
+      "sample": 6,
+      "ns_per_call": 9816,
+      "checksum": 14000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "create-remove-dir",
+      "sample": 0,
+      "ns_per_call": 6270,
+      "checksum": 2000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "create-remove-dir",
+      "sample": 1,
+      "ns_per_call": 6398,
+      "checksum": 4000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "create-remove-dir",
+      "sample": 2,
+      "ns_per_call": 6373,
+      "checksum": 6000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "create-remove-dir",
+      "sample": 3,
+      "ns_per_call": 6329,
+      "checksum": 8000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "create-remove-dir",
+      "sample": 4,
+      "ns_per_call": 6415,
+      "checksum": 10000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "create-remove-dir",
+      "sample": 5,
+      "ns_per_call": 6467,
+      "checksum": 12000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "create-remove-dir",
+      "sample": 6,
+      "ns_per_call": 6765,
+      "checksum": 14000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "list-1000",
+      "sample": 0,
+      "ns_per_call": 176551,
+      "checksum": 20000000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "list-1000",
+      "sample": 1,
+      "ns_per_call": 179775,
+      "checksum": 40000000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "list-1000",
+      "sample": 2,
+      "ns_per_call": 180487,
+      "checksum": 60000000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "list-1000",
+      "sample": 3,
+      "ns_per_call": 177815,
+      "checksum": 80000000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "list-1000",
+      "sample": 4,
+      "ns_per_call": 177123,
+      "checksum": 100000000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "list-1000",
+      "sample": 5,
+      "ns_per_call": 182819,
+      "checksum": 120000000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "list-1000",
+      "sample": 6,
+      "ns_per_call": 180936,
+      "checksum": 140000000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "list-1000-max-buffer",
+      "sample": 0,
+      "ns_per_call": 216890,
+      "checksum": 20000000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "list-1000-max-buffer",
+      "sample": 1,
+      "ns_per_call": 219575,
+      "checksum": 40000000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "list-1000-max-buffer",
+      "sample": 2,
+      "ns_per_call": 219301,
+      "checksum": 60000000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "list-1000-max-buffer",
+      "sample": 3,
+      "ns_per_call": 218859,
+      "checksum": 80000000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "list-1000-max-buffer",
+      "sample": 4,
+      "ns_per_call": 218934,
+      "checksum": 100000000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "list-1000-max-buffer",
+      "sample": 5,
+      "ns_per_call": 221002,
+      "checksum": 120000000
+    },
+    {
+      "variant": "candidate",
+      "round": 1,
+      "workload": "list-1000-max-buffer",
+      "sample": 6,
+      "ns_per_call": 219854,
+      "checksum": 140000000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "read-empty",
+      "sample": 0,
+      "ns_per_call": 5977,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "read-empty",
+      "sample": 1,
+      "ns_per_call": 5686,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "read-empty",
+      "sample": 2,
+      "ns_per_call": 5575,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "read-empty",
+      "sample": 3,
+      "ns_per_call": 5299,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "read-empty",
+      "sample": 4,
+      "ns_per_call": 5489,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "read-empty",
+      "sample": 5,
+      "ns_per_call": 5587,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "read-empty",
+      "sample": 6,
+      "ns_per_call": 5818,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "read-empty-max-buffer",
+      "sample": 0,
+      "ns_per_call": 60711,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "read-empty-max-buffer",
+      "sample": 1,
+      "ns_per_call": 47707,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "read-empty-max-buffer",
+      "sample": 2,
+      "ns_per_call": 43926,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "read-empty-max-buffer",
+      "sample": 3,
+      "ns_per_call": 42159,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "read-empty-max-buffer",
+      "sample": 4,
+      "ns_per_call": 35199,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "read-empty-max-buffer",
+      "sample": 5,
+      "ns_per_call": 35752,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "read-empty-max-buffer",
+      "sample": 6,
+      "ns_per_call": 33650,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "read-small",
+      "sample": 0,
+      "ns_per_call": 3890,
+      "checksum": 368000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "read-small",
+      "sample": 1,
+      "ns_per_call": 4144,
+      "checksum": 736000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "read-small",
+      "sample": 2,
+      "ns_per_call": 4153,
+      "checksum": 1104000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "read-small",
+      "sample": 3,
+      "ns_per_call": 4154,
+      "checksum": 1472000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "read-small",
+      "sample": 4,
+      "ns_per_call": 4329,
+      "checksum": 1840000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "read-small",
+      "sample": 5,
+      "ns_per_call": 4354,
+      "checksum": 2208000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "read-small",
+      "sample": 6,
+      "ns_per_call": 4331,
+      "checksum": 2576000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "read-small-max-buffer",
+      "sample": 0,
+      "ns_per_call": 39252,
+      "checksum": 368000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "read-small-max-buffer",
+      "sample": 1,
+      "ns_per_call": 46240,
+      "checksum": 736000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "read-small-max-buffer",
+      "sample": 2,
+      "ns_per_call": 46155,
+      "checksum": 1104000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "read-small-max-buffer",
+      "sample": 3,
+      "ns_per_call": 45853,
+      "checksum": 1472000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "read-small-max-buffer",
+      "sample": 4,
+      "ns_per_call": 45505,
+      "checksum": 1840000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "read-small-max-buffer",
+      "sample": 5,
+      "ns_per_call": 45779,
+      "checksum": 2208000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "read-small-max-buffer",
+      "sample": 6,
+      "ns_per_call": 45975,
+      "checksum": 2576000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "read-missing",
+      "sample": 0,
+      "ns_per_call": 4154,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "read-missing",
+      "sample": 1,
+      "ns_per_call": 4393,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "read-missing",
+      "sample": 2,
+      "ns_per_call": 4373,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "read-missing",
+      "sample": 3,
+      "ns_per_call": 4348,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "read-missing",
+      "sample": 4,
+      "ns_per_call": 4234,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "read-missing",
+      "sample": 5,
+      "ns_per_call": 4374,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "read-missing",
+      "sample": 6,
+      "ns_per_call": 4358,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "read-64k",
+      "sample": 0,
+      "ns_per_call": 11812,
+      "checksum": 131312000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "read-64k",
+      "sample": 1,
+      "ns_per_call": 11910,
+      "checksum": 262624000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "read-64k",
+      "sample": 2,
+      "ns_per_call": 12246,
+      "checksum": 393936000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "read-64k",
+      "sample": 3,
+      "ns_per_call": 12362,
+      "checksum": 525248000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "read-64k",
+      "sample": 4,
+      "ns_per_call": 12381,
+      "checksum": 656560000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "read-64k",
+      "sample": 5,
+      "ns_per_call": 12427,
+      "checksum": 787872000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "read-64k",
+      "sample": 6,
+      "ns_per_call": 12192,
+      "checksum": 919184000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "read-1m",
+      "sample": 0,
+      "ns_per_call": 141699,
+      "checksum": 2097392000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "read-1m",
+      "sample": 1,
+      "ns_per_call": 140546,
+      "checksum": 4194784000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "read-1m",
+      "sample": 2,
+      "ns_per_call": 141337,
+      "checksum": 6292176000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "read-1m",
+      "sample": 3,
+      "ns_per_call": 143257,
+      "checksum": 8389568000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "read-1m",
+      "sample": 4,
+      "ns_per_call": 143598,
+      "checksum": 10486960000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "read-1m",
+      "sample": 5,
+      "ns_per_call": 140395,
+      "checksum": 12584352000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "read-1m",
+      "sample": 6,
+      "ns_per_call": 140528,
+      "checksum": 14681744000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "read-overflow",
+      "sample": 0,
+      "ns_per_call": 5221,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "read-overflow",
+      "sample": 1,
+      "ns_per_call": 5403,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "read-overflow",
+      "sample": 2,
+      "ns_per_call": 5398,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "read-overflow",
+      "sample": 3,
+      "ns_per_call": 5374,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "read-overflow",
+      "sample": 4,
+      "ns_per_call": 5242,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "read-overflow",
+      "sample": 5,
+      "ns_per_call": 5389,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "read-overflow",
+      "sample": 6,
+      "ns_per_call": 5221,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "read-deep",
+      "sample": 0,
+      "ns_per_call": 16263,
+      "checksum": 368000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "read-deep",
+      "sample": 1,
+      "ns_per_call": 16596,
+      "checksum": 736000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "read-deep",
+      "sample": 2,
+      "ns_per_call": 16444,
+      "checksum": 1104000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "read-deep",
+      "sample": 3,
+      "ns_per_call": 16222,
+      "checksum": 1472000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "read-deep",
+      "sample": 4,
+      "ns_per_call": 16550,
+      "checksum": 1840000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "read-deep",
+      "sample": 5,
+      "ns_per_call": 16505,
+      "checksum": 2208000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "read-deep",
+      "sample": 6,
+      "ns_per_call": 16335,
+      "checksum": 2576000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "list-one",
+      "sample": 0,
+      "ns_per_call": 5785,
+      "checksum": 20000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "list-one",
+      "sample": 1,
+      "ns_per_call": 5890,
+      "checksum": 40000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "list-one",
+      "sample": 2,
+      "ns_per_call": 5705,
+      "checksum": 60000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "list-one",
+      "sample": 3,
+      "ns_per_call": 5924,
+      "checksum": 80000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "list-one",
+      "sample": 4,
+      "ns_per_call": 6032,
+      "checksum": 100000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "list-one",
+      "sample": 5,
+      "ns_per_call": 5980,
+      "checksum": 120000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "list-one",
+      "sample": 6,
+      "ns_per_call": 5958,
+      "checksum": 140000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "list-one-max-buffer",
+      "sample": 0,
+      "ns_per_call": 46919,
+      "checksum": 20000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "list-one-max-buffer",
+      "sample": 1,
+      "ns_per_call": 46984,
+      "checksum": 40000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "list-one-max-buffer",
+      "sample": 2,
+      "ns_per_call": 46527,
+      "checksum": 60000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "list-one-max-buffer",
+      "sample": 3,
+      "ns_per_call": 50293,
+      "checksum": 80000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "list-one-max-buffer",
+      "sample": 4,
+      "ns_per_call": 46709,
+      "checksum": 100000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "list-one-max-buffer",
+      "sample": 5,
+      "ns_per_call": 46956,
+      "checksum": 120000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "list-one-max-buffer",
+      "sample": 6,
+      "ns_per_call": 46549,
+      "checksum": 140000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "create-remove-file",
+      "sample": 0,
+      "ns_per_call": 13251,
+      "checksum": 2000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "create-remove-file",
+      "sample": 1,
+      "ns_per_call": 13342,
+      "checksum": 4000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "create-remove-file",
+      "sample": 2,
+      "ns_per_call": 13065,
+      "checksum": 6000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "create-remove-file",
+      "sample": 3,
+      "ns_per_call": 12891,
+      "checksum": 8000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "create-remove-file",
+      "sample": 4,
+      "ns_per_call": 13440,
+      "checksum": 10000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "create-remove-file",
+      "sample": 5,
+      "ns_per_call": 13615,
+      "checksum": 12000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "create-remove-file",
+      "sample": 6,
+      "ns_per_call": 13441,
+      "checksum": 14000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "create-remove-dir",
+      "sample": 0,
+      "ns_per_call": 9799,
+      "checksum": 2000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "create-remove-dir",
+      "sample": 1,
+      "ns_per_call": 9710,
+      "checksum": 4000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "create-remove-dir",
+      "sample": 2,
+      "ns_per_call": 10035,
+      "checksum": 6000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "create-remove-dir",
+      "sample": 3,
+      "ns_per_call": 9807,
+      "checksum": 8000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "create-remove-dir",
+      "sample": 4,
+      "ns_per_call": 9810,
+      "checksum": 10000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "create-remove-dir",
+      "sample": 5,
+      "ns_per_call": 9900,
+      "checksum": 12000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "create-remove-dir",
+      "sample": 6,
+      "ns_per_call": 9842,
+      "checksum": 14000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "list-1000",
+      "sample": 0,
+      "ns_per_call": 177948,
+      "checksum": 20000000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "list-1000",
+      "sample": 1,
+      "ns_per_call": 179935,
+      "checksum": 40000000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "list-1000",
+      "sample": 2,
+      "ns_per_call": 180471,
+      "checksum": 60000000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "list-1000",
+      "sample": 3,
+      "ns_per_call": 179934,
+      "checksum": 80000000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "list-1000",
+      "sample": 4,
+      "ns_per_call": 180243,
+      "checksum": 100000000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "list-1000",
+      "sample": 5,
+      "ns_per_call": 179891,
+      "checksum": 120000000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "list-1000",
+      "sample": 6,
+      "ns_per_call": 179250,
+      "checksum": 140000000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "list-1000-max-buffer",
+      "sample": 0,
+      "ns_per_call": 224409,
+      "checksum": 20000000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "list-1000-max-buffer",
+      "sample": 1,
+      "ns_per_call": 225229,
+      "checksum": 40000000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "list-1000-max-buffer",
+      "sample": 2,
+      "ns_per_call": 221941,
+      "checksum": 60000000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "list-1000-max-buffer",
+      "sample": 3,
+      "ns_per_call": 224683,
+      "checksum": 80000000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "list-1000-max-buffer",
+      "sample": 4,
+      "ns_per_call": 223707,
+      "checksum": 100000000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "list-1000-max-buffer",
+      "sample": 5,
+      "ns_per_call": 226290,
+      "checksum": 120000000
+    },
+    {
+      "variant": "baseline",
+      "round": 1,
+      "workload": "list-1000-max-buffer",
+      "sample": 6,
+      "ns_per_call": 224693,
+      "checksum": 140000000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "read-empty",
+      "sample": 0,
+      "ns_per_call": 6018,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "read-empty",
+      "sample": 1,
+      "ns_per_call": 5244,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "read-empty",
+      "sample": 2,
+      "ns_per_call": 6332,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "read-empty",
+      "sample": 3,
+      "ns_per_call": 9985,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "read-empty",
+      "sample": 4,
+      "ns_per_call": 7289,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "read-empty",
+      "sample": 5,
+      "ns_per_call": 6193,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "read-empty",
+      "sample": 6,
+      "ns_per_call": 6273,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "read-empty-max-buffer",
+      "sample": 0,
+      "ns_per_call": 63113,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "read-empty-max-buffer",
+      "sample": 1,
+      "ns_per_call": 51226,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "read-empty-max-buffer",
+      "sample": 2,
+      "ns_per_call": 47989,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "read-empty-max-buffer",
+      "sample": 3,
+      "ns_per_call": 46009,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "read-empty-max-buffer",
+      "sample": 4,
+      "ns_per_call": 55103,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "read-empty-max-buffer",
+      "sample": 5,
+      "ns_per_call": 66509,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "read-empty-max-buffer",
+      "sample": 6,
+      "ns_per_call": 45851,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "read-small",
+      "sample": 0,
+      "ns_per_call": 5034,
+      "checksum": 368000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "read-small",
+      "sample": 1,
+      "ns_per_call": 5142,
+      "checksum": 736000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "read-small",
+      "sample": 2,
+      "ns_per_call": 5988,
+      "checksum": 1104000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "read-small",
+      "sample": 3,
+      "ns_per_call": 5080,
+      "checksum": 1472000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "read-small",
+      "sample": 4,
+      "ns_per_call": 4924,
+      "checksum": 1840000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "read-small",
+      "sample": 5,
+      "ns_per_call": 5074,
+      "checksum": 2208000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "read-small",
+      "sample": 6,
+      "ns_per_call": 4933,
+      "checksum": 2576000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "read-small-max-buffer",
+      "sample": 0,
+      "ns_per_call": 47232,
+      "checksum": 368000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "read-small-max-buffer",
+      "sample": 1,
+      "ns_per_call": 46293,
+      "checksum": 736000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "read-small-max-buffer",
+      "sample": 2,
+      "ns_per_call": 46883,
+      "checksum": 1104000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "read-small-max-buffer",
+      "sample": 3,
+      "ns_per_call": 47031,
+      "checksum": 1472000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "read-small-max-buffer",
+      "sample": 4,
+      "ns_per_call": 48562,
+      "checksum": 1840000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "read-small-max-buffer",
+      "sample": 5,
+      "ns_per_call": 46078,
+      "checksum": 2208000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "read-small-max-buffer",
+      "sample": 6,
+      "ns_per_call": 45737,
+      "checksum": 2576000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "read-missing",
+      "sample": 0,
+      "ns_per_call": 4483,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "read-missing",
+      "sample": 1,
+      "ns_per_call": 4429,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "read-missing",
+      "sample": 2,
+      "ns_per_call": 4342,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "read-missing",
+      "sample": 3,
+      "ns_per_call": 4273,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "read-missing",
+      "sample": 4,
+      "ns_per_call": 4367,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "read-missing",
+      "sample": 5,
+      "ns_per_call": 4249,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "read-missing",
+      "sample": 6,
+      "ns_per_call": 4269,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "read-64k",
+      "sample": 0,
+      "ns_per_call": 12068,
+      "checksum": 131312000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "read-64k",
+      "sample": 1,
+      "ns_per_call": 12016,
+      "checksum": 262624000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "read-64k",
+      "sample": 2,
+      "ns_per_call": 12007,
+      "checksum": 393936000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "read-64k",
+      "sample": 3,
+      "ns_per_call": 11928,
+      "checksum": 525248000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "read-64k",
+      "sample": 4,
+      "ns_per_call": 11952,
+      "checksum": 656560000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "read-64k",
+      "sample": 5,
+      "ns_per_call": 11918,
+      "checksum": 787872000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "read-64k",
+      "sample": 6,
+      "ns_per_call": 14133,
+      "checksum": 919184000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "read-1m",
+      "sample": 0,
+      "ns_per_call": 139653,
+      "checksum": 2097392000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "read-1m",
+      "sample": 1,
+      "ns_per_call": 137393,
+      "checksum": 4194784000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "read-1m",
+      "sample": 2,
+      "ns_per_call": 138402,
+      "checksum": 6292176000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "read-1m",
+      "sample": 3,
+      "ns_per_call": 136860,
+      "checksum": 8389568000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "read-1m",
+      "sample": 4,
+      "ns_per_call": 137776,
+      "checksum": 10486960000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "read-1m",
+      "sample": 5,
+      "ns_per_call": 139990,
+      "checksum": 12584352000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "read-1m",
+      "sample": 6,
+      "ns_per_call": 137949,
+      "checksum": 14681744000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "read-overflow",
+      "sample": 0,
+      "ns_per_call": 4911,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "read-overflow",
+      "sample": 1,
+      "ns_per_call": 5099,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "read-overflow",
+      "sample": 2,
+      "ns_per_call": 5004,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "read-overflow",
+      "sample": 3,
+      "ns_per_call": 5136,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "read-overflow",
+      "sample": 4,
+      "ns_per_call": 5062,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "read-overflow",
+      "sample": 5,
+      "ns_per_call": 5188,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "read-overflow",
+      "sample": 6,
+      "ns_per_call": 5090,
+      "checksum": 0
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "read-deep",
+      "sample": 0,
+      "ns_per_call": 16552,
+      "checksum": 368000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "read-deep",
+      "sample": 1,
+      "ns_per_call": 16529,
+      "checksum": 736000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "read-deep",
+      "sample": 2,
+      "ns_per_call": 16441,
+      "checksum": 1104000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "read-deep",
+      "sample": 3,
+      "ns_per_call": 16595,
+      "checksum": 1472000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "read-deep",
+      "sample": 4,
+      "ns_per_call": 16336,
+      "checksum": 1840000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "read-deep",
+      "sample": 5,
+      "ns_per_call": 16476,
+      "checksum": 2208000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "read-deep",
+      "sample": 6,
+      "ns_per_call": 16443,
+      "checksum": 2576000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "list-one",
+      "sample": 0,
+      "ns_per_call": 5858,
+      "checksum": 20000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "list-one",
+      "sample": 1,
+      "ns_per_call": 5986,
+      "checksum": 40000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "list-one",
+      "sample": 2,
+      "ns_per_call": 6066,
+      "checksum": 60000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "list-one",
+      "sample": 3,
+      "ns_per_call": 6047,
+      "checksum": 80000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "list-one",
+      "sample": 4,
+      "ns_per_call": 5997,
+      "checksum": 100000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "list-one",
+      "sample": 5,
+      "ns_per_call": 5983,
+      "checksum": 120000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "list-one",
+      "sample": 6,
+      "ns_per_call": 5978,
+      "checksum": 140000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "list-one-max-buffer",
+      "sample": 0,
+      "ns_per_call": 46650,
+      "checksum": 20000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "list-one-max-buffer",
+      "sample": 1,
+      "ns_per_call": 47717,
+      "checksum": 40000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "list-one-max-buffer",
+      "sample": 2,
+      "ns_per_call": 46384,
+      "checksum": 60000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "list-one-max-buffer",
+      "sample": 3,
+      "ns_per_call": 47345,
+      "checksum": 80000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "list-one-max-buffer",
+      "sample": 4,
+      "ns_per_call": 47620,
+      "checksum": 100000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "list-one-max-buffer",
+      "sample": 5,
+      "ns_per_call": 47461,
+      "checksum": 120000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "list-one-max-buffer",
+      "sample": 6,
+      "ns_per_call": 47374,
+      "checksum": 140000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "create-remove-file",
+      "sample": 0,
+      "ns_per_call": 13745,
+      "checksum": 2000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "create-remove-file",
+      "sample": 1,
+      "ns_per_call": 13444,
+      "checksum": 4000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "create-remove-file",
+      "sample": 2,
+      "ns_per_call": 13405,
+      "checksum": 6000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "create-remove-file",
+      "sample": 3,
+      "ns_per_call": 13270,
+      "checksum": 8000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "create-remove-file",
+      "sample": 4,
+      "ns_per_call": 13320,
+      "checksum": 10000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "create-remove-file",
+      "sample": 5,
+      "ns_per_call": 13079,
+      "checksum": 12000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "create-remove-file",
+      "sample": 6,
+      "ns_per_call": 13382,
+      "checksum": 14000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "create-remove-dir",
+      "sample": 0,
+      "ns_per_call": 9516,
+      "checksum": 2000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "create-remove-dir",
+      "sample": 1,
+      "ns_per_call": 9566,
+      "checksum": 4000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "create-remove-dir",
+      "sample": 2,
+      "ns_per_call": 9715,
+      "checksum": 6000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "create-remove-dir",
+      "sample": 3,
+      "ns_per_call": 9691,
+      "checksum": 8000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "create-remove-dir",
+      "sample": 4,
+      "ns_per_call": 9931,
+      "checksum": 10000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "create-remove-dir",
+      "sample": 5,
+      "ns_per_call": 9505,
+      "checksum": 12000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "create-remove-dir",
+      "sample": 6,
+      "ns_per_call": 9342,
+      "checksum": 14000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "list-1000",
+      "sample": 0,
+      "ns_per_call": 176767,
+      "checksum": 20000000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "list-1000",
+      "sample": 1,
+      "ns_per_call": 182506,
+      "checksum": 40000000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "list-1000",
+      "sample": 2,
+      "ns_per_call": 183504,
+      "checksum": 60000000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "list-1000",
+      "sample": 3,
+      "ns_per_call": 177391,
+      "checksum": 80000000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "list-1000",
+      "sample": 4,
+      "ns_per_call": 176708,
+      "checksum": 100000000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "list-1000",
+      "sample": 5,
+      "ns_per_call": 177965,
+      "checksum": 120000000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "list-1000",
+      "sample": 6,
+      "ns_per_call": 179882,
+      "checksum": 140000000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "list-1000-max-buffer",
+      "sample": 0,
+      "ns_per_call": 222931,
+      "checksum": 20000000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "list-1000-max-buffer",
+      "sample": 1,
+      "ns_per_call": 234416,
+      "checksum": 40000000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "list-1000-max-buffer",
+      "sample": 2,
+      "ns_per_call": 221494,
+      "checksum": 60000000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "list-1000-max-buffer",
+      "sample": 3,
+      "ns_per_call": 219963,
+      "checksum": 80000000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "list-1000-max-buffer",
+      "sample": 4,
+      "ns_per_call": 222053,
+      "checksum": 100000000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "list-1000-max-buffer",
+      "sample": 5,
+      "ns_per_call": 224314,
+      "checksum": 120000000
+    },
+    {
+      "variant": "baseline",
+      "round": 2,
+      "workload": "list-1000-max-buffer",
+      "sample": 6,
+      "ns_per_call": 225254,
+      "checksum": 140000000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "read-empty",
+      "sample": 0,
+      "ns_per_call": 3347,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "read-empty",
+      "sample": 1,
+      "ns_per_call": 3148,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "read-empty",
+      "sample": 2,
+      "ns_per_call": 3006,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "read-empty",
+      "sample": 3,
+      "ns_per_call": 3029,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "read-empty",
+      "sample": 4,
+      "ns_per_call": 3172,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "read-empty",
+      "sample": 5,
+      "ns_per_call": 3157,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "read-empty",
+      "sample": 6,
+      "ns_per_call": 3476,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "read-empty-max-buffer",
+      "sample": 0,
+      "ns_per_call": 46618,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "read-empty-max-buffer",
+      "sample": 1,
+      "ns_per_call": 44461,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "read-empty-max-buffer",
+      "sample": 2,
+      "ns_per_call": 42806,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "read-empty-max-buffer",
+      "sample": 3,
+      "ns_per_call": 43196,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "read-empty-max-buffer",
+      "sample": 4,
+      "ns_per_call": 42162,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "read-empty-max-buffer",
+      "sample": 5,
+      "ns_per_call": 42170,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "read-empty-max-buffer",
+      "sample": 6,
+      "ns_per_call": 42049,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "read-small",
+      "sample": 0,
+      "ns_per_call": 3163,
+      "checksum": 368000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "read-small",
+      "sample": 1,
+      "ns_per_call": 3202,
+      "checksum": 736000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "read-small",
+      "sample": 2,
+      "ns_per_call": 3090,
+      "checksum": 1104000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "read-small",
+      "sample": 3,
+      "ns_per_call": 3218,
+      "checksum": 1472000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "read-small",
+      "sample": 4,
+      "ns_per_call": 3172,
+      "checksum": 1840000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "read-small",
+      "sample": 5,
+      "ns_per_call": 3096,
+      "checksum": 2208000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "read-small",
+      "sample": 6,
+      "ns_per_call": 3098,
+      "checksum": 2576000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "read-small-max-buffer",
+      "sample": 0,
+      "ns_per_call": 42188,
+      "checksum": 368000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "read-small-max-buffer",
+      "sample": 1,
+      "ns_per_call": 43290,
+      "checksum": 736000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "read-small-max-buffer",
+      "sample": 2,
+      "ns_per_call": 44190,
+      "checksum": 1104000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "read-small-max-buffer",
+      "sample": 3,
+      "ns_per_call": 43980,
+      "checksum": 1472000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "read-small-max-buffer",
+      "sample": 4,
+      "ns_per_call": 43035,
+      "checksum": 1840000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "read-small-max-buffer",
+      "sample": 5,
+      "ns_per_call": 44366,
+      "checksum": 2208000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "read-small-max-buffer",
+      "sample": 6,
+      "ns_per_call": 42610,
+      "checksum": 2576000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "read-missing",
+      "sample": 0,
+      "ns_per_call": 2656,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "read-missing",
+      "sample": 1,
+      "ns_per_call": 2570,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "read-missing",
+      "sample": 2,
+      "ns_per_call": 2481,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "read-missing",
+      "sample": 3,
+      "ns_per_call": 2552,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "read-missing",
+      "sample": 4,
+      "ns_per_call": 2662,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "read-missing",
+      "sample": 5,
+      "ns_per_call": 2619,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "read-missing",
+      "sample": 6,
+      "ns_per_call": 2784,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "read-64k",
+      "sample": 0,
+      "ns_per_call": 10340,
+      "checksum": 131312000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "read-64k",
+      "sample": 1,
+      "ns_per_call": 10069,
+      "checksum": 262624000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "read-64k",
+      "sample": 2,
+      "ns_per_call": 9935,
+      "checksum": 393936000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "read-64k",
+      "sample": 3,
+      "ns_per_call": 10133,
+      "checksum": 525248000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "read-64k",
+      "sample": 4,
+      "ns_per_call": 10039,
+      "checksum": 656560000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "read-64k",
+      "sample": 5,
+      "ns_per_call": 10299,
+      "checksum": 787872000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "read-64k",
+      "sample": 6,
+      "ns_per_call": 10319,
+      "checksum": 919184000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "read-1m",
+      "sample": 0,
+      "ns_per_call": 136953,
+      "checksum": 2097392000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "read-1m",
+      "sample": 1,
+      "ns_per_call": 135658,
+      "checksum": 4194784000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "read-1m",
+      "sample": 2,
+      "ns_per_call": 139350,
+      "checksum": 6292176000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "read-1m",
+      "sample": 3,
+      "ns_per_call": 142448,
+      "checksum": 8389568000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "read-1m",
+      "sample": 4,
+      "ns_per_call": 140668,
+      "checksum": 10486960000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "read-1m",
+      "sample": 5,
+      "ns_per_call": 140487,
+      "checksum": 12584352000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "read-1m",
+      "sample": 6,
+      "ns_per_call": 136376,
+      "checksum": 14681744000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "read-overflow",
+      "sample": 0,
+      "ns_per_call": 3294,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "read-overflow",
+      "sample": 1,
+      "ns_per_call": 3472,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "read-overflow",
+      "sample": 2,
+      "ns_per_call": 3458,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "read-overflow",
+      "sample": 3,
+      "ns_per_call": 3292,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "read-overflow",
+      "sample": 4,
+      "ns_per_call": 3461,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "read-overflow",
+      "sample": 5,
+      "ns_per_call": 3460,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "read-overflow",
+      "sample": 6,
+      "ns_per_call": 3472,
+      "checksum": 0
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "read-deep",
+      "sample": 0,
+      "ns_per_call": 3984,
+      "checksum": 368000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "read-deep",
+      "sample": 1,
+      "ns_per_call": 3952,
+      "checksum": 736000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "read-deep",
+      "sample": 2,
+      "ns_per_call": 3819,
+      "checksum": 1104000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "read-deep",
+      "sample": 3,
+      "ns_per_call": 3922,
+      "checksum": 1472000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "read-deep",
+      "sample": 4,
+      "ns_per_call": 4073,
+      "checksum": 1840000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "read-deep",
+      "sample": 5,
+      "ns_per_call": 3748,
+      "checksum": 2208000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "read-deep",
+      "sample": 6,
+      "ns_per_call": 3786,
+      "checksum": 2576000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "list-one",
+      "sample": 0,
+      "ns_per_call": 4083,
+      "checksum": 20000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "list-one",
+      "sample": 1,
+      "ns_per_call": 4171,
+      "checksum": 40000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "list-one",
+      "sample": 2,
+      "ns_per_call": 4263,
+      "checksum": 60000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "list-one",
+      "sample": 3,
+      "ns_per_call": 4113,
+      "checksum": 80000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "list-one",
+      "sample": 4,
+      "ns_per_call": 4186,
+      "checksum": 100000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "list-one",
+      "sample": 5,
+      "ns_per_call": 4217,
+      "checksum": 120000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "list-one",
+      "sample": 6,
+      "ns_per_call": 4086,
+      "checksum": 140000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "list-one-max-buffer",
+      "sample": 0,
+      "ns_per_call": 44287,
+      "checksum": 20000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "list-one-max-buffer",
+      "sample": 1,
+      "ns_per_call": 44642,
+      "checksum": 40000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "list-one-max-buffer",
+      "sample": 2,
+      "ns_per_call": 45274,
+      "checksum": 60000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "list-one-max-buffer",
+      "sample": 3,
+      "ns_per_call": 44850,
+      "checksum": 80000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "list-one-max-buffer",
+      "sample": 4,
+      "ns_per_call": 45404,
+      "checksum": 100000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "list-one-max-buffer",
+      "sample": 5,
+      "ns_per_call": 45018,
+      "checksum": 120000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "list-one-max-buffer",
+      "sample": 6,
+      "ns_per_call": 43919,
+      "checksum": 140000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "create-remove-file",
+      "sample": 0,
+      "ns_per_call": 9695,
+      "checksum": 2000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "create-remove-file",
+      "sample": 1,
+      "ns_per_call": 9529,
+      "checksum": 4000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "create-remove-file",
+      "sample": 2,
+      "ns_per_call": 9353,
+      "checksum": 6000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "create-remove-file",
+      "sample": 3,
+      "ns_per_call": 9533,
+      "checksum": 8000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "create-remove-file",
+      "sample": 4,
+      "ns_per_call": 9311,
+      "checksum": 10000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "create-remove-file",
+      "sample": 5,
+      "ns_per_call": 9820,
+      "checksum": 12000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "create-remove-file",
+      "sample": 6,
+      "ns_per_call": 9552,
+      "checksum": 14000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "create-remove-dir",
+      "sample": 0,
+      "ns_per_call": 6140,
+      "checksum": 2000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "create-remove-dir",
+      "sample": 1,
+      "ns_per_call": 6546,
+      "checksum": 4000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "create-remove-dir",
+      "sample": 2,
+      "ns_per_call": 6241,
+      "checksum": 6000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "create-remove-dir",
+      "sample": 3,
+      "ns_per_call": 6390,
+      "checksum": 8000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "create-remove-dir",
+      "sample": 4,
+      "ns_per_call": 6509,
+      "checksum": 10000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "create-remove-dir",
+      "sample": 5,
+      "ns_per_call": 6512,
+      "checksum": 12000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "create-remove-dir",
+      "sample": 6,
+      "ns_per_call": 5989,
+      "checksum": 14000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "list-1000",
+      "sample": 0,
+      "ns_per_call": 173507,
+      "checksum": 20000000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "list-1000",
+      "sample": 1,
+      "ns_per_call": 173631,
+      "checksum": 40000000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "list-1000",
+      "sample": 2,
+      "ns_per_call": 181038,
+      "checksum": 60000000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "list-1000",
+      "sample": 3,
+      "ns_per_call": 176187,
+      "checksum": 80000000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "list-1000",
+      "sample": 4,
+      "ns_per_call": 177572,
+      "checksum": 100000000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "list-1000",
+      "sample": 5,
+      "ns_per_call": 179042,
+      "checksum": 120000000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "list-1000",
+      "sample": 6,
+      "ns_per_call": 173175,
+      "checksum": 140000000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "list-1000-max-buffer",
+      "sample": 0,
+      "ns_per_call": 218070,
+      "checksum": 20000000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "list-1000-max-buffer",
+      "sample": 1,
+      "ns_per_call": 217360,
+      "checksum": 40000000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "list-1000-max-buffer",
+      "sample": 2,
+      "ns_per_call": 216901,
+      "checksum": 60000000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "list-1000-max-buffer",
+      "sample": 3,
+      "ns_per_call": 222528,
+      "checksum": 80000000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "list-1000-max-buffer",
+      "sample": 4,
+      "ns_per_call": 227622,
+      "checksum": 100000000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "list-1000-max-buffer",
+      "sample": 5,
+      "ns_per_call": 218370,
+      "checksum": 120000000
+    },
+    {
+      "variant": "candidate",
+      "round": 2,
+      "workload": "list-1000-max-buffer",
+      "sample": 6,
+      "ns_per_call": 214666,
+      "checksum": 140000000
+    }
+  ]
+}

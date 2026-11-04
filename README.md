@@ -98,7 +98,9 @@ zero progress, disk-full and close failures. GCC/Clang ASan/UBSan exercise the p
 interface and native kernel. Goose uses mmap-backed data stacks; sanitizers do not
 independently cover every logical array lifetime or bound, so debug checks and
 independent oracles are also required. CI smoke-runs [benchmarks](bench/README.md)
-without timing thresholds. No universal performance claim is made.
+without timing thresholds. See the [measured audit results](bench/results/2026-11-04/README.md)
+for all workloads, raw samples and reproduction commands. No universal performance
+claim is made.
 
 The first version excludes recursive operations, locks, temp-directory lifecycle,
 path normalization, atomic publication, streaming and Windows support.
