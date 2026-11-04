@@ -4,6 +4,7 @@ SANITIZER_CC ?= gcc
 BENCH_CC ?= gcc
 BENCH_ITERATIONS ?= 100
 CFLAGS = -std=c11 -Wall -Wextra -Werror -pthread
+FILE_META_WRAP = -Wl,--wrap=fchmod -Wl,--wrap=fchown -Wl,--wrap=futimens
 RENAME_WRAP = -Wl,--wrap=syscall -Wl,--wrap=renameat -Wl,--wrap=openat -Wl,--wrap=close -Wl,--wrap=fsync
 LIST_WRAP = -Wl,--wrap=readdir -Wl,--wrap=closedir -Wl,--wrap=close -Wl,--wrap=openat -Wl,--wrap=fdopendir
 ROOT_WRAP = -Wl,--wrap=syscall -Wl,--wrap=openat -Wl,--wrap=fcntl -Wl,--wrap=fstat -Wl,--wrap=ftruncate -Wl,--wrap=close
@@ -20,6 +21,7 @@ format:
 check:
 	python3 scripts/native-manifest.py --check
 	$(GOOSE) format --check fs.goose tests examples bench
+	$(GOOSE) check tests/file_metadata.goose
 	$(GOOSE) check tests/rename.goose
 	$(GOOSE) check tests/listing.goose
 	$(GOOSE) check tests/api.goose
@@ -82,6 +84,11 @@ test:
 	$(GOOSE) build tests/path_grammar.goose --cc $(CC) --debug --no-bce -o .build/path-grammar-debug
 	$(CC) $(CFLAGS) -O2 -shared -fPIC native/fs.c -o .build/path-grammar-native.so
 	python3 tests/path_grammar.py .build/path-grammar .build/path-grammar-debug .build/path-grammar-native.so
+	python3 tests/run.py $(abspath $(GOOSE)) run tests/file_metadata.goose --
+	$(GOOSE) build tests/file_metadata.goose --cc $(CC) -O2 -o .build/file-metadata
+	python3 tests/run.py .build/file-metadata
+	$(GOOSE) build tests/file_metadata.goose --cc $(CC) --debug --no-bce -o .build/file-metadata-debug
+	python3 tests/run.py .build/file-metadata-debug
 	python3 tests/run.py $(abspath $(GOOSE)) run tests/rename.goose --
 	$(GOOSE) build tests/rename.goose --cc $(CC) -O2 -o .build/rename
 	python3 tests/run.py .build/rename
@@ -102,6 +109,10 @@ handles:
 	$(CC) $(CFLAGS) -O2 -shared -fPIC native/fs.c native/handles.c -o .build/fs-handles.so
 	python3 tests/listing_model.py .build/listing .build/listing-debug
 	python3 tests/handles_model.py
+	python3 tests/file_metadata_model.py
+	python3 tests/file_metadata_credentials.py
+	$(CC) $(CFLAGS) -O2 tests/file_metadata_native.c native/fs.c $(FILE_META_WRAP) -o .build/file-metadata-native
+	python3 tests/run.py .build/file-metadata-native
 	python3 tests/locks_model.py
 	python3 tests/roots_model.py
 	python3 tests/rename_model.py
@@ -113,12 +124,14 @@ handles:
 	$(CC) $(CFLAGS) -O2 -shared -fPIC native/fs.c native/handles.c tests/no-openat2.c -Wl,--wrap=syscall -o .build/fs-handles-fallback.so
 	FS_HANDLES_LIBRARY=$(abspath .build/fs-handles-fallback.so) python3 tests/listing_model.py
 	FS_HANDLES_LIBRARY=$(abspath .build/fs-handles-fallback.so) python3 tests/handles_model.py
+	FS_HANDLES_LIBRARY=$(abspath .build/fs-handles-fallback.so) python3 tests/file_metadata_model.py
 	FS_HANDLES_LIBRARY=$(abspath .build/fs-handles-fallback.so) python3 tests/roots_model.py
 	FS_HANDLES_LIBRARY=$(abspath .build/fs-handles-fallback.so) python3 tests/rename_model.py
 	$(CC) $(CFLAGS) -O2 -shared -fPIC -DGF_DENIED_ERRNO=EPERM native/fs.c native/handles.c tests/no-openat2.c -Wl,--wrap=syscall -o .build/fs-handles-denied.so
 	FS_HANDLES_LIBRARY=$(abspath .build/fs-handles-denied.so) python3 tests/rename_model.py
 	$(CC) $(CFLAGS) -O2 -shared -fPIC native/fs.c native/handles.c -Wl,--wrap=statx -o .build/fs-handles-no-statx.so
 	FS_HANDLES_LIBRARY=$(abspath .build/fs-handles-no-statx.so) python3 tests/handles_model.py
+	FS_HANDLES_LIBRARY=$(abspath .build/fs-handles-no-statx.so) python3 tests/file_metadata_model.py
 	FS_HANDLES_LIBRARY=$(abspath .build/fs-handles-no-statx.so) python3 tests/roots_model.py
 	$(CC) $(CFLAGS) -O2 tests/handles_native.c native/fs.c $(HANDLE_WRAP) -o .build/handles-native
 	python3 tests/run.py .build/handles-native
@@ -162,6 +175,10 @@ fallback:
 	FS_NATIVE_LIBRARY=$(abspath .build/fs-denied.so) python3 tests/stress.py
 sanitize:
 	mkdir -p .build
+	$(SANITIZER_CC) $(CFLAGS) -O1 -g -fno-omit-frame-pointer -fsanitize=address,undefined -no-pie tests/file_metadata_native.c native/fs.c $(FILE_META_WRAP) -o .build/file-metadata-native-sanitize
+	ASAN_OPTIONS=detect_leaks=1:abort_on_error=1 UBSAN_OPTIONS=halt_on_error=1 python3 tests/run.py .build/file-metadata-native-sanitize
+	SANITIZER_CC=$(SANITIZER_CC) $(GOOSE) build tests/file_metadata.goose --debug --no-bce --cc $(abspath scripts/sanitizer-cc.sh) -o .build/file-metadata-sanitize
+	ASAN_OPTIONS=detect_leaks=1:abort_on_error=1 UBSAN_OPTIONS=halt_on_error=1 python3 tests/run.py .build/file-metadata-sanitize
 	$(SANITIZER_CC) $(CFLAGS) -O1 -g -fno-omit-frame-pointer -fsanitize=address,undefined -no-pie tests/rename_native.c native/fs.c $(RENAME_WRAP) -o .build/rename-native-sanitize
 	ASAN_OPTIONS=detect_leaks=1:abort_on_error=1 UBSAN_OPTIONS=halt_on_error=1 python3 tests/run.py .build/rename-native-sanitize
 	$(SANITIZER_CC) $(CFLAGS) -O1 -g -fno-omit-frame-pointer -fsanitize=address,undefined -no-pie -DGF_RENAME_FORCE_FALLBACK=1 tests/rename_native.c native/fs.c $(RENAME_WRAP) -o .build/rename-native-fallback-sanitize

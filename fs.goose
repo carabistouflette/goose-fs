@@ -523,3 +523,37 @@ fn rename_at(root: Root, from: const u8[:], to: const u8[:], options: RenameOpti
     let code = native_root_rename(root.context.id, root.id, from, to, flags, meta[..]);
     return rename_result(code, meta[..]);
 }
+
+// Metadata setters use the held File inode; no pathname is resolved again.
+extern fn native_file_set_permissions(context: i64, file: i64, mode: i64, meta: i64[:]) -> i64 = "gf_file_set_permissions";
+extern fn native_file_set_owner(context: i64, file: i64, uid: i64, gid: i64, meta: i64[:]) -> i64 = "gf_file_set_owner";
+extern fn native_file_set_times(context: i64, file: i64, accessed_action: i64, accessed_seconds: i64, accessed_nanos: i64,
+                              modified_action: i64, modified_seconds: i64, modified_nanos: i64, meta: i64[:]) -> i64 = "gf_file_set_times";
+fn set_permissions(file: File, mode: u32) -> Status {
+    if mode > 4095 { return Status { error: Error.InvalidInput }; }
+    var meta: i64[3] = [0; 3];
+    let code = native_file_set_permissions(file.context.id, file.id, mode, meta[..]);
+    return status(code, meta[0]);
+}
+fn set_owner(file: File, uid: i64, gid: i64) -> Status {
+    if uid < -1 || uid > 4294967294 || gid < -1 || gid > 4294967294 { return Status { error: Error.InvalidInput }; }
+    var meta: i64[3] = [0; 3];
+    let code = native_file_set_owner(file.context.id, file.id, uid, gid, meta[..]);
+    return status(code, meta[0]);
+}
+enum TimeAction { Keep, Now, Exact }
+struct TimeUpdate { action: TimeAction = TimeAction.Keep, value: Timestamp = Timestamp { .. } }
+fn time_action(update: TimeUpdate) -> i64 {
+    if update.action == TimeAction.Keep { return 0; }
+    if update.action == TimeAction.Now { return 1; }
+    if update.action == TimeAction.Exact && update.value.nanoseconds >= 0 && update.value.nanoseconds <= 999999999 { return 2; }
+    return -1;
+}
+fn set_times(file: File, accessed: TimeUpdate, modified: TimeUpdate) -> Status {
+    let a = time_action(accessed); let m = time_action(modified);
+    if a < 0 || m < 0 { return Status { error: Error.InvalidInput }; }
+    var meta: i64[3] = [0; 3];
+    let code = native_file_set_times(file.context.id, file.id, a, accessed.value.seconds, accessed.value.nanoseconds,
+                                    m, modified.value.seconds, modified.value.nanoseconds, meta[..]);
+    return status(code, meta[0]);
+}

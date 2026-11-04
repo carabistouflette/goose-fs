@@ -365,6 +365,51 @@ int64_t gf_file_sync(int64_t context, int64_t id, bool data_only, gf_meta meta) 
     unlock_resource(ctx, file);
     return result(meta, error);
 }
+/* Metadata changes target the held inode, including after rename/unlink.
+ * Access mode does not replace the kernel's ownership/permission checks. */
+int64_t gf_file_set_permissions(int64_t context, int64_t id, int64_t mode, gf_meta meta) {
+    if (!meta_valid(meta)) return GF_INVALID;
+    if (mode < 0 || mode > 07777) return GF_INVALID;
+    context_slot *ctx; int error;
+    resource_slot *file = lock_resource(context,id,RESOURCE_FILE,true,&ctx,&error);
+    if (!file) return result(meta,error);
+    if (fchmod(file->fd,(mode_t)mode) < 0) error = errno;
+    unlock_resource(ctx,file);
+    return result(meta,error);
+}
+int64_t gf_file_set_owner(int64_t context, int64_t id, int64_t uid, int64_t gid, gf_meta meta) {
+    if (!meta_valid(meta)) return GF_INVALID;
+    if (uid < -1 || uid > (int64_t)UINT32_MAX-1 || gid < -1 || gid > (int64_t)UINT32_MAX-1) return GF_INVALID;
+    context_slot *ctx; int error;
+    resource_slot *file = lock_resource(context,id,RESOURCE_FILE,true,&ctx,&error);
+    if (!file) return result(meta,error);
+    if (fchown(file->fd,(uid_t)uid,(gid_t)gid) < 0) error = errno;
+    unlock_resource(ctx,file);
+    return result(meta,error);
+}
+static bool metadata_time(int64_t action, int64_t seconds, int64_t nanos, struct timespec *time) {
+    if (action < 0 || action > 2 || (action == 2 && (nanos < 0 || nanos > 999999999))) return false;
+    time->tv_sec = action == 2 ? (time_t)seconds : 0;
+    time->tv_nsec = action == 0 ? UTIME_OMIT : action == 1 ? UTIME_NOW : (long)nanos;
+    return true;
+}
+int64_t gf_file_set_times(int64_t context, int64_t id,
+                          int64_t accessed_action, int64_t accessed_seconds, int64_t accessed_nanos,
+                          int64_t modified_action, int64_t modified_seconds, int64_t modified_nanos, gf_meta meta) {
+    _Static_assert(sizeof(time_t) == sizeof(int64_t), "goose-fs requires 64-bit time_t");
+    if (!meta_valid(meta)) return GF_INVALID;
+    struct timespec times[2];
+    if (!metadata_time(accessed_action,accessed_seconds,accessed_nanos,&times[0]) ||
+        !metadata_time(modified_action,modified_seconds,modified_nanos,&times[1])) return GF_INVALID;
+    context_slot *ctx; int error;
+    resource_slot *file = lock_resource(context,id,RESOURCE_FILE,true,&ctx,&error);
+    if (!file) return result(meta,error);
+    /* Do not retry metadata mutations after an error, even EINTR. */
+    if (futimens(file->fd,times) < 0) error = errno;
+    unlock_resource(ctx,file);
+    return result(meta,error);
+}
+
 static int64_t resource_metadata(int64_t context, int64_t id, int kind, gf_meta fields) {
     if (fields.len != 18 || !fields.data) return GF_INVALID;
     memset(fields.data, 0, 18 * sizeof(int64_t));

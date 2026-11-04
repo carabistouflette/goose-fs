@@ -139,3 +139,8 @@ is thread-safe but not async-signal-safe. ContextClose cannot cancel I/O and may
 wait indefinitely. No deadline, global termination or lock-acquisition fairness
 is guaranteed. glibc uses writer-preferred nonrecursive rwlocks; other Linux libcs
 use their native default policy and have not received the full libc test matrix.
+
+
+Held File permission, numeric owner/group and atime/mtime setters are documented
+in [FILE-METADATA.md](FILE-METADATA.md). They use the held inode without another
+pathname lookup, including after unlink, and do not implicitly synchronize.

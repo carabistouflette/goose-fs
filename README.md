@@ -38,6 +38,7 @@ For Git dependencies, pin a reviewed full commit rather than a moving branch. Se
 | `metadata(path, out)` | Inspect final-entry type, identity, size, permissions and timestamps without following links |
 | `exists(path)`, `is_dir(path)` | Error-preserving, no-follow entry predicates |
 | `list_sorted(path, byte_limit, entry_limit, out)` | Bytewise sorted owned entries |
+| `set_permissions(file, mode)`, `set_owner(file, uid, gid)`, `set_times(file, accessed, modified)` | [Held-inode metadata changes](docs/FILE-METADATA.md) |
 | `rename(from, to, options)`, `rename_at(root, from, to, options)` | Move entries with replace/no-replace, explicit outcomes and optional checked parent sync |
 | Root APIs | Held-directory relative reads/listings/metadata/create/remove and child Roots; see [Root contract](docs/ROOTS.md) |
 | Context/File APIs | Explicit resource ownership, bounded streaming/positioned I/O, duplicate/seek/truncate/sync and held-file metadata; see [File contract](docs/HANDLES.md) |
@@ -101,7 +102,10 @@ make bench BENCH_ITERATIONS=100
 Builds need Linux headers providing openat2 (5.6+); older runtime kernels use
 the descriptor-walk fallback. NoReplace rename also needs runtime renameat2 and
 filesystem support; unsupported requests return an error. The full rename tests
-use a local filesystem supporting NoReplace and directory fsync.
+use a local filesystem supporting NoReplace and directory fsync. Public metadata
+setter fixtures also require POSIX mode changes, nanosecond timestamps, and dates
+before the Epoch and after 2038; the differential model compares actual filesystem
+rounding against direct OS calls.
 ENOSYS/EPERM trigger the parent-lookup fallback without caching
 global feature state. Setup requires Git, CMake 3.27+, C/C++20 compilers and Make. Tests require Python
 3.11+, Linux `/proc`, GCC and Clang for the full matrix. The retained-handle capacity

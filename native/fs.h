@@ -29,6 +29,11 @@ int64_t gf_file_write(int64_t context, int64_t file, gf_input data, int64_t offs
 int64_t gf_file_seek(int64_t context, int64_t file, int64_t offset, int64_t origin, gf_meta meta);
 int64_t gf_file_truncate(int64_t context, int64_t file, int64_t size, gf_meta meta);
 int64_t gf_file_sync(int64_t context, int64_t file, _Bool data_only, gf_meta meta);
+int64_t gf_file_set_permissions(int64_t context, int64_t file, int64_t mode, gf_meta meta);
+int64_t gf_file_set_owner(int64_t context, int64_t file, int64_t uid, int64_t gid, gf_meta meta);
+int64_t gf_file_set_times(int64_t context, int64_t file,
+                         int64_t accessed_action, int64_t accessed_seconds, int64_t accessed_nanos,
+                         int64_t modified_action, int64_t modified_seconds, int64_t modified_nanos, gf_meta meta);
 int64_t gf_file_metadata(int64_t context, int64_t file, gf_meta fields);
 int64_t gf_file_try_lock(int64_t context, int64_t file, int64_t mode, gf_meta meta);
 _Bool gf_lock_contended(int64_t error);
