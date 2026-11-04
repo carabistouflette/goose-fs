@@ -98,6 +98,21 @@ with tempfile.TemporaryDirectory(prefix='goose-fs-boundary-') as temp:
     (root/'extra').touch()
     assert call(1, root, limit=1048576)[0] == 2
 
+# Resolve an actually existing maximum-length pathname, not merely its grammar.
+assert call(0, '/', limit=1)[0] == 3
+assert call(2, '/', b'x')[0] == 1
+with tempfile.TemporaryDirectory(prefix='goose-fs-path-') as temp:
+    parent = Path(temp)
+    for i in range(20):
+        parent = parent / ('d'*199 + str(i % 10))
+        parent.mkdir()
+    target = parent / ('f'*(4095-len(os.fsencode(parent))-1))
+    assert len(os.fsencode(target)) == 4095
+    target.write_bytes(b'maximum')
+    assert call(0, target, limit=7)[:2] == (0, b'maximum')
+    assert call(0, str(target)+'x', limit=7)[0] == 1
+    assert call(4, target)[0] == 0
+
 with tempfile.TemporaryDirectory(prefix='goose-fs-stdio-') as temp:
     root = Path(temp)
     (root/'file').write_bytes(b'data')

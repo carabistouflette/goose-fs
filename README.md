@@ -76,7 +76,9 @@ make sanitize SANITIZER_CC=clang
 make bench BENCH_ITERATIONS=100
 ```
 
-Setup requires Git, CMake 3.27+, C/C++20 compilers and Make. Tests require Python
+Builds need Linux headers providing openat2 (5.6+); older runtime kernels use
+the descriptor-walk fallback. ENOSYS/EPERM trigger that fallback without caching
+global feature state. Setup requires Git, CMake 3.27+, C/C++20 compilers and Make. Tests require Python
 3.11+, Linux `/proc`, GCC and Clang for the full matrix. GOOSE_REVISION pins the
 same compiler as goose-json. An existing matching binary can be selected with
 `make GOOSE=/absolute/path/to/goose ...`. Compatibility with other revisions is
@@ -85,7 +87,8 @@ Run one Make invocation per checkout; Goose shares generated C output paths.
 
 Validation includes JIT/native/debug public behavior, ownership and immutable-bound
 compile rejections, consumer-overload isolation, an independent Python filesystem
-oracle, binary names and contents, symlinks/FIFOs/devices, descriptor leaks, protected
+oracle, binary names and contents, symlinks/FIFOs/devices, descriptor leaks, concurrent symlink swaps, exact maximum listing limits,
+closed standard descriptors, forced syscall fallbacks, protected
 buffer boundaries, malformed private ABI inputs, and injected short I/O, EINTR,
 zero progress, disk-full and close failures. GCC/Clang ASan/UBSan exercise the public
 interface and native kernel. Goose uses mmap-backed data stacks; sanitizers do not

@@ -7,9 +7,11 @@
 #include <dirent.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <linux/openat2.h>
 #include <stdbool.h>
 #include <string.h>
 #include <sys/stat.h>
+#include <sys/syscall.h>
 #include <unistd.h>
 
 enum { OK, INVALID, LIMIT, NOT_REGULAR, SYSTEM };
@@ -42,7 +44,7 @@ static bool path_copy(gf_input path, char text[MAX_PATH + 1]) {
 }
 
 /* Return parent descriptor and a leaf in text; every ancestor rejects symlinks. */
-static int parent(char *text, char **leaf) {
+static int parent_walk(char *text, char **leaf) {
     int fd = open("/", O_PATH | O_DIRECTORY | O_CLOEXEC);
     if (fd < 0) return -1;
     char *part = text + 1, *slash;
@@ -56,6 +58,24 @@ static int parent(char *text, char **leaf) {
     }
     *leaf = *part ? part : ".";
     return fd;
+}
+
+/* A single kernel path walk preserves the same all-component no-symlink policy.
+ * No cached feature state: older kernels and seccomp-denied syscalls use the
+ * descriptor walker. Other lookup failures are returned unchanged. */
+static int parent(char *text, char **leaf) {
+    char *separator = strrchr(text, '/'); /* path_copy guarantees an absolute path. */
+    *separator = 0;
+    const char *directory = separator == text ? "/" : text;
+    struct open_how how = { .flags = O_PATH | O_DIRECTORY | O_CLOEXEC,
+                            .resolve = RESOLVE_NO_SYMLINKS };
+    int fd = (int)syscall(SYS_openat2, AT_FDCWD, directory, &how, sizeof how);
+    int saved = errno;
+    *separator = '/';
+    if (fd >= 0) { *leaf = separator[1] ? separator + 1 : "."; return fd; }
+    if (saved == ENOSYS || saved == EPERM) return parent_walk(text, leaf);
+    errno = saved;
+    return -1;
 }
 
 static int read_regular(int dir, const char *leaf, gf_output out, int64_t *length) {

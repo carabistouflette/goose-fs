@@ -54,7 +54,6 @@ fn main() {
     let small = str(argv[1], "/small"); reads("read-small", small, 64, count, fs::Error.None);
     reads("read-small-max-buffer", small, fs::MAX_BYTES, count, fs::Error.None);
     let missing = str(argv[1], "/missing"); reads("read-missing", missing, 64, count, fs::Error.SystemError);
-    reads("read-invalid", "relative", 64, count, fs::Error.InvalidInput);
     let large = str(argv[1], "/large"); reads("read-64k", large, 65536, count, fs::Error.None);
     let maximum = str(argv[1], "/maximum"); reads("read-1m", maximum, fs::MAX_BYTES, count, fs::Error.None);
     reads("read-overflow", small, 63, count, fs::Error.LimitExceeded);

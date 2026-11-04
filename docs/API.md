@@ -5,8 +5,11 @@ Experimental Linux-only interface; byte-oriented paths and contents. No release 
 All paths are absolute, at most 4095 bytes, with no NUL, empty, `.` or `..`
 components, and no trailing slash. `/` is accepted only by read/list (read reports
 NotRegular). Component size limits are enforced by the OS. Invalid UTF-8 is allowed.
-Each directory component is opened relative to the preceding descriptor with
-O_NOFOLLOW and O_DIRECTORY. Reads/listing reject final symlinks too. No process
+Parent directories are resolved with Linux openat2 RESOLVE_NO_SYMLINKS. If the
+syscall returns ENOSYS (older kernel) or EPERM (including seccomp denial), a
+component-by-component O_NOFOLLOW/O_DIRECTORY descriptor walk enforces the same
+policy. EPERM is retried by that walker; its final result/errno is returned.
+Other lookup failures are propagated without retry. Reads/listing reject final symlinks too. No process
 cwd/umask changes, global mutable state, or retained descriptors.
 
 This is a path-resolution policy, not confinement: hard links, mount points and

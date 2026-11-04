@@ -13,7 +13,7 @@ import tempfile
 signal.alarm(60)
 class Slice(C.Structure):
     _fields_ = [('data', C.c_void_p), ('len', C.c_int64)]
-lib = C.CDLL(str(Path(__file__).resolve().parent.parent / '.build/fs.so'))
+lib = C.CDLL(os.environ.get('FS_NATIVE_LIBRARY', str(Path(__file__).resolve().parent.parent / '.build/fs.so')))
 call = lib.gf_call
 call.argtypes = [C.c_int64, Slice, Slice, C.c_int64, Slice, Slice]
 call.restype = C.c_int64

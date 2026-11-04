@@ -4,9 +4,36 @@
 #include <dirent.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <stdarg.h>
+#include <sys/stat.h>
 #include <unistd.h>
 static int read_mode, write_mode, close_mode, directory_mode, closedir_mode;
 static int read_progress, write_progress;
+static int stat_mode, directory_open_mode, open_mode;
+int __real_fstat(int, struct stat *);
+DIR *__real_fdopendir(int);
+int __real_openat(int, const char *, ...);
+int __wrap_fstat(int fd, struct stat *st) {
+    if (stat_mode) { stat_mode = 0; errno = EIO; return -1; }
+    return __real_fstat(fd, st);
+}
+DIR *__wrap_fdopendir(int fd) {
+    if (directory_open_mode) { directory_open_mode = 0; errno = ENOMEM; return NULL; }
+    return __real_fdopendir(fd);
+}
+int __wrap_openat(int dir, const char *path, int flags, ...) {
+    if (open_mode) { open_mode = 0; errno = EACCES; return -1; }
+    int mode = 0;
+    if (flags & O_CREAT) {
+        va_list args; va_start(args, flags); mode = va_arg(args, int); va_end(args);
+    }
+    return __real_openat(dir, path, flags, mode);
+}
+static int descriptors(void) {
+    DIR *dir = opendir("/proc/self/fd"); assert(dir);
+    int n = 0; while (readdir(dir)) ++n;
+    assert(!closedir(dir)); return n;
+}
 ssize_t __real_read(int, void *, size_t);
 ssize_t __real_write(int, const void *, size_t);
 int __real_close(int);
@@ -68,7 +95,16 @@ int main(int argc, char **argv) {
         if (!code) assert(m[1] == 6 && !memcmp(out, "abcdef", 6));
         else assert(m[0] == EIO && !m[1]);
     }
-    read_mode = 0; close_mode = 1;
+    read_mode = 0;
+    int before = descriptors();
+    stat_mode = 1; close_mode = 1;
+    assert(invoke(0, path, "", out, 6, m) == 4 && m[0] == EIO && !m[1]);
+    directory_open_mode = 1; close_mode = 1;
+    assert(invoke(1, argv[1], "", out, 100, m) == 4 && m[0] == ENOMEM && !m[1]);
+    open_mode = 1;
+    assert(invoke(0, path, "", out, 6, m) == 4 && m[0] == EACCES && !m[1]);
+    assert(descriptors() == before);
+    close_mode = 1;
     assert(invoke(0, path, "", out, 6, m) == 4 && m[0] == EINTR && !m[1]);
     directory_mode = 1;
     assert(invoke(1, argv[1], "", out, 100, m) == 4 && m[0] == EIO && !m[1]);

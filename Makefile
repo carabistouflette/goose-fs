@@ -4,8 +4,9 @@ SANITIZER_CC ?= gcc
 BENCH_CC ?= gcc
 BENCH_ITERATIONS ?= 100
 CFLAGS = -std=c11 -Wall -Wextra -Werror
+WRAP_FLAGS = -Wl,--wrap=read -Wl,--wrap=write -Wl,--wrap=close -Wl,--wrap=readdir -Wl,--wrap=closedir -Wl,--wrap=fstat -Wl,--wrap=fdopendir -Wl,--wrap=openat
 .NOTPARALLEL:
-.PHONY: setup format check test native sanitize bench
+.PHONY: setup format check test native fallback sanitize bench
 setup:
 	./scripts/setup-goose.sh
 format:
@@ -37,8 +38,19 @@ native:
 	python3 tests/stress.py
 	$(CC) $(CFLAGS) -O2 tests/native.c native/fs.c -o .build/native
 	python3 tests/run.py .build/native
-	$(CC) $(CFLAGS) -O2 tests/failures.c native/fs.c -Wl,--wrap=read -Wl,--wrap=write -Wl,--wrap=close -Wl,--wrap=readdir -Wl,--wrap=closedir -o .build/failures
+	$(CC) $(CFLAGS) -O2 tests/failures.c native/fs.c $(WRAP_FLAGS) -o .build/failures
 	python3 tests/run.py .build/failures
+	$(MAKE) fallback
+fallback:
+	mkdir -p .build
+	$(CC) $(CFLAGS) -O2 tests/failures.c native/fs.c tests/no-openat2.c $(WRAP_FLAGS) -Wl,--wrap=syscall -o .build/failures-fallback
+	python3 tests/run.py .build/failures-fallback
+	$(CC) $(CFLAGS) -O2 -shared -fPIC native/fs.c tests/no-openat2.c -Wl,--wrap=syscall -o .build/fs-fallback.so
+	FS_NATIVE_LIBRARY=$(abspath .build/fs-fallback.so) python3 tests/model.py
+	FS_NATIVE_LIBRARY=$(abspath .build/fs-fallback.so) python3 tests/stress.py
+	$(CC) $(CFLAGS) -O2 -shared -fPIC -DGF_DENIED_ERRNO=EPERM native/fs.c tests/no-openat2.c -Wl,--wrap=syscall -o .build/fs-denied.so
+	FS_NATIVE_LIBRARY=$(abspath .build/fs-denied.so) python3 tests/model.py
+	FS_NATIVE_LIBRARY=$(abspath .build/fs-denied.so) python3 tests/stress.py
 sanitize:
 	mkdir -p .build
 	python3 scripts/native-manifest.py --check
@@ -46,8 +58,10 @@ sanitize:
 	ASAN_OPTIONS=detect_leaks=1:abort_on_error=1 UBSAN_OPTIONS=halt_on_error=1 python3 tests/run.py --api .build/api-sanitize
 	$(SANITIZER_CC) $(CFLAGS) -O1 -g -fno-omit-frame-pointer -fsanitize=address,undefined -no-pie tests/native.c native/fs.c -o .build/native-sanitize
 	ASAN_OPTIONS=detect_leaks=1:abort_on_error=1 UBSAN_OPTIONS=halt_on_error=1 python3 tests/run.py .build/native-sanitize
-	$(SANITIZER_CC) $(CFLAGS) -O1 -g -fno-omit-frame-pointer -fsanitize=address,undefined -no-pie tests/failures.c native/fs.c -Wl,--wrap=read -Wl,--wrap=write -Wl,--wrap=close -Wl,--wrap=readdir -Wl,--wrap=closedir -o .build/failures-sanitize
+	$(SANITIZER_CC) $(CFLAGS) -O1 -g -fno-omit-frame-pointer -fsanitize=address,undefined -no-pie tests/failures.c native/fs.c $(WRAP_FLAGS) -o .build/failures-sanitize
 	ASAN_OPTIONS=detect_leaks=1:abort_on_error=1 UBSAN_OPTIONS=halt_on_error=1 python3 tests/run.py .build/failures-sanitize
+	$(SANITIZER_CC) $(CFLAGS) -O1 -g -fno-omit-frame-pointer -fsanitize=address,undefined -no-pie tests/native.c native/fs.c tests/no-openat2.c -Wl,--wrap=syscall -o .build/fallback-sanitize
+	ASAN_OPTIONS=detect_leaks=1:abort_on_error=1 UBSAN_OPTIONS=halt_on_error=1 python3 tests/run.py .build/fallback-sanitize
 bench:
 	python3 scripts/native-manifest.py --check
 	mkdir -p .build
