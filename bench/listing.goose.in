@@ -4,10 +4,7 @@ import std;
 import os;
 fn listing(path: const u8[:], root: fs::Root, api: i64, budget: i64, entries: fs::Entry[>..]&) {
     var result = fs::Status { .. };
-    if api == 0 { result = fs::list(path, budget, fs::MAX_ENTRIES, entries); }
-    if api == 1 { result = fs::list_sorted(path, budget, fs::MAX_ENTRIES, entries); }
-    if api == 2 { result = fs::list_at(root, ".", budget, fs::MAX_ENTRIES, entries); }
-    if api == 3 { result = fs::list_sorted_at(root, ".", budget, fs::MAX_ENTRIES, entries); }
+@LISTING_CALLS@
     assert(result.error == fs::Error.None && result.os_error == 0);
 }
 fn main() {

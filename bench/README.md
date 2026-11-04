@@ -10,9 +10,11 @@ Read/list samples are mean nanoseconds per call including loop/status/checksum
 overhead. Mutation samples are nanoseconds per **create/remove pair**, containing
 two public calls. Timers stop before output formatting. Output buffers are warmed
 and reused; results are consumed in checksums. Listings still stage scratch each
-call. Maximum-buffer reads initialize growth up to 1 MiB per call. Listings start
-with min(budget, 64 KiB); stable results larger than that take a sizing pass and a
-complete retry. Right-sized short listing workloads use 12/12000 bytes.
+call. Maximum-buffer reads initialize growth up to 1 MiB per call. Existing
+listing calls and ListOptions.adaptive=false initialize the full budget and
+enumerate once. Explicit adaptive=true starts with min(budget, 64 KiB); stable
+larger results take a sizing pass and a complete retry. Right-sized short
+listing workloads use 12/12000 bytes.
 No uninitialized storage is exposed to Goose.
 
 Metadata records CPU/OS, temporary filesystem type, compiler, flags, compiler pin,
@@ -50,18 +52,20 @@ timeout is one hour; `--timeout SECONDS` changes it.
 
 The paired listing harness covers all four absolute/Root, unsorted/sorted APIs,
 exact/maximum budgets, short names and payloads around 64 KiB through 1 MiB.
-Both variants use the same current harness. Build from a trusted baseline commit:
+Baseline, current full staging and current adaptive staging use the same
+sampling harness; the builder renders their respective public API calls. Build from a trusted baseline commit:
 
 ```sh
 python3 bench/listing-build.py --goose /path/to/goose --cc gcc \
   --baseline-revision FULL_COMMIT
 python3 bench/listing-measure.py --goose /path/to/goose --cc gcc \
-  --baseline .build/listing-pair/baseline --candidate .build/listing-pair/candidate \
+  --baseline .build/listing-pair/baseline --full .build/listing-pair/full \
+  --adaptive .build/listing-pair/adaptive \
   --baseline-revision FULL_COMMIT --build-manifest .build/listing-pair/build.json \
   --rounds 5 --iterations 5 --output .build/listing-pair/raw.json
 ```
 
-The builder records native/source/harness/compiler and executable hashes. The
+The builder records native/source/template/rendered-harness/compiler and executable hashes. The
 runner verifies that manifest before measurement and inputs again afterward.
 Complete filename/order checks precede timing; timed calls consume entry counts,
 name lengths and endpoints. Seven samples per process include all public calls,

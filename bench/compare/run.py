@@ -18,6 +18,7 @@ p=argparse.ArgumentParser(description=__doc__)
 p.add_argument('--goose',required=True)
 p.add_argument('--cc',default='gcc')
 p.add_argument('--rust-toolchain',default='1.99.1')
+p.add_argument('--adaptive-listing',action='store_true',help='require the adaptive staging build profile')
 p.add_argument('--iterations',type=int,default=100)
 p.add_argument('--rounds',type=int,default=3)
 p.add_argument('--seed',type=int,default=20261104)
@@ -36,10 +37,10 @@ try:
 except (OSError,ValueError) as error:
     p.error(f'missing/invalid build manifest; rebuild runners: {error}')
 def verify_build():
-    if (build.get('schema')!=1 or build.get('source_sha256')!=sources()
+    if (build.get('schema')!=1 or build.get('adaptive_listing')!=a.adaptive_listing or build.get('source_sha256')!=sources()
         or build.get('binaries_sha256')!={name:sha256(path) for name,path in paths.items()}
         or build.get('toolchains')!=toolchains(str(Path(a.goose).resolve()),a.cc,a.rust_toolchain)):
-        p.error('build source, binary or toolchain mismatch; rebuild runners with the requested toolchains')
+        p.error('build source, binary, profile or toolchain mismatch; rebuild runners with the requested profile/toolchains')
 verify_build()
 runtime=runtime_settings()
 read_sizes=[0,64,4096,65536,1048576]
@@ -106,10 +107,10 @@ metadata=dict(profile='native-public-api-task-costs',timestamp=datetime.datetime
     platform=platform.platform(),cpu_info=Path('/proc/cpuinfo').read_text().split('\n\n')[0],filesystem=filesystem,
     cpu_affinity=sorted(os.sched_getaffinity(0)),loadavg_start=load_start,loadavg_end=os.getloadavg(),
     iterations=a.iterations,rounds=a.rounds,seed=a.seed,fixtures_sha256=fixture_hashes,
-    listing_limits={'goose-fs':{'byte_limit':1048576,'entry_limit':4096}},
+    listing_limits={'goose-fs':{'byte_limit':1048576,'entry_limit':4096,'adaptive':a.adaptive_listing}},
     metadata_consumption='All callers test regular kind and size; Rust/Go additionally retain full native metadata objects, Goose may elide unused wrapper fields.',
     locking_policy='goose-fs/Rust retained readonly Files; exclusive try-acquire plus unlock per iteration; untimed warm pair; no contention or polling; Go os/Goose stdlib unsupported.',
-    root_policy='Root open/close excluded. goose-fs strict no-symlink relative paths, bounded fresh read64, nofollow metadata, sorted structured entries with1MiB/4096entrybudget; Go os.Root ReadFile/Lstat and Root.Open+File.Readdirnames+slices.Sort owned names-only (avoids unused eager Root DirEntry metadata), permits in-tree links; Ruststd/Goosestd unsupported. Different lookup/output contracts, not equal-security ranking.',
+    root_policy='Root open/close excluded. goose-fs strict no-symlink relative paths, bounded fresh read64, nofollow metadata, sorted structured entries with1MiB/4096entrybudget; Go os.Root ReadFile/Lstat and Root.Open+File.Readdirnames+slices.Sort owned names-only (avoids unused eager Root DirEntry metadata), permits in-tree links; Ruststd/Goosestd unsupported. Different lookup/output contracts, not equal-security ranking. Staging adaptive='+str(a.adaptive_listing)+'.',
     unsupported_workloads={name:sorted(values) for name,values in unsupported_cases.items()},
     policies={
       'goose-fs':'absolute strict paths; all-component nofollow; bounded regular reads; clear-on-error; retained read_at holds Context+entry read locks; owned sorted entries plus kind hints; nofollow metadata',

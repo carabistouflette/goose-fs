@@ -71,3 +71,12 @@ per-operation memory nor an allocation count.
 
 Do not infer portable parity, durability, cold-I/O, equal-security or universal
 language performance from this harness. Publish regressions and unsupported cases.
+
+
+`build.py --adaptive-listing` and matching `run.py --adaptive-listing` explicitly
+select goose-fs ListOptions.adaptive=true for absolute and Root sorted listings.
+The build manifest and raw listing_limits retain that choice; mismatched profiles
+are rejected. The default remains full one-pass staging. Comparator APIs and all
+other workloads are unchanged. Adaptive mode trades lower small-result buffer
+initialization for a second pass when accepted packed names exceed 64 KiB; use the
+paired long-name profile in [the benchmark guide](../README.md) to see that cost.

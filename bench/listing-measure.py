@@ -20,7 +20,8 @@ p.add_argument('--goose',required=True)
 p.add_argument('--cc',default='gcc')
 p.add_argument('--baseline',type=Path,required=True)
 p.add_argument('--baseline-revision',required=True)
-p.add_argument('--candidate',type=Path,required=True)
+p.add_argument('--full',type=Path,required=True)
+p.add_argument('--adaptive',type=Path,required=True)
 p.add_argument('--rounds',type=int,default=5)
 p.add_argument('--iterations',type=int,default=5)
 p.add_argument('--output',type=Path,required=True)
@@ -32,14 +33,16 @@ def capture(args):return subprocess.check_output(args,cwd=ROOT,text=True,timeout
 def digest(path):return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 def sources():
     paths=[ROOT/'fs.goose',ROOT/'fs.build',ROOT/'GOOSE_REVISION',*sorted((ROOT/'native').glob('*')),
-           ROOT/'bench/listing.goose',Path(__file__).resolve(),ROOT/'tests/listing_fixture.py',ROOT/'bench/build-baseline.py',ROOT/'bench/listing-build.py']
+           ROOT/'bench/listing.goose.in',Path(__file__).resolve(),ROOT/'tests/listing_fixture.py',ROOT/'bench/build-baseline.py',ROOT/'bench/listing-build.py']
     return {str(path.relative_to(ROOT)):digest(path) for path in paths if path.is_file()}
-binaries={'baseline':a.baseline.resolve(),'candidate':a.candidate.resolve()}
+binaries={'baseline':a.baseline.resolve(),'full':a.full.resolve(),'adaptive':a.adaptive.resolve()}
 initial_sources=sources();initial_bins={k:digest(v) for k,v in binaries.items()}
 build=json.loads(a.build_manifest.read_text())
 assert build['sources_sha256']==initial_sources and build['binaries_sha256']==initial_bins
 assert build['baseline_revision']==a.baseline_revision
 assert build['cc']==capture([a.cc,'--version'])
+rendered={name:digest(a.build_manifest.parent/name) for name in build['rendered_sources_sha256']}
+assert rendered==build['rendered_sources_sha256']
 initial_revision=capture(['git','rev-parse','HEAD']);initial_dirty=bool(capture(['git','status','--porcelain']))
 goose=str(Path(a.goose).resolve());compiler_hash=digest(goose)
 assert build['goose_sha256']==compiler_hash
@@ -80,6 +83,7 @@ with tempfile.TemporaryDirectory(prefix='goose-fs-listing-bench-') as temp:
 assert sources()==initial_sources and {k:digest(v) for k,v in binaries.items()}==initial_bins
 assert capture(['git','rev-parse','HEAD'])==initial_revision and digest(goose)==compiler_hash
 assert capture([a.cc,'--version'])==build['cc']
+assert {name:digest(a.build_manifest.parent/name) for name in rendered}==rendered
 metadata=dict(started_utc=started,finished_utc=datetime.datetime.now(datetime.timezone.utc).isoformat(),
               platform=platform.platform(),cpu_info=Path('/proc/cpuinfo').read_text().split('\n\n')[0],filesystem=filesystem,
               cpu_affinity=sorted(os.sched_getaffinity(0)),loadavg_start=load_start,loadavg_end=os.getloadavg(),

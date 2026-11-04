@@ -4,6 +4,7 @@ import fs from "../..";
 import std;
 import os;
 const CUSTOM = @CUSTOM@;
+const ADAPTIVE = @ADAPTIVE@;
 fn checksum(bytes: const u8[:]) -> i64 {
     var result = bytes.len;
     if bytes.len > 0 { result += bytes[0]; result += bytes[bytes.len - 1]; }
@@ -65,12 +66,20 @@ fn retained_read(path: const u8[:], size: i64, count: i64) {
     check_pattern(bytes);
     assert(fs::close_context(context).error == fs::Error.None);
 }
+fn custom_list(path: const u8[:], entries: fs::Entry[>..]&) -> fs::Status {
+    if ADAPTIVE { return fs::list_sorted(path, fs::ListOptions { adaptive: true }, entries); }
+    return fs::list_sorted(path, fs::MAX_BYTES, fs::MAX_ENTRIES, entries);
+}
+fn custom_root_list(root: fs::Root, entries: fs::Entry[>..]&) -> fs::Status {
+    if ADAPTIVE { return fs::list_sorted_at(root, "list-128", fs::ListOptions { adaptive: true }, entries); }
+    return fs::list_sorted_at(root, "list-128", fs::MAX_BYTES, fs::MAX_ENTRIES, entries);
+}
 fn listing(path: const u8[:], count: i64, iterations: i64) {
     let label = str("list-sorted-", count);
     var entries: fs::Entry[>..] = [];
     var packed: u8[>..] = [];
     if CUSTOM {
-        assert(fs::list_sorted(path, fs::MAX_BYTES, fs::MAX_ENTRIES, entries).error == fs::Error.None);
+        assert(custom_list(path, entries).error == fs::Error.None);
         assert(entries.len == count);
         for entry, i in entries { assert(entry.name == expected_name(i)); }
     } else {
@@ -86,7 +95,7 @@ fn listing(path: const u8[:], count: i64, iterations: i64) {
         let start = clock_ns();
         for _ in iterations {
             if CUSTOM {
-                assert(fs::list_sorted(path, fs::MAX_BYTES, fs::MAX_ENTRIES, entries).error == fs::Error.None);
+                assert(custom_list(path, entries).error == fs::Error.None);
                 for entry in entries {
                     sum += entry.name.len; sum += entry.name[0]; sum += entry.name[entry.name.len - 1];
                 }
@@ -175,7 +184,7 @@ fn rooted(path: const u8[:], count: i64) {
     var info = fs::Metadata { .. };
     assert(fs::metadata_at(root, "read-64", info).error == fs::Error.None && info.size == 64 && info.kind == fs::Kind.File);
     var entries: fs::Entry[>..] = [];
-    assert(fs::list_sorted_at(root, "list-128", fs::MAX_BYTES, fs::MAX_ENTRIES, entries).error == fs::Error.None);
+    assert(custom_root_list(root, entries).error == fs::Error.None);
     assert(entries.len == 128); for entry, i in entries { assert(entry.name == expected_name(i)); }
     for operation in 3 {
         let label: const u8[:] = if operation == 0 { "root-read-fresh-64" }
@@ -189,7 +198,7 @@ fn rooted(path: const u8[:], count: i64) {
                     assert(fs::metadata_at(root, "read-64", info).error == fs::Error.None && info.kind == fs::Kind.File && info.size == 64);
                     sum += 65;
                 } else {
-                    assert(fs::list_sorted_at(root, "list-128", fs::MAX_BYTES, fs::MAX_ENTRIES, entries).error == fs::Error.None);
+                    assert(custom_root_list(root, entries).error == fs::Error.None);
                     for entry in entries { sum += entry.name.len; sum += entry.name[0]; sum += entry.name[entry.name.len - 1]; }
                 }
             }

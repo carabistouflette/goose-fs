@@ -11,6 +11,7 @@ p=argparse.ArgumentParser(description=__doc__)
 p.add_argument('--goose',required=True)
 p.add_argument('--cc',default='gcc')
 p.add_argument('--rust-toolchain',default='1.99.1')
+p.add_argument('--adaptive-listing',action='store_true',help='opt goose-fs listings into adaptive staging')
 a=p.parse_args()
 out=ROOT/'.build/compare'; out.mkdir(exist_ok=True,parents=True)
 manifest=out/'build.json'
@@ -21,7 +22,7 @@ before=sources()
 versions=toolchains(compiler,a.cc,a.rust_toolchain)
 for name, custom in [('goose-fs','true'),('goose-stdlib','false')]:
     source=out/f'{name}.goose'
-    source.write_text((ROOT/'bench/compare/goose.goose.in').read_text().replace('@CUSTOM@',custom))
+    source.write_text((ROOT/'bench/compare/goose.goose.in').read_text().replace('@CUSTOM@',custom).replace('@ADAPTIVE@','true' if a.adaptive_listing else 'false'))
     subprocess.run([compiler,'format',str(source)],cwd=ROOT,check=True)
     subprocess.run([compiler,'build',str(source),'--cc',a.cc,'-O2','-o',str(out/name)],cwd=ROOT,check=True)
 subprocess.run(['rustc',f'+{a.rust_toolchain}','--edition=2024','-C','opt-level=2','-C','codegen-units=1',
@@ -31,7 +32,7 @@ if sources()!=before or toolchains(compiler,a.cc,a.rust_toolchain)!=versions:
     raise SystemExit('Build inputs changed during compilation; rebuild from stable sources')
 record=dict(schema=1,timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),
     source_revision=capture(['git','rev-parse','HEAD']),
-    source_dirty=bool(capture(['git','status','--porcelain'])),
+    adaptive_listing=a.adaptive_listing,source_dirty=bool(capture(['git','status','--porcelain'])),
     source_sha256=before,toolchains=versions,
     binaries_sha256={name:sha256(out/name) for name in RUNNERS},
     flags={'goose':['-O2'],'rust':['opt-level=2','codegen-units=1','edition=2024'],
