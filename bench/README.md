@@ -5,7 +5,7 @@ and records seven samples per workload in `.build/bench.json`: empty, 64-byte,
 64-KiB and 1-MiB reads; an over-limit read; a 12-component-deep read; one-entry
 and 1000-entry listings with both right-sized and maximum-capacity buffers. The harness warms reusable output buffers first and
 consumes results in checksums. Each raw sample is mean nanoseconds per call
-including loop/status/checksum overhead. Metadata includes CPU/OS, compiler,
+including loop/status/checksum overhead. Metadata includes CPU/OS, temporary filesystem type, compiler,
 flags, compiler pin, source commit and dirty status. Fixtures live in private
 temporary directories and are deleted afterward.
 

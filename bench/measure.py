@@ -23,6 +23,7 @@ with tempfile.TemporaryDirectory(prefix='goose-fs-bench-') as temp:
     root = Path(temp)
     for name, size in [('empty',0), ('small',64), ('large',65536), ('maximum',1048576)]:
         (root/name).write_bytes(b'x'*size)
+    filesystem = output(['stat', '-f', '-c', '%T', str(root)])
     deep = root.joinpath(*(['d']*12)); deep.mkdir(parents=True); (deep/'small').write_bytes(b'x'*64)
     for name, count in [('narrow',1), ('wide',1000)]:
         (root/name).mkdir()
@@ -34,7 +35,7 @@ for line in raw.splitlines():
     rows.append(dict(workload=workload, sample=int(sample), ns_per_call=int(ns), checksum=int(checksum)))
 assert len(rows) == 70
 metadata = dict(timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),
-                platform=platform.platform(), machine=platform.machine(), cpu=platform.processor(),
+                platform=platform.platform(), machine=platform.machine(), cpu=platform.processor(), filesystem=filesystem,
                 cpu_info=Path('/proc/cpuinfo').read_text().split('\n\n')[0],
                 goose=output([a.goose,'--version']), goose_revision=(ROOT/'GOOSE_REVISION').read_text().strip(),
                 cc=output([a.cc,'--version']), flags=['-O2'], iterations=a.iterations,
