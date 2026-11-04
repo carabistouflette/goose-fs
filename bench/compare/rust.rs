@@ -61,6 +61,10 @@ fn main() {
         let info = fs::symlink_metadata(&file).unwrap(); assert!(info.is_file()); assert_eq!(info.len(), 64);
         black_box(info); 65
     });
+    let locked = fs::File::open(&file).unwrap();
+    samples("lock-exclusive-pair", count, || {
+        locked.try_lock().unwrap(); locked.unlock().unwrap(); 1
+    });
     let directory = root.join("list-0");
     samples("is-dir", count, || { assert!(directory.is_dir()); 1 });
     let status = fs::read_to_string("/proc/self/status").unwrap();

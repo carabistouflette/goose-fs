@@ -50,7 +50,7 @@ for size in read_sizes:
     for mode in ['fresh','reuse','retained']: expected[f'read-{mode}-{size}']=value
 for count in list_sizes:
     expected[f'list-sorted-{count}']=sum(159+i%10 for i in range(count))
-expected.update({'metadata-file':65,'is-dir':1})
+expected.update({'metadata-file':65,'is-dir':1,'lock-exclusive-pair':1})
 def capture(args): return subprocess.check_output(args,cwd=ROOT,text=True,timeout=30).strip()
 def execute(name,root,iterations):
     result=subprocess.run([str(paths[name]),str(root),str(iterations)],cwd=ROOT,capture_output=True,text=True,check=True,timeout=a.timeout)
@@ -64,7 +64,8 @@ def execute(name,root,iterations):
         key=(workload,int(sample))
         assert workload in expected and key not in seen and 0<=int(sample)<7,key
         seen.add(key)
-        unsupported=name=='goose-stdlib' and (workload=='metadata-file' or workload.startswith('read-retained-'))
+        unsupported=(name=='goose-stdlib' and (workload in ['metadata-file','lock-exclusive-pair'] or workload.startswith('read-retained-'))
+                     or name=='go' and workload=='lock-exclusive-pair')
         assert state==('unsupported' if unsupported else 'ok'),(name,line)
         assert int(ns)>=0 and int(checksum)==(0 if unsupported else expected[workload]*iterations),(name,line)
         rows.append(dict(workload=workload,sample=int(sample),ns_per_call=None if unsupported else int(ns),checksum=int(checksum),state=state))
@@ -102,6 +103,7 @@ metadata=dict(profile='native-public-api-task-costs',timestamp=datetime.datetime
     iterations=a.iterations,rounds=a.rounds,seed=a.seed,fixtures_sha256=fixture_hashes,
     listing_limits={'goose-fs':{'byte_limit':1048576,'entry_limit':4096}},
     metadata_consumption='All callers test regular kind and size; Rust/Go additionally retain full native metadata objects, Goose may elide unused wrapper fields.',
+    locking_policy='goose-fs/Rust retained readonly Files; exclusive try-acquire plus unlock per iteration; untimed warm pair; no contention or polling; Go os/Goose stdlib unsupported.',
     policies={
       'goose-fs':'absolute strict paths; all-component nofollow; bounded regular reads; clear-on-error; retained read_at holds Context+entry read locks; owned sorted entries plus kind hints; nofollow metadata',
       'goose-stdlib':'cwd-compatible paths; follows links; unbounded append-to-builder whole read reset by runner; sorted newline names; no general metadata',

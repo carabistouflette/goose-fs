@@ -131,6 +131,31 @@ fn dir_case(path: const u8[:], count: i64) {
         print("is-dir\t", sample, "\t", elapsed / count, "\t", sum, "\tok");
     }
 }
+fn locking(path: const u8[:], count: i64) {
+    if !CUSTOM {
+        for sample in 7 { print("lock-exclusive-pair\t", sample, "\t0\t0\tunsupported"); }
+        return;
+    }
+    let context, created = fs::create_context(); assert(created.error == fs::Error.None);
+    let file, opened = fs::open_file(context, path, fs::OpenOptions { .. });
+    assert(opened.error == fs::Error.None);
+    let warm, warmed = fs::try_lock_file(file, fs::LockMode.Exclusive);
+    assert(warm && warmed.error == fs::Error.None);
+    assert(fs::unlock_file(file).error == fs::Error.None);
+    for sample in 7 {
+        var sum: i64 = 0;
+        let start = clock_ns();
+        for _ in count {
+            let acquired, result = fs::try_lock_file(file, fs::LockMode.Exclusive);
+            assert(acquired && result.error == fs::Error.None);
+            assert(fs::unlock_file(file).error == fs::Error.None);
+            sum++;
+        }
+        let elapsed = clock_ns() - start;
+        print("lock-exclusive-pair\t", sample, "\t", elapsed / count, "\t", sum, "\tok");
+    }
+    assert(fs::close_context(context).error == fs::Error.None);
+}
 fn main() {
     let argv = args(); assert(argv.len == 3);
     let count, valid = parse_int(argv[2], 10); assert(valid && count > 0 && count <= 1000000);
@@ -142,7 +167,7 @@ fn main() {
     for entries in [0, 1, 128, 4096] {
         let path = str(argv[1], "/list-", entries); listing(path, entries, count);
     }
-    let file = str(argv[1], "/read-64"); metadata_case(file, count);
+    let file = str(argv[1], "/read-64"); metadata_case(file, count); locking(file, count);
     let directory = str(argv[1], "/list-0"); dir_case(directory, count);
     var status: u8[>..] = [];
     assert(read_file("/proc/self/status", status));

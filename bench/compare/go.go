@@ -91,6 +91,9 @@ func main() {
         if !info.Mode().IsRegular() || info.Size()!=64 { panic("metadata mismatch") }
         infoSink = info; return 65
     })
+    for sample := 0; sample < 7; sample++ {
+        fmt.Printf("lock-exclusive-pair\t%d\t0\t0\tunsupported\n",sample)
+    }
     directory := filepath.Join(root,"list-0")
     samples("is-dir",count,func() uint64 {
         info, err := os.Stat(directory); must(err); if !info.IsDir() { panic("not directory") }; return 1

@@ -27,6 +27,10 @@ Go ReadAt's more general fill/EOF contract. Short reads/EINTR remain possible;
 syscall counts are not measured. Zero-sized retained reads may avoid
 syscalls. Context+entry lock and error checks remain in goose-fs timings; these
 are sequential retained calls, not a concurrency or lifecycle-cost measurement.
+The uncontended lock case times an exclusive try-acquire/unlock pair through
+goose-fs and Rust File. Both use Linux flock on this host; Go os and the pinned
+Goose stdlib have no portable File locking API and receive unsupported rows.
+It excludes open/close and does not measure contention or polling wakeup costs.
 
 Results record native-API policies, source/executable/fixture hashes, versions,
 flags, affinity, filesystem, shared-host load, all raw samples, and per-process
