@@ -256,6 +256,40 @@ fn rename_case(path: const u8[:], count: i64, rooted: bool, mode: i64) {
     else { assert(!file_exists(to)); }
     if CUSTOM && rooted { assert(fs::close_context(context).error == fs::Error.None); }
 }
+fn file_setters(path: const u8[:], count: i64) {
+    if !CUSTOM {
+        for label in ["file-set-permissions", "file-set-owner", "file-set-times"] {
+            for sample in 7 { print(label, "\t", sample, "\t0\t0\tunsupported"); }
+        }
+        return;
+    }
+    let context, created = fs::create_context(); assert(created.error == fs::Error.None);
+    let file, opened = fs::open_file(context, path, fs::OpenOptions { .. }); assert(opened.error == fs::Error.None);
+    var info = fs::Metadata { .. }; assert(fs::file_metadata(file, info).error == fs::Error.None);
+    let uid: i64 = info.uid; let gid: i64 = info.gid;
+    let accessed = fs::TimeUpdate { action: fs::TimeAction.Exact, value: fs::Timestamp { seconds: 1000, nanoseconds: 123456789 } };
+    let modified = fs::TimeUpdate { action: fs::TimeAction.Exact, value: fs::Timestamp { seconds: 2200000000, nanoseconds: 987654321 } };
+    let position, positioned = fs::seek(file, 3, fs::SeekOrigin.Start); assert(positioned.error == fs::Error.None && position == 3);
+    for operation in 3 {
+        let label: const u8[:] = if operation == 0 { "file-set-permissions" } else if operation == 1 { "file-set-owner" } else { "file-set-times" };
+        for sample in 8 {
+            var sum: i64 = 0; let start = clock_ns();
+            for _ in (if sample == 0 { 1 } else { count }) {
+                let result = if operation == 0 { fs::set_permissions(file, 416) }
+                    else if operation == 1 { fs::set_owner(file, uid, gid) } else { fs::set_times(file, accessed, modified) };
+                assert(result.error == fs::Error.None); sum++;
+            }
+            let elapsed = clock_ns() - start;
+            if sample > 0 { print(label, "\t", sample - 1, "\t", elapsed / count, "\t", sum, "\tok"); }
+        }
+        assert(fs::file_metadata(file, info).error == fs::Error.None);
+        if operation == 0 { assert(info.permissions == 416); }
+        else if operation == 1 { assert(info.uid == uid && info.gid == gid); }
+        else { assert(info.accessed.seconds == 1000 && info.accessed.nanoseconds == 123456789 && info.modified.seconds == 2200000000 && info.modified.nanoseconds == 987654321); }
+    }
+    let after, checked = fs::seek(file, 0, fs::SeekOrigin.Current); assert(checked.error == fs::Error.None && after == 3);
+    assert(fs::close_context(context).error == fs::Error.None);
+}
 fn main() {
     let argv = args(); assert(argv.len == 3);
     let count, valid = parse_int(argv[2], 10); assert(valid && count > 0 && count <= 1000000);
@@ -272,6 +306,7 @@ fn main() {
     rooted(argv[1], count);
     let rename_path = str(argv[1], "/rename");
     for mode in 3 { rename_case(rename_path, count, false, mode); rename_case(rename_path, count, true, mode); }
+    file_setters(str(argv[1], "/file-metadata"), count);
     var status: u8[>..] = [];
     assert(read_file("/proc/self/status", status));
     var start: i64 = 0;

@@ -107,3 +107,24 @@ Absolute Rust/Go checked compositions re-resolve pathname parents in the rename
 call; their preopened sync handles are not a concurrent-parent identity promise.
 The fixtures stay stable. goose-fs renames through the exact held parent FDs.
 This difference is another reason the rows are not an equal-security ranking.
+
+Held-file metadata rows time one setter per iteration, on a read-only-open File:
+mode 0640, the fixture's captured current numeric UID/GID, or exact access time
+1000.123456789 and modification time 2200000000.987654321 seconds since the Epoch.
+Repeated same-value requests still invoke the OS mutation; they are not harmless
+no-ops (chown can clear privilege attributes). No implicit sync is requested.
+Open/close, Context lifecycle, identity capture, cursor setup and metadata/content
+checks are outside timers. Timers include status checks and one checksum increment
+per successful setter. The fixture must support the requested nanosecond times.
+
+Rust uses File::set_permissions, Unix std::os::unix::fs::fchown and File::set_times;
+Go uses File.Chmod and File.Chown. The syscall.Stat_t assertion in Go extracts
+fixture UID/GID outside timing, without adding a non-os mutation adapter. Go os
+has no held-File time setter in the recorded toolchain; path Chtimes is not
+substituted. Pinned Goose stdlib lacks retained File setters. Those cells remain
+unsupported. Public API contracts, locking, runtime and error behavior differ;
+these sequential task costs do not establish equal-security performance.
+
+API references: [Rust File](https://doc.rust-lang.org/std/fs/struct.File.html),
+[Rust fchown](https://doc.rust-lang.org/std/os/unix/fs/fn.fchown.html),
+[Go os](https://pkg.go.dev/os).

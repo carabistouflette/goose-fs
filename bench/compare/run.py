@@ -52,6 +52,8 @@ for size in read_sizes:
 for count in list_sizes:
     expected[f'list-sorted-{count}']=sum(159+i%10 for i in range(count))
 expected.update({'metadata-file':65,'is-dir':1,'lock-exclusive-pair':1})
+setter_cases={'file-set-permissions','file-set-owner','file-set-times'}
+expected.update({case:1 for case in setter_cases})
 rename_cases={'rename-replace-pair','rename-parents-sync-pair','rename-noreplace-pair',
               'root-rename-replace-pair','root-rename-parents-sync-pair','root-rename-noreplace-pair'}
 expected.update({case:1 for case in rename_cases})
@@ -59,8 +61,8 @@ root_cases={'root-read-fresh-64','root-metadata-file','root-list-sorted-128'} | 
 expected.update({'root-read-fresh-64':expected['read-fresh-64'],
                  'root-metadata-file':65,'root-list-sorted-128':expected['list-sorted-128']})
 unsupported_cases={
-    'goose-stdlib':{'metadata-file','lock-exclusive-pair','rename-parents-sync-pair','rename-noreplace-pair'}|root_cases|{w for w in expected if w.startswith('read-retained-')},
-    'rust':root_cases|{'rename-noreplace-pair'},'go':{'lock-exclusive-pair','rename-noreplace-pair','root-rename-noreplace-pair'},'goose-fs':set()}
+    'goose-stdlib':{'metadata-file','lock-exclusive-pair','rename-parents-sync-pair','rename-noreplace-pair'}|root_cases|setter_cases|{w for w in expected if w.startswith('read-retained-')},
+    'rust':root_cases|{'rename-noreplace-pair'},'go':{'lock-exclusive-pair','rename-noreplace-pair','root-rename-noreplace-pair','file-set-times'},'goose-fs':set()}
 def capture(args): return subprocess.check_output(args,cwd=ROOT,text=True,timeout=30).strip()
 def execute(name,root,iterations):
     result=subprocess.run([str(paths[name]),str(root),str(iterations)],cwd=ROOT,capture_output=True,text=True,check=True,timeout=a.timeout)
@@ -80,6 +82,12 @@ def execute(name,root,iterations):
         rows.append(dict(workload=workload,sample=int(sample),ns_per_call=None if unsupported else int(ns),checksum=int(checksum),state=state))
     assert len(seen)==len(expected)*7 and rss is not None,(name,len(seen),rss,result.stderr)
     assert (root/'rename/left').read_bytes()==b'rename fixture' and not os.path.lexists(root/'rename/right')
+    info=(root/'file-metadata').stat()
+    assert (info.st_uid,info.st_gid)==metadata_identity
+    if name!='goose-stdlib': assert info.st_mode&0o7777==0o640
+    if name in ('goose-fs','rust'):
+        assert info.st_atime_ns==1000123456789 and info.st_mtime_ns==2200000000987654321
+    assert (root/'file-metadata').read_bytes()==b'metadata fixture'
     return rows,rss
 samples=[];batches=[];rng=random.Random(a.seed);load_start=os.getloadavg()
 with tempfile.TemporaryDirectory(prefix='goose-fs-compare-') as temp:
@@ -96,6 +104,9 @@ with tempfile.TemporaryDirectory(prefix='goose-fs-compare-') as temp:
         fixture_hashes[f'list-{count}']=hashlib.sha256(b'\0'.join(n.encode() for n in sorted(names))).hexdigest()
     (root/'rename').mkdir();(root/'rename/left').write_bytes(b'rename fixture')
     fixture_hashes['rename/left']=hashlib.sha256(b'rename fixture').hexdigest()
+    (root/'file-metadata').write_bytes(b'metadata fixture')
+    info=(root/'file-metadata').stat();metadata_identity=(info.st_uid,info.st_gid)
+    fixture_hashes['file-metadata']=hashlib.sha256(b'metadata fixture').hexdigest()
     filesystem=capture(['stat','-f','-c','%T',str(root)])
     # Full content and ordered-name validation happens in every runner outside timers.
     for name in runners: execute(name,root,1)
@@ -115,6 +126,7 @@ metadata=dict(profile='native-public-api-task-costs',timestamp=datetime.datetime
     iterations=a.iterations,rounds=a.rounds,seed=a.seed,fixtures_sha256=fixture_hashes,
     listing_limits={'goose-fs':{'byte_limit':1048576,'entry_limit':4096,'adaptive':a.adaptive_listing}},
     metadata_consumption='All callers test regular kind and size; Rust/Go additionally retain full native metadata objects, Goose may elide unused wrapper fields.',
+    file_setter_policy='Held readonly File; open, identity capture, seek setup, validation and close outside timing. Each timed call sets mode0640, captured current uid/gid, or exact atime1000.123456789/mtime2200000000.987654321. Repeated same-value calls remain real syscalls, not no-ops; no implicit sync. Status checks/checksum included. Go File has no time setter in the recorded os API; path Chtimes is not substituted. Goose stdlib lacks retained Files. Native syscall counts not instrumented.',
     rename_policy='Each pair moves left to absent right and back; two renames, no existing-target overwrite latency measured. fs uses explicit Replace/NoReplace and optional checked both-parent fsync. Rust/Go checked rows compose two readable-parent opens before each rename, both fsyncs, then cleanup; Rust Drop does not report close errors. Pinned Goose rename_file always best-effort syncs destination parent even in basic row and cannot report checked sync; Root lifecycle excluded. Absolute Rust/Go compositions re-resolve paths during rename; fixtures are stable, so concurrent-parent identity is not measured. Different nofollow/outcome policies, not equal-security ranking.',
     locking_policy='goose-fs/Rust retained readonly Files; exclusive try-acquire plus unlock per iteration; untimed warm pair; no contention or polling; Go os/Goose stdlib unsupported.',
     root_policy='Root open/close excluded. goose-fs strict no-symlink relative paths, bounded fresh read64, nofollow metadata, sorted structured entries with1MiB/4096entrybudget; Go os.Root ReadFile/Lstat and Root.Open+File.Readdirnames+slices.Sort owned names-only (avoids unused eager Root DirEntry metadata), permits in-tree links; Ruststd/Goosestd unsupported. Different lookup/output contracts, not equal-security ranking. Staging adaptive='+str(a.adaptive_listing)+'.',

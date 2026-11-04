@@ -9,6 +9,7 @@ import (
     "slices"
     "strings"
     "time"
+    "syscall"
 )
 var byteSink []byte
 var entrySink []os.DirEntry
@@ -192,6 +193,20 @@ func main() {
     })
     must(held.Close())
     renameCases(filepath.Join(root,"rename"),count)
+    metadataFile, err := os.Open(filepath.Join(root,"file-metadata")); must(err)
+    before, err := metadataFile.Stat(); must(err)
+    identity := before.Sys().(*syscall.Stat_t)
+    uid, gid := int(identity.Uid), int(identity.Gid)
+    position, err := metadataFile.Seek(3,io.SeekStart); must(err); if position!=3 { panic("metadata cursor setup") }
+    samples("file-set-permissions",count,func() uint64 { must(metadataFile.Chmod(0o640)); return 1 })
+    afterMode, err := metadataFile.Stat(); must(err)
+    if afterMode.Mode().Perm()!=0o640 { panic("metadata mode mismatch") }
+    samples("file-set-owner",count,func() uint64 { must(metadataFile.Chown(uid,gid)); return 1 })
+    afterOwner, err := metadataFile.Stat(); must(err); afterIdentity := afterOwner.Sys().(*syscall.Stat_t)
+    if afterIdentity.Uid!=uint32(uid) || afterIdentity.Gid!=uint32(gid) { panic("metadata owner mismatch") }
+    position, err = metadataFile.Seek(0,io.SeekCurrent); must(err); if position!=3 { panic("metadata cursor changed") }
+    must(metadataFile.Close())
+    for sample:=0;sample<7;sample++ { fmt.Printf("file-set-times\t%d\t0\t0\tunsupported\n",sample) }
     status, err := os.ReadFile("/proc/self/status"); must(err)
     for _, line := range strings.Split(string(status),"\n") {
         if strings.HasPrefix(line,"VmHWM:") { fmt.Printf("MEMORY\t%s\n",line) }

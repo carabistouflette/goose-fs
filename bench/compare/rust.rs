@@ -1,6 +1,28 @@
 // SPDX-License-Identifier: Apache-2.0
 use std::{fs, hint::black_box, io::Read, path::Path, time::Instant};
-use std::os::unix::fs::FileExt;
+use std::os::unix::fs::{FileExt, MetadataExt, PermissionsExt};
+use std::io::{Seek, SeekFrom};
+fn file_setters(path: &Path, count: u64) {
+    let mut file = fs::File::open(path).unwrap();
+    let before = file.metadata().unwrap();
+    let (uid, gid) = (before.uid(), before.gid());
+    file.seek(SeekFrom::Start(3)).unwrap();
+    samples("file-set-permissions", count, || {
+        file.set_permissions(fs::Permissions::from_mode(0o640)).unwrap(); 1
+    });
+    assert_eq!(file.metadata().unwrap().mode() & 0o7777, 0o640);
+    samples("file-set-owner", count, || {
+        std::os::unix::fs::fchown(&file, Some(uid), Some(gid)).unwrap(); 1
+    });
+    let after = file.metadata().unwrap(); assert_eq!((after.uid(), after.gid()), (uid, gid));
+    let accessed = std::time::UNIX_EPOCH + std::time::Duration::new(1000, 123456789);
+    let modified = std::time::UNIX_EPOCH + std::time::Duration::new(2200000000, 987654321);
+    let times = fs::FileTimes::new().set_accessed(accessed).set_modified(modified);
+    samples("file-set-times", count, || { file.set_times(times).unwrap(); 1 });
+    let after = file.metadata().unwrap();
+    assert_eq!(after.accessed().unwrap(), accessed); assert_eq!(after.modified().unwrap(), modified);
+    assert_eq!(file.stream_position().unwrap(), 3);
+}
 fn checksum(bytes: &[u8]) -> u64 {
     bytes.len() as u64 + bytes.first().copied().unwrap_or(0) as u64
         + bytes.last().copied().unwrap_or(0) as u64
@@ -105,6 +127,7 @@ fn main() {
         for sample in 0..7 { println!("{label}\t{sample}\t0\t0\tunsupported"); }
     }
     rename_cases(&root.join("rename"), count);
+    file_setters(&root.join("file-metadata"), count);
     let status = fs::read_to_string("/proc/self/status").unwrap();
     for line in status.lines().filter(|s| s.starts_with("VmHWM:")) { println!("MEMORY\t{line}"); }
 }
