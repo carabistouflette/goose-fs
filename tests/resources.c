@@ -6,12 +6,25 @@
 #include <sys/resource.h>
 #include <unistd.h>
 static int mode, calls;
+static int fail_read(void) {
+    ++calls;
+    if (calls == 2 && mode) { errno = mode == 1 ? EIO : EINTR; return 1; }
+    return 0;
+}
 ssize_t __real_read(int, void *, size_t);
 ssize_t __wrap_read(int fd, void *out, size_t n) {
-    ++calls;
-    if (calls == 2 && mode) { errno = mode == 1 ? EIO : EINTR; return -1; }
+    if (fail_read()) return -1;
     return __real_read(fd, out, n);
 }
+#ifdef __GLIBC__
+/* Ubuntu GCC13 + FORTIFY3 routes the stack-byte probe through __read_chk.
+ * Intercept it too, and preserve its bounds check when forwarding real I/O. */
+ssize_t __real___read_chk(int, void *, size_t, size_t);
+ssize_t __wrap___read_chk(int fd, void *out, size_t n, size_t capacity) {
+    if (fail_read()) return -1;
+    return __real___read_chk(fd, out, n, capacity);
+}
+#endif
 int main(int argc, char **argv) {
     assert(argc == 2); char path[4096]; uint8_t out[6]; int64_t m[3];
     assert(snprintf(path,sizeof path,"%s/file",argv[1])>0);
