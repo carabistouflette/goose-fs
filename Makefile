@@ -6,7 +6,7 @@ BENCH_ITERATIONS ?= 100
 CFLAGS = -std=c11 -Wall -Wextra -Werror
 WRAP_FLAGS = -Wl,--wrap=read -Wl,--wrap=write -Wl,--wrap=close -Wl,--wrap=readdir -Wl,--wrap=closedir -Wl,--wrap=fstat -Wl,--wrap=fdopendir -Wl,--wrap=openat
 .NOTPARALLEL:
-.PHONY: setup format check test native fallback sanitize bench
+.PHONY: setup format check test native resources fallback sanitize bench
 setup:
 	./scripts/setup-goose.sh
 format:
@@ -40,7 +40,18 @@ native:
 	python3 tests/run.py .build/native
 	$(CC) $(CFLAGS) -O2 tests/failures.c native/fs.c $(WRAP_FLAGS) -o .build/failures
 	python3 tests/run.py .build/failures
+	$(MAKE) resources
 	$(MAKE) fallback
+resources:
+	mkdir -p .build
+	$(CC) $(CFLAGS) -O2 tests/resources.c native/fs.c -Wl,--wrap=read -o .build/resources
+	python3 tests/run.py .build/resources
+	$(CC) $(CFLAGS) -O2 tests/resources.c native/fs.c tests/no-openat2.c -Wl,--wrap=read -Wl,--wrap=syscall -o .build/resources-fallback
+	python3 tests/run.py .build/resources-fallback
+	$(CC) $(CFLAGS) -O2 tests/cloexec.c native/fs.c -Wl,--wrap=open -Wl,--wrap=openat -Wl,--wrap=syscall -o .build/cloexec
+	python3 tests/run.py .build/cloexec
+	$(CC) $(CFLAGS) -O2 -DGF_FORCE_WALKER tests/cloexec.c native/fs.c -Wl,--wrap=open -Wl,--wrap=openat -Wl,--wrap=syscall -o .build/cloexec-fallback
+	python3 tests/run.py .build/cloexec-fallback
 fallback:
 	mkdir -p .build
 	$(CC) $(CFLAGS) -O2 tests/failures.c native/fs.c tests/no-openat2.c $(WRAP_FLAGS) -Wl,--wrap=syscall -o .build/failures-fallback
@@ -62,6 +73,10 @@ sanitize:
 	ASAN_OPTIONS=detect_leaks=1:abort_on_error=1 UBSAN_OPTIONS=halt_on_error=1 python3 tests/run.py .build/failures-sanitize
 	$(SANITIZER_CC) $(CFLAGS) -O1 -g -fno-omit-frame-pointer -fsanitize=address,undefined -no-pie tests/native.c native/fs.c tests/no-openat2.c -Wl,--wrap=syscall -o .build/fallback-sanitize
 	ASAN_OPTIONS=detect_leaks=1:abort_on_error=1 UBSAN_OPTIONS=halt_on_error=1 python3 tests/run.py .build/fallback-sanitize
+	$(SANITIZER_CC) $(CFLAGS) -O1 -g -fno-omit-frame-pointer -fsanitize=address,undefined -no-pie tests/resources.c native/fs.c -Wl,--wrap=read -o .build/resources-sanitize
+	ASAN_OPTIONS=detect_leaks=1:abort_on_error=1 UBSAN_OPTIONS=halt_on_error=1 python3 tests/run.py .build/resources-sanitize
+	$(SANITIZER_CC) $(CFLAGS) -O1 -g -fno-omit-frame-pointer -fsanitize=address,undefined -no-pie tests/cloexec.c native/fs.c -Wl,--wrap=open -Wl,--wrap=openat -Wl,--wrap=syscall -o .build/cloexec-sanitize
+	ASAN_OPTIONS=detect_leaks=1:abort_on_error=1 UBSAN_OPTIONS=halt_on_error=1 python3 tests/run.py .build/cloexec-sanitize
 bench:
 	python3 scripts/native-manifest.py --check
 	mkdir -p .build
