@@ -122,6 +122,9 @@ The [native API task measurements](bench/results/2026-11-04-native-api/README.md
 retain every comparator cell and policy difference; the
 [read-reuse measurement](bench/results/2026-11-04-read-reuse/README.md) isolates
 the initialized-buffer optimization.
+The [retained File measurements](bench/results/2026-11-04-retained/README.md)
+add positioned reads with open/close outside timing and disclose lifetime-check
+costs, unsupported stdlib operations and remaining comparison limits.
 
 The current version excludes recursive operations, advisory locks, temp-directory lifecycle,
 path normalization, atomic publication, directory-relative traversal and Windows support.
