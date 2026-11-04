@@ -20,7 +20,16 @@ bandwidth, cold I/O, concurrent throughput, allocation-free guarantees, or unive
 cross-library rankings. CI has no timing thresholds.
 
 For comparisons preserve the baseline executable before editing production code,
-then build the candidate with the same compiler and flags. Run:
+then build the candidate with the same compiler and flags. To rebuild an old
+library using the current harness (only from trusted commits), run:
+
+```sh
+python3 bench/build-baseline.py --revision FULL_COMMIT --goose /path/to/goose \
+  --cc gcc --output .build/baseline-gcc
+make bench GOOSE=/path/to/goose BENCH_CC=gcc
+```
+
+Then compare:
 
 ```sh
 python3 bench/measure.py --goose /path/to/goose --cc gcc --iterations 1000 \

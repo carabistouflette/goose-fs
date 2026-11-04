@@ -2,7 +2,7 @@
 
 Small, bounded filesystem operations for the
 [Goose programming language](https://github.com/aardappel/goose). Apache-2.0.
-Experimental interface; no release or public remote yet. Linux is the initial target.
+Experimental interface; no release yet. Linux is the initial target.
 
 Read regular files with byte limits, list directories with structured byte-preserving
 names, exclusively create files/directories, and remove individual entries.
@@ -21,8 +21,9 @@ fn main() {
 }
 ```
 
-Declare the package in the application's root source. Use a local import until a
-reviewed public repository is available. See [the runnable example](examples/read.goose).
+Declare the package in the application's root source. The example assumes a sibling
+checkout named goose-fs. Public source: [carabistouflette/goose-fs](https://github.com/carabistouflette/goose-fs).
+For Git dependencies, pin a reviewed full commit rather than a moving branch. See [the runnable example](examples/read.goose).
 
 ## Interface
 
@@ -68,12 +69,15 @@ is checked; device-open side effects remain possible. See the full
 ## Development
 
 ```sh
+git clone https://github.com/carabistouflette/goose-fs.git
+cd goose-fs
 make setup
 make format check test CC=gcc
 make test CC=clang
 make sanitize SANITIZER_CC=gcc
 make sanitize SANITIZER_CC=clang
 make bench BENCH_ITERATIONS=100
+.toolchain/goose/build/goose run examples/read.goose -- "$PWD/README.md"
 ```
 
 Builds need Linux headers providing openat2 (5.6+); older runtime kernels use
