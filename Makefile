@@ -12,13 +12,15 @@ RESOURCE_WRAP = -Wl,--wrap=read -Wl,--wrap=__read_chk
 HANDLE_WRAP = -Wl,--wrap=read -Wl,--wrap=pread -Wl,--wrap=__read_chk -Wl,--wrap=__pread_chk -Wl,--wrap=write -Wl,--wrap=pwrite -Wl,--wrap=close -Wl,--wrap=fstat -Wl,--wrap=ftruncate -Wl,--wrap=fsync -Wl,--wrap=fdatasync -Wl,--wrap=lseek -Wl,--wrap=fcntl -Wl,--wrap=flock -Wl,--wrap=nanosleep
 WRAP_FLAGS = -Wl,--wrap=read -Wl,--wrap=write -Wl,--wrap=close -Wl,--wrap=readdir -Wl,--wrap=closedir -Wl,--wrap=fstat -Wl,--wrap=fdopendir -Wl,--wrap=openat
 .NOTPARALLEL:
-.PHONY: setup format check test native handles resources fallback sanitize bench
+.PHONY: readlink setup format check test native handles resources fallback sanitize bench
 setup:
 	./scripts/setup-goose.sh
 format:
 	python3 scripts/native-manifest.py
 	$(GOOSE) format fs.goose tests examples bench
 check:
+	$(GOOSE) check tests/read_link.goose
+	$(GOOSE) check tests/read_link_fault.goose
 	python3 scripts/native-manifest.py --check
 	$(GOOSE) format --check fs.goose tests examples bench
 	$(GOOSE) check tests/file_metadata.goose
@@ -40,6 +42,7 @@ check:
 	$(GOOSE) check examples/root.goose
 	$(GOOSE) check bench/bench.goose
 test:
+	$(MAKE) readlink
 	python3 scripts/native-manifest.py --check
 	mkdir -p .build
 	python3 tests/run.py --api $(abspath $(GOOSE)) run tests/api.goose --
@@ -106,6 +109,19 @@ test:
 	$(GOOSE) build tests/overloads.goose --cc $(CC) -O2 -o .build/overloads
 	python3 tests/run.py .build/overloads
 	$(MAKE) native
+readlink:
+	mkdir -p .build
+	python3 tests/read_link.py $(abspath $(GOOSE)) run tests/read_link.goose --
+	$(GOOSE) build tests/read_link.goose --cc $(CC) -O2 -o .build/read-link
+	python3 tests/read_link.py .build/read-link
+	$(GOOSE) build tests/read_link.goose --cc $(CC) --debug --no-bce -o .build/read-link-debug
+	python3 tests/read_link.py .build/read-link-debug
+	FS_READLINK_CC=$(CC) $(GOOSE) build tests/read_link_fault.goose --cc $(abspath tests/read_link_fault-cc.sh) -O2 -o .build/read-link-fault
+	python3 tests/run.py .build/read-link-fault
+	$(CC) $(CFLAGS) -O2 tests/read_link_native.c native/fs.c native/handles.c -Wl,--wrap=readlinkat -Wl,--wrap=close -Wl,--wrap=syscall -o .build/read-link-native
+	python3 tests/run.py .build/read-link-native
+	$(CC) $(CFLAGS) -O2 -shared -fPIC native/fs.c native/handles.c -o .build/read-link-model.so
+	python3 tests/read_link_model.py .build/read-link-model.so
 handles:
 	mkdir -p .build
 	$(GOOSE) build tests/listing.goose --cc $(CC) -O2 -o .build/listing
@@ -180,6 +196,12 @@ fallback:
 	FS_NATIVE_LIBRARY=$(abspath .build/fs-denied.so) python3 tests/model.py
 	FS_NATIVE_LIBRARY=$(abspath .build/fs-denied.so) python3 tests/stress.py
 sanitize:
+	$(GOOSE) build tests/read_link.goose --debug --no-bce --cc $(abspath scripts/sanitizer-cc.sh) -o .build/read-link-sanitize
+	ASAN_OPTIONS=detect_leaks=1:abort_on_error=1 UBSAN_OPTIONS=halt_on_error=1 python3 tests/read_link.py .build/read-link-sanitize
+	FS_READLINK_CC=$(abspath scripts/sanitizer-cc.sh) $(GOOSE) build tests/read_link_fault.goose --debug --no-bce --cc $(abspath tests/read_link_fault-cc.sh) -o .build/read-link-fault-sanitize
+	ASAN_OPTIONS=detect_leaks=1:abort_on_error=1 UBSAN_OPTIONS=halt_on_error=1 python3 tests/run.py .build/read-link-fault-sanitize
+	$(SANITIZER_CC) $(CFLAGS) -O1 -g -fno-omit-frame-pointer -fsanitize=address,undefined -no-pie tests/read_link_native.c native/fs.c native/handles.c -Wl,--wrap=readlinkat -Wl,--wrap=close -Wl,--wrap=syscall -o .build/read-link-native-sanitize
+	ASAN_OPTIONS=detect_leaks=1:abort_on_error=1 UBSAN_OPTIONS=halt_on_error=1 python3 tests/run.py .build/read-link-native-sanitize
 	mkdir -p .build
 	SANITIZER_CC=$(SANITIZER_CC) $(GOOSE) build tests/sorted_lifetime.goose --debug --no-bce --cc $(abspath scripts/sanitizer-cc.sh) -o .build/sorted-lifetime-sanitize
 	ASAN_OPTIONS=detect_leaks=1:abort_on_error=1 UBSAN_OPTIONS=halt_on_error=1 python3 tests/run.py --api .build/sorted-lifetime-sanitize

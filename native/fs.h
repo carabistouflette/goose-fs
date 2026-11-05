@@ -8,6 +8,8 @@ typedef struct { int64_t *data; int64_t len; } gf_meta;
 /* Private slice ABI; no pointers retained. meta = errno, byte count, entry count. */
 int64_t gf_call(int64_t op, gf_input path, gf_input data, int64_t entries,
                 gf_output out, gf_meta meta);
+int64_t gf_read_link(gf_input path, int64_t limit, gf_output out, gf_meta meta);
+int64_t gf_root_read_link(int64_t context, int64_t root, gf_input path, int64_t limit, gf_output out, gf_meta meta);
 int64_t gf_metadata(gf_input path, gf_meta fields);
 /* Staging meta4 = errno, written bytes, written entries, required bytes.
  * Only result5 supplies required bytes; written counts are zero on all failures.

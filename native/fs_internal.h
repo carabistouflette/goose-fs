@@ -16,6 +16,8 @@ int gf_parent_checked(char *text, char **leaf, int64_t *cleanup);
 bool gf_relative_copy(gf_input path, char text[GF_MAX_PATH + 1]);
 int gf_parent_relative(int root, char *text, char **leaf);
 int gf_parent_relative_checked(int root, char *text, char **leaf, int64_t *cleanup);
+bool gf_read_link_arguments(gf_input path, int64_t limit, gf_output out, gf_meta meta);
+int gf_read_link_owned_parent(int dir, const char *leaf, int64_t limit, gf_output out, gf_meta meta);
 int gf_read_regular(int dir, const char *leaf, gf_output out, int64_t *length);
 int gf_list_dir(int dir, const char *leaf, gf_output out, int64_t cap, int64_t *length, int64_t *count);
 int gf_list_dir_sized(int dir, const char *leaf, gf_output out, int64_t bytes, int64_t cap,

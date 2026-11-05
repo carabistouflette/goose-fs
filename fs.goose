@@ -58,6 +58,34 @@ fn read(path: const u8[:], limit: i64, out: u8[>..]&) -> Status {
     if code == 0 { out.resize(meta[1]); } else { out.clear(); }
     return status(code, meta[0]);
 }
+extern fn native_read_link(path: const u8[:], limit: i64, out: u8[:], meta: i64[:]) -> i64 = "gf_read_link";
+extern fn native_root_read_link(context: i64, root: i64, path: const u8[:], limit: i64, out: u8[:], meta: i64[:]) -> i64 = "gf_root_read_link";
+fn read_link(path: const u8[:], limit: i64, out: u8[>..]&) -> Status {
+    return read_link_impl(Root { .. }, false, path, limit, out);
+}
+fn read_link_at(root: Root, path: const u8[:], limit: i64, out: u8[>..]&) -> Status {
+    return read_link_impl(root, true, path, limit, out);
+}
+fn read_link_impl(root: Root, relative: bool, path: const u8[:], limit: i64, out: u8[>..]&) -> Status {
+    if !(if relative { valid_relative(path) } else { valid_path(path) }) || limit < 0 || limit > MAX_BYTES {
+        out.clear(); return Status { error: Error.InvalidInput };
+    }
+    // Separate staging also preserves a pathname borrowed from out during growth.
+    var capacity = if limit + 1 < 256 { limit + 1 } else { 256 };
+    var packed: u8[>..] = []; packed.resize(capacity, 0);
+    var meta:   i64[3]  = [0; 3];
+    var code:   i64     = 0;
+    loop {
+        code = if relative { native_root_read_link(root.context.id, root.id, path, limit, packed[..], meta[..]) }
+               else { native_read_link(path, limit, packed[..], meta[..]) };
+        if code != 5 { break; }
+        capacity = if capacity * 2 < limit + 1 { capacity * 2 } else { limit + 1 };
+        packed.resize(capacity, 0);
+    }
+    out.clear();
+    if code == 0 { out.append(packed[..meta[1]]); }
+    return status(code, meta[0]);
+}
 fn list(path: const u8[:], byte_limit: i64, entry_limit: i64, out: Entry[>..]&) -> Status {
     return list(path, ListOptions { byte_limit: byte_limit, entry_limit: entry_limit }, out);
 }

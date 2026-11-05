@@ -13,6 +13,7 @@ permitted in-tree symlinks. See [comparison coverage](feature-coverage.md).
 | `open_file_at(root, relative_path, options)` | Open a regular File with the existing OpenOptions contract |
 | `root_metadata(root, out)` | Inspect the held directory directly, without pathname lookup |
 | `metadata_at(root, relative_path, out)` | Inspect the final entry without following it |
+| `read_link_at(root, path, limit, out)` | [Bounded final-symlink target bytes](READ-LINK.md); never resolves the target |
 | `read_file_at(root, relative_path, limit, out)` | Bounded whole-file read, including overflow probe |
 | `list_at`, `list_sorted_at` | Same limits/owned Entry format as list/list_sorted |
 | `rename_at(root, from, to, options)` | Two operands under one Root; [explicit outcomes and parent sync](RENAME.md) |

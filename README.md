@@ -29,6 +29,7 @@ For Git dependencies, pin a reviewed full commit rather than a moving branch. Se
 
 | Function | Behavior |
 | --- | --- |
+| `read_link(path, limit, out)`, `read_link_at(root, path, limit, out)` | [Bounded verbatim symlink target inspection](docs/READ-LINK.md) |
 | `read(path, limit, out)` | Replace caller-owned bytes with a bounded regular-file read |
 | `list(path, byte_limit, entry_limit, out)` | Replace caller-owned entries with owned names and kind hints |
 | `create_file(path, data)` | Exclusive creation, mode 0600 subject to umask |

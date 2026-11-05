@@ -107,6 +107,35 @@ int gf_parent_checked(char *text, char **leaf, int64_t *cleanup) {
 
 int gf_parent(char *text, char **leaf) { return gf_parent_checked(text,leaf,NULL); }
 
+/* Private staging may be smaller than limit+1; a full buffer is never success. */
+bool gf_read_link_arguments(gf_input path, int64_t limit, gf_output out, gf_meta meta) {
+    if (meta.len != 3 || !meta.data || gf_overlap(meta.data,24,path.data,path.len) ||
+        gf_overlap(meta.data,24,out.data,out.len)) return false;
+    memset(meta.data,0,24);
+    return limit >= 0 && limit <= GF_MAX_BYTES && out.len > 0 &&
+        out.len <= limit + 1 && out.data && !gf_overlap(out.data,out.len,path.data,path.len);
+}
+/* Consume the owned parent exactly once. Never retry close, including EINTR. */
+int gf_read_link_owned_parent(int dir, const char *leaf, int64_t limit, gf_output out, gf_meta meta) {
+    ssize_t n;
+    do { n = readlinkat(dir,leaf,(char *)out.data,(size_t)out.len); } while (n < 0 && errno == EINTR);
+    int code = n < 0 ? GF_SYSTEM : n > limit ? GF_LIMIT : n == out.len ? GF_NEED_SPACE : GF_OK;
+    int error = n < 0 ? errno : 0;
+    if (close(dir) < 0 && (code == GF_OK || code == GF_NEED_SPACE)) { code = GF_SYSTEM; error = errno; }
+    meta.data[0] = error;
+    meta.data[1] = code == GF_OK ? n : 0;
+    return code;
+}
+int64_t gf_read_link(gf_input path, int64_t limit, gf_output out, gf_meta meta) {
+    if (!gf_read_link_arguments(path,limit,out,meta)) return GF_INVALID;
+    char text[GF_MAX_PATH+1];
+    if (!gf_path_copy(path,text)) return GF_INVALID;
+    char *leaf;
+    int dir = gf_parent(text,&leaf);
+    if (dir < 0) { meta.data[0] = errno; return GF_SYSTEM; }
+    return gf_read_link_owned_parent(dir,leaf,limit,out,meta);
+}
+
 int gf_read_regular(int dir, const char *leaf, gf_output out, int64_t *length) {
     int fd = openat(dir, leaf, O_RDONLY | O_NOFOLLOW | O_NONBLOCK | O_NOCTTY | O_CLOEXEC);
     if (fd < 0) return GF_SYSTEM;

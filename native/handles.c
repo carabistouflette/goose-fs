@@ -488,6 +488,20 @@ static int64_t root_call(int64_t context, int64_t id, int op, gf_input path,
     meta.data[0] = error;
     return code;
 }
+int64_t gf_root_read_link(int64_t context, int64_t id, gf_input path, int64_t limit, gf_output out, gf_meta meta) {
+    if (!gf_read_link_arguments(path,limit,out,meta)) return GF_INVALID;
+    char text[GF_MAX_PATH+1];
+    if (!gf_relative_copy(path,text)) return GF_INVALID;
+    context_slot *ctx; int error;
+    resource_slot *root = lock_resource(context,id,RESOURCE_ROOT,false,&ctx,&error);
+    if (!root) return result(meta,error);
+    char *leaf;
+    int dir = gf_parent_relative(root->fd,text,&leaf);
+    if (dir < 0) { error = errno; unlock_resource(ctx,root); return result(meta,error); }
+    int code = gf_read_link_owned_parent(dir,leaf,limit,out,meta);
+    unlock_resource(ctx,root);
+    return code;
+}
 int64_t gf_root_read(int64_t context, int64_t root, gf_input path, gf_output out, gf_meta meta) {
     return root_call(context,root,ROOT_READ,path,(gf_input){NULL,0},out,0,meta);
 }
