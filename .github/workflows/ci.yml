@@ -56,3 +56,4 @@ jobs:
           python3 tests/read_growth.py
           python3 bench/read-contract/build.py --goose .toolchain/goose/build/goose --baseline-revision ce3bdcf92c07c03761e73333526933d2db8b33b1 --output-dir .build/read-growth
           python3 tests/read_growth.py --build-dir .build/read-growth
+          python3 tests/read_aa.py --build-dir .build/read-contract

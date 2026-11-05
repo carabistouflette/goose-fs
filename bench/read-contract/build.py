@@ -31,7 +31,7 @@ def capture(args):
 
 def inputs():
     paths=[ROOT/'fs.goose',ROOT/'fs.build',ROOT/'GOOSE_REVISION',*sorted((ROOT/'native').glob('*')),
-           *sorted(HERE.rglob('*')),*sorted((ROOT/'bench/read-growth').rglob('*')),ROOT/'bench/compare/provenance.py',ROOT/'tests/read_contract.py',ROOT/'tests/read_growth.py']
+           *sorted(HERE.rglob('*')),*sorted((ROOT/'bench/read-growth').rglob('*')),*sorted((ROOT/'bench/read-aa').rglob('*')),ROOT/'bench/compare/provenance.py',ROOT/'tests/read_contract.py',ROOT/'tests/read_growth.py',ROOT/'tests/read_aa.py']
     return {str(p.relative_to(ROOT)):sha256(p) for p in paths
             if p.is_file() and '__pycache__' not in p.parts}
 
@@ -84,7 +84,7 @@ def main():
     cc=str(Path(cc).resolve())
     with (out/'build.lock').open('a') as lock:
         fcntl.flock(lock,fcntl.LOCK_EX)
-        if any(out.glob('attempt-*.jsonl')):raise SystemExit('measured attempts already exist; preserve this checkpoint and use a new directory')
+        if any(out.glob('attempt-*.jsonl')) or any(out.glob('aa-attempt-*.jsonl')):raise SystemExit('measured attempts already exist; preserve this checkpoint and use a new directory')
         (out/'build.json').unlink(missing_ok=True)
         before=inputs();versions=tools(goose,cc,a.rust_toolchain)
         revision=capture(['git','rev-parse','HEAD']);dirty=bool(capture(['git','status','--porcelain']))

@@ -12,6 +12,7 @@ import statistics
 import subprocess
 import sys
 import tempfile
+from child import run_captured
 from build import ROOT,LABELS,PAIRS,GROWTH_LABELS,GROWTH_PAIRS,BASELINE,library_export,publish,capture,inputs,tools,sha256,runtime_settings
 from conformance import fixtures,check_release,check_faults,add_fresh_case
 
@@ -53,7 +54,7 @@ def validate(out,manifest,growth=False):
 
 def record_process(command,event,emit,timeout=60):
     try:
-        proc=subprocess.run(command,stdout=subprocess.PIPE,stderr=subprocess.PIPE,timeout=timeout)
+        proc=run_captured(command,timeout)
     except subprocess.TimeoutExpired as e:
         event.update(timeout=True,stdout_hex=(e.stdout or b'').hex(),stderr_hex=(e.stderr or b'').hex())
         emit(event);raise
