@@ -5,6 +5,8 @@ harness, output, CWD and GOOSE_HOME paths. Remove the private build tree and
 caches between builds. Compiler, stdlib and flags match. Saved executables have
 different execution paths (a/b), recorded with runtime settings, affinity and load.
 
+Requires Linux, Python 3.11+, GNU objcopy, the pinned Goose compiler and a C compiler.
+
 ```sh
 python3 bench/listing-control-build.py --revision FULL_TRUSTED_COMMIT --goose /path/to/goose
 python3 tests/listing_control.py --goose /path/to/goose

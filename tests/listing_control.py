@@ -46,4 +46,11 @@ with tempfile.TemporaryDirectory(dir=ROOT/'.build') as t:
     for script in ('bench/listing-control-build.py','bench/listing-measure.py'):
         result=subprocess.run(['python3','-O',str(ROOT/script),'--help'],capture_output=True)
         assert result.returncode!=0 and b'requires Python assertions' in result.stderr
+    target=temp/'symlink-output';target.mkdir();victim=temp/'victim';victim.write_bytes(b'unchanged')
+    artifacts=('a','b','a-build.log','b-build.log','runner.goose','build.json')
+    for name in artifacts:(target/name).symlink_to(victim)
+    subprocess.run(['python3',str(ROOT/'bench/listing-control-build.py'),'--revision',record['baseline_revision'],
+        '--goose',str(Path(a.goose).resolve()),'--cc',record['cc_path'],'--output-dir',str(target)],check=True)
+    assert victim.read_bytes()==b'unchanged'
+    assert all(not (target/name).is_symlink() for name in artifacts)
 print('A/A recording and profile/source/eligibility/binary/optimized-Python rejection passed')
