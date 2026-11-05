@@ -25,6 +25,7 @@ p.add_argument('--full',type=Path,required=True)
 p.add_argument('--adaptive',type=Path,required=True)
 p.add_argument('--rounds',type=int,default=5)
 p.add_argument('--iterations',type=int,default=5)
+p.add_argument('--creation-order',choices=['natural','shuffled'],default='natural')
 p.add_argument('--output',type=Path,required=True)
 p.add_argument('--build-manifest',type=Path,required=True)
 a=p.parse_args()
@@ -50,24 +51,29 @@ assert build['goose_sha256']==compiler_hash
 assert build['goose_stdlib']==goose_stdlib(goose)
 load_start=os.getloadavg();started=datetime.datetime.now(datetime.timezone.utc).isoformat();rows=[];fixtures={}
 rng=random.Random(61937)
+fixture_rng=random.Random(61938)
 with tempfile.TemporaryDirectory(prefix='goose-fs-listing-bench-') as temp:
     base=Path(temp);cases=[]
     # One short name costs12 bytes; short4096 uses the same10-byte name family.
     for label,size in [('empty',0),('one',12),('short4096',49152),('prefix255',4080*257),('below64k',65535),('at64k',65536),('above64k',65537),('above128k',131073),('above512k',524289),('max1m',1048576)]:
         path=base/label;path.mkdir()
         names=[f'entry-{i:04d}'.encode() for i in range(4096)] if label=='short4096' else [b'x'*250+f'{i:05d}'.encode() for i in range(4080)] if label=='prefix255' else names_for_bytes(size)
-        for name in names:
+        creation=names.copy()
+        if a.creation_order=='shuffled':fixture_rng.shuffle(creation)
+        for name in creation:
             fd=os.open(os.fsencode(path)+b'/'+name,os.O_CREAT|os.O_EXCL|os.O_WRONLY,0o600);os.close(fd)
         expected=b''.join(n+b'\0' for n in sorted(names))
-        fixtures[label]=dict(packed_bytes=size,entries=len(names),sorted_names_sha256=hashlib.sha256(expected).hexdigest())
+        fixtures[label]=dict(packed_bytes=size,entries=len(names),sorted_names_sha256=hashlib.sha256(expected).hexdigest(),
+                             creation_names_sha256=hashlib.sha256(b'\0'.join(creation)).hexdigest(),unsorted_preflight_sha256={})
         signature=len(names)+sum(len(n)+n[0]+n[-1] for n in names)
         for budget in sorted({size,1048576}):
             for api,api_name in enumerate(['absolute','absolute-sorted','root','root-sorted']):
                 key=f'{label}/{budget}/{api_name}'
                 cases.append((key,path,budget,api,signature))
                 # Complete independent filename checks outside every timed series.
-                for binary in binaries.values():
+                for variant,binary in binaries.items():
                     got=subprocess.check_output([str(binary),str(path),str(budget),str(api),'0'],timeout=30)
+                    if not api%2:fixtures[label]['unsorted_preflight_sha256'][f'{budget}/{api_name}/{variant}']=hashlib.sha256(got).hexdigest()
                     entries=got.split(b'\0');assert entries.pop()==b''
                     assert (entries if api%2 else sorted(entries))==sorted(names),(binary,key)
     filesystem=capture(['stat','-f','-c','%T',str(base)])
@@ -94,6 +100,7 @@ metadata=dict(started_utc=started,finished_utc=datetime.datetime.now(datetime.ti
               sources_sha256=initial_sources,binaries_sha256=initial_bins,goose=capture([goose,'--version']),
               goose_sha256=compiler_hash,build_manifest=build,goose_revision=(ROOT/'GOOSE_REVISION').read_text().strip(),
               cc=capture([a.cc,'--version']),flags=['-O2'],shuffle_seed=61937,rounds=a.rounds,iterations=a.iterations,
+              creation_order=a.creation_order,creation_shuffle_seed=61938,
               runtime_environment={key:os.environ.get(key) for key in ['LD_PRELOAD','GLIBC_TUNABLES','MALLOC_CONF']},
               fixtures=fixtures,samples=rows)
 a.output.write_text(json.dumps(metadata,indent=2)+'\n')
