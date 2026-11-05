@@ -1,0 +1,1261 @@
+{
+  "task": "GL-DOCSFS-01",
+  "runtime_revision": "60cec1e1956962772fff6091b4c7ff1876533f9e",
+  "measured_revision": "4a7b2c178695fb453b4303184303212ee3d85834",
+  "production_sha256": {
+    "fs.goose": "8fef184f13af90c2c72af075522c14c56402844d6207b4cfb4c1d670e87f137b",
+    "fs.build": "4ff658811c55b581dc033e06ab1c6b4eeda84c1de9e1fdc78f2cb8cc638e2f65",
+    "GOOSE_REVISION": "64e14b181dfe96743211738fb0f1b1f7798ea940da2ca50ff122e6f028c24e15",
+    "native/fs.c": "771639d22cd67ae18f48894a11eccdca3a11c25cb025352aa8151520cffd7e6a",
+    "native/fs.h": "42dbb2dc7b7a07923c6f7058eb2d9f2e1c994d9db68de3b4112a864998f93682",
+    "native/fs_internal.h": "423b852d9b0f9d51971fff0faf7113e8e2d7c50799aa1353782365962b6bd5e2",
+    "native/handles.c": "3e69d2344337744723f32b8d7ef45f532291fc3e6902e27650c83ea098317be0"
+  },
+  "source_bridge": [
+    {
+      "path": "tests/native_compare.py",
+      "recorded_sha256": "072c089c18e37c3507def96bad4f5cc76c08f057f323070d7719a05639e5a6f2",
+      "current_sha256": "072c089c18e37c3507def96bad4f5cc76c08f057f323070d7719a05639e5a6f2",
+      "scope": "identical"
+    },
+    {
+      "path": "bench/read-contract/child.py",
+      "recorded_sha256": "765ad1b464db1ac837f5fd02e8b85b7ba40cf193c602dbca8d5e52e995d9ba98",
+      "current_sha256": "765ad1b464db1ac837f5fd02e8b85b7ba40cf193c602dbca8d5e52e995d9ba98",
+      "scope": "identical"
+    },
+    {
+      "path": "fs.goose",
+      "recorded_sha256": "8fef184f13af90c2c72af075522c14c56402844d6207b4cfb4c1d670e87f137b",
+      "current_sha256": "8fef184f13af90c2c72af075522c14c56402844d6207b4cfb4c1d670e87f137b",
+      "scope": "identical"
+    },
+    {
+      "path": "fs.build",
+      "recorded_sha256": "4ff658811c55b581dc033e06ab1c6b4eeda84c1de9e1fdc78f2cb8cc638e2f65",
+      "current_sha256": "4ff658811c55b581dc033e06ab1c6b4eeda84c1de9e1fdc78f2cb8cc638e2f65",
+      "scope": "identical"
+    },
+    {
+      "path": "GOOSE_REVISION",
+      "recorded_sha256": "64e14b181dfe96743211738fb0f1b1f7798ea940da2ca50ff122e6f028c24e15",
+      "current_sha256": "64e14b181dfe96743211738fb0f1b1f7798ea940da2ca50ff122e6f028c24e15",
+      "scope": "identical"
+    },
+    {
+      "path": "native/fs.c",
+      "recorded_sha256": "771639d22cd67ae18f48894a11eccdca3a11c25cb025352aa8151520cffd7e6a",
+      "current_sha256": "771639d22cd67ae18f48894a11eccdca3a11c25cb025352aa8151520cffd7e6a",
+      "scope": "identical"
+    },
+    {
+      "path": "native/fs.h",
+      "recorded_sha256": "42dbb2dc7b7a07923c6f7058eb2d9f2e1c994d9db68de3b4112a864998f93682",
+      "current_sha256": "42dbb2dc7b7a07923c6f7058eb2d9f2e1c994d9db68de3b4112a864998f93682",
+      "scope": "identical"
+    },
+    {
+      "path": "native/fs_internal.h",
+      "recorded_sha256": "423b852d9b0f9d51971fff0faf7113e8e2d7c50799aa1353782365962b6bd5e2",
+      "current_sha256": "423b852d9b0f9d51971fff0faf7113e8e2d7c50799aa1353782365962b6bd5e2",
+      "scope": "identical"
+    },
+    {
+      "path": "native/handles.c",
+      "recorded_sha256": "3e69d2344337744723f32b8d7ef45f532291fc3e6902e27650c83ea098317be0",
+      "current_sha256": "3e69d2344337744723f32b8d7ef45f532291fc3e6902e27650c83ea098317be0",
+      "scope": "identical"
+    },
+    {
+      "path": "bench/compare/README.md",
+      "recorded_sha256": "0286763dc09b9e0150cc68f46f032e22abaef9b70d88a9752bcc28ee9207d278",
+      "current_sha256": "301f070998088d73dc91eea806d2cdaeb881a3cb122d53e37f83ff0a51e65e1e",
+      "scope": "documentation only; not compiled"
+    },
+    {
+      "path": "bench/compare/build.py",
+      "recorded_sha256": "c61b5fc1086e158176dd4bb4aca74b2648f022852ebdb717f0eda4501e71bfd4",
+      "current_sha256": "c61b5fc1086e158176dd4bb4aca74b2648f022852ebdb717f0eda4501e71bfd4",
+      "scope": "identical"
+    },
+    {
+      "path": "bench/compare/go.go",
+      "recorded_sha256": "f02e504f111bda31380aa4d16f8af3ee8465d2d1b6a39dbb6f661f0f8964d744",
+      "current_sha256": "f02e504f111bda31380aa4d16f8af3ee8465d2d1b6a39dbb6f661f0f8964d744",
+      "scope": "identical"
+    },
+    {
+      "path": "bench/compare/goose.goose.in",
+      "recorded_sha256": "23c02dfb7a34953493ff8ed44030694c60a30573e2879ea8ea76d119b18f260b",
+      "current_sha256": "23c02dfb7a34953493ff8ed44030694c60a30573e2879ea8ea76d119b18f260b",
+      "scope": "identical"
+    },
+    {
+      "path": "bench/compare/provenance.py",
+      "recorded_sha256": "94b6d6480e4d3753042532d73b5e6474a1fc5ee9378e1a0259d4feb1285b4555",
+      "current_sha256": "94b6d6480e4d3753042532d73b5e6474a1fc5ee9378e1a0259d4feb1285b4555",
+      "scope": "identical"
+    },
+    {
+      "path": "bench/compare/run.py",
+      "recorded_sha256": "f95bf31bc47f3f9e2d8693218032310545463c7971406a4a3c994150e6159ebd",
+      "current_sha256": "f95bf31bc47f3f9e2d8693218032310545463c7971406a4a3c994150e6159ebd",
+      "scope": "identical"
+    },
+    {
+      "path": "bench/compare/rust.rs",
+      "recorded_sha256": "d689184a560323239155566d7481cfe8071752f7cf608bfb6938f5e263792f61",
+      "current_sha256": "d689184a560323239155566d7481cfe8071752f7cf608bfb6938f5e263792f61",
+      "scope": "identical"
+    }
+  ],
+  "live_toolchain_checks": {
+    "goose": true,
+    "goose_sha256": true,
+    "goose_revision": true,
+    "native_cc": true,
+    "rust": true,
+    "go": true,
+    "go_settings": true,
+    "stdlib_sources": true
+  },
+  "recorded_toolchains": {
+    "goose": "goose eadca40 (runtime 3025e5810379)",
+    "goose_sha256": "3db881b3955dc510f3efb513cd818fd092857b11ccc2164a808ed68b76caa443",
+    "goose_stdlib": {
+      "directory": "/home/arobin/Work/Projects/goose-libs/libraries/goose-log/.toolchain/goose/stdlib",
+      "sources_sha256": {
+        "base64.goose": "fa1111ce46e9534311f825880dbd2988953430aeb3f1f52d8f0eaecbbc298a61",
+        "binary.goose": "24f3f09192738f42dfc0cb08b7447bbdc38009f7fec2567cae932b3022455631",
+        "csv.goose": "a49b0647f4a2f8ca36170e5a184ab6c6e505492434d0a10a5e05127e96da61ba",
+        "dictionary.goose": "fb39f896731faf3799e81727f7261849a62bdfbdc92d5fdbc36405a85830f322",
+        "exception.goose": "093863eda5433176750182b597aa6760a93808d86b0c9b713681443d2fb29160",
+        "ffi.goose": "e092b245fbe13ee2fdc71599b7b8eb44198e5261cad9600b7681e13ad75a6c2e",
+        "json.goose": "81595baa298b9b0deb271297c971166fd084c13b128bba2a7f7486191ea0de4e",
+        "math.goose": "b20bd3f78cd1ca291fdbc65df85d9aeaa77054cdf601b5adecfdd4f9db9f0d6e",
+        "os.goose": "2193f394d44469daffd993ed204a91b068084fd8db13e261e11156b40c66e934",
+        "regex.goose": "1ea3fc0a38402f29193777478b793b4a74a3074da0e3baf96f0b54eea1a84a95",
+        "slice_pool.goose": "e15aa757be8edea4b367ac0b2cb8cce48df9f4f249f5002a9393475cc89404f0",
+        "slice_pool_internal.goose": "488048c4e67754c878aa24ae25a941833a4a1a36ba679a2444b13806e7d42e15",
+        "slot_pool.goose": "e83b975bfff2806df0401afc3e37e147618c5673a9c98690007e6beb3bd51745",
+        "std.goose": "2bff7f6748300396e4c048bbf072f798566fadfe6b05d4256052d32c93e6d5d2",
+        "vec.goose": "2cac168c72047834433bfb419734c38455c9429ea045b1273898031c53faa82e"
+      }
+    },
+    "goose_revision": "eadca409f68210893f366e60d0c2f0dc29a339be",
+    "native_cc": "gcc (GCC) 16.2.1 20260810\nCopyright (C) 2026 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.",
+    "rust": "rustc 1.99.1 (58cf8f9c3 2026-10-13)\nbinary: rustc\ncommit-hash: 58cf8f9c35b355199727627d07ae34a4e2846d67\ncommit-date: 2026-10-13\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.1\nLLVM version: 23.1.1",
+    "go": "go version go1.27.3-X:nodwarf5 linux/amd64",
+    "go_settings": "{\n\t\"CGO_ENABLED\": \"1\",\n\t\"GOAMD64\": \"v1\",\n\t\"GOARCH\": \"amd64\",\n\t\"GOARM64\": \"\",\n\t\"GOEXPERIMENT\": \"nodwarf5\",\n\t\"GOFLAGS\": \"\",\n\t\"GOOS\": \"linux\",\n\t\"GOTOOLCHAIN\": \"auto\"\n}"
+  },
+  "platform": "Linux-7.2.11-arch1-1-x86_64-with-glibc2.44",
+  "filesystem": "tmpfs",
+  "historical_artifacts_unchanged": 98,
+  "benchmark_inventory": [
+    {
+      "profile": "2026-11-04",
+      "status": "historical only; no current-main numerical claim",
+      "records": [
+        {
+          "file": "clang.json",
+          "measured_revision": "3c863ca2171a347d878b4708f189597eb2244e2d",
+          "measured_checkout_changed_production_paths": [
+            "fs.goose",
+            "fs.build",
+            "native/fs.c",
+            "native/fs.h",
+            "native/fs_internal.h",
+            "native/handles.c"
+          ],
+          "recorded_revision_references": [
+            {
+              "path": "goose_revision",
+              "revision": "eadca409f68210893f366e60d0c2f0dc29a339be"
+            },
+            {
+              "path": "source_revision",
+              "revision": "3c863ca2171a347d878b4708f189597eb2244e2d"
+            },
+            {
+              "path": "baseline_revision",
+              "revision": "6b8c079ba0414115713b16ae216327197fceb27d"
+            }
+          ],
+          "stdlib_hashes_recorded": false,
+          "stdlib_source_maps": []
+        },
+        {
+          "file": "gcc.json",
+          "measured_revision": "3c863ca2171a347d878b4708f189597eb2244e2d",
+          "measured_checkout_changed_production_paths": [
+            "fs.goose",
+            "fs.build",
+            "native/fs.c",
+            "native/fs.h",
+            "native/fs_internal.h",
+            "native/handles.c"
+          ],
+          "recorded_revision_references": [
+            {
+              "path": "goose_revision",
+              "revision": "eadca409f68210893f366e60d0c2f0dc29a339be"
+            },
+            {
+              "path": "source_revision",
+              "revision": "3c863ca2171a347d878b4708f189597eb2244e2d"
+            },
+            {
+              "path": "baseline_revision",
+              "revision": "6b8c079ba0414115713b16ae216327197fceb27d"
+            }
+          ],
+          "stdlib_hashes_recorded": false,
+          "stdlib_source_maps": []
+        }
+      ]
+    },
+    {
+      "profile": "2026-11-04-adaptive-native-api",
+      "status": "historical only; no current-main numerical claim",
+      "records": [
+        {
+          "file": "raw.json",
+          "measured_revision": "070a899ad7491596f7dc743fe386cf58ffbf8517",
+          "measured_checkout_changed_production_paths": [
+            "fs.goose",
+            "fs.build",
+            "native/fs.c",
+            "native/fs.h",
+            "native/fs_internal.h",
+            "native/handles.c"
+          ],
+          "recorded_revision_references": [
+            {
+              "path": "source_revision",
+              "revision": "070a899ad7491596f7dc743fe386cf58ffbf8517"
+            },
+            {
+              "path": "build.source_revision",
+              "revision": "070a899ad7491596f7dc743fe386cf58ffbf8517"
+            },
+            {
+              "path": "build.toolchains.goose_revision",
+              "revision": "eadca409f68210893f366e60d0c2f0dc29a339be"
+            }
+          ],
+          "stdlib_hashes_recorded": false,
+          "stdlib_source_maps": []
+        }
+      ]
+    },
+    {
+      "profile": "2026-11-04-listing-staging",
+      "status": "historical only; no current-main numerical claim",
+      "records": [
+        {
+          "file": "raw.json",
+          "measured_revision": "070a899ad7491596f7dc743fe386cf58ffbf8517",
+          "measured_checkout_changed_production_paths": [
+            "fs.goose",
+            "fs.build",
+            "native/fs.c",
+            "native/fs.h",
+            "native/fs_internal.h",
+            "native/handles.c"
+          ],
+          "recorded_revision_references": [
+            {
+              "path": "source_revision",
+              "revision": "070a899ad7491596f7dc743fe386cf58ffbf8517"
+            },
+            {
+              "path": "baseline_revision",
+              "revision": "caf5fc3e9d86e9963393781115027cf2a75774d1"
+            },
+            {
+              "path": "build_manifest.baseline_revision",
+              "revision": "caf5fc3e9d86e9963393781115027cf2a75774d1"
+            },
+            {
+              "path": "build_manifest.source_revision",
+              "revision": "070a899ad7491596f7dc743fe386cf58ffbf8517"
+            },
+            {
+              "path": "goose_revision",
+              "revision": "eadca409f68210893f366e60d0c2f0dc29a339be"
+            }
+          ],
+          "stdlib_hashes_recorded": false,
+          "stdlib_source_maps": []
+        }
+      ]
+    },
+    {
+      "profile": "2026-11-04-locks",
+      "status": "historical only; no current-main numerical claim",
+      "records": [
+        {
+          "file": "raw.json",
+          "measured_revision": "42db4b6abca3cad711146bce83419ca2387a4ca6",
+          "measured_checkout_changed_production_paths": [
+            "fs.goose",
+            "fs.build",
+            "native/fs.c",
+            "native/fs.h",
+            "native/fs_internal.h",
+            "native/handles.c"
+          ],
+          "recorded_revision_references": [
+            {
+              "path": "source_revision",
+              "revision": "42db4b6abca3cad711146bce83419ca2387a4ca6"
+            },
+            {
+              "path": "build.source_revision",
+              "revision": "42db4b6abca3cad711146bce83419ca2387a4ca6"
+            },
+            {
+              "path": "build.toolchains.goose_revision",
+              "revision": "eadca409f68210893f366e60d0c2f0dc29a339be"
+            }
+          ],
+          "stdlib_hashes_recorded": false,
+          "stdlib_source_maps": []
+        }
+      ]
+    },
+    {
+      "profile": "2026-11-04-native-api",
+      "status": "historical only; no current-main numerical claim",
+      "records": [
+        {
+          "file": "raw.json",
+          "measured_revision": "81e304c7938373355ac3c20b9135ac4eeb9bc843",
+          "measured_checkout_changed_production_paths": [
+            "fs.goose",
+            "fs.build",
+            "native/fs.c",
+            "native/fs.h",
+            "native/fs_internal.h",
+            "native/handles.c"
+          ],
+          "recorded_revision_references": [
+            {
+              "path": "source_revision",
+              "revision": "81e304c7938373355ac3c20b9135ac4eeb9bc843"
+            },
+            {
+              "path": "build.source_revision",
+              "revision": "81e304c7938373355ac3c20b9135ac4eeb9bc843"
+            },
+            {
+              "path": "build.toolchains.goose_revision",
+              "revision": "eadca409f68210893f366e60d0c2f0dc29a339be"
+            }
+          ],
+          "stdlib_hashes_recorded": false,
+          "stdlib_source_maps": []
+        }
+      ]
+    },
+    {
+      "profile": "2026-11-04-read-reuse",
+      "status": "historical only; no current-main numerical claim",
+      "records": [
+        {
+          "file": "raw.json",
+          "measured_revision": "81e304c7938373355ac3c20b9135ac4eeb9bc843",
+          "measured_checkout_changed_production_paths": [
+            "fs.goose",
+            "fs.build",
+            "native/fs.c",
+            "native/fs.h",
+            "native/fs_internal.h",
+            "native/handles.c"
+          ],
+          "recorded_revision_references": [
+            {
+              "path": "goose_revision",
+              "revision": "eadca409f68210893f366e60d0c2f0dc29a339be"
+            },
+            {
+              "path": "source_revision",
+              "revision": "81e304c7938373355ac3c20b9135ac4eeb9bc843"
+            },
+            {
+              "path": "baseline_revision",
+              "revision": "3157fd2d0183d994e481c778a51e193bb93da340"
+            }
+          ],
+          "stdlib_hashes_recorded": false,
+          "stdlib_source_maps": []
+        }
+      ]
+    },
+    {
+      "profile": "2026-11-04-rename",
+      "status": "historical only; no current-main numerical claim",
+      "records": [
+        {
+          "file": "raw.json",
+          "measured_revision": "15a4951f680c7c9d1abcebc96296dc672189183c",
+          "measured_checkout_changed_production_paths": [
+            "fs.goose",
+            "fs.build",
+            "native/fs.c",
+            "native/fs.h",
+            "native/fs_internal.h",
+            "native/handles.c"
+          ],
+          "recorded_revision_references": [
+            {
+              "path": "source_revision",
+              "revision": "15a4951f680c7c9d1abcebc96296dc672189183c"
+            },
+            {
+              "path": "build.source_revision",
+              "revision": "15a4951f680c7c9d1abcebc96296dc672189183c"
+            },
+            {
+              "path": "build.toolchains.goose_revision",
+              "revision": "eadca409f68210893f366e60d0c2f0dc29a339be"
+            }
+          ],
+          "stdlib_hashes_recorded": false,
+          "stdlib_source_maps": []
+        }
+      ]
+    },
+    {
+      "profile": "2026-11-04-retained",
+      "status": "historical only; no current-main numerical claim",
+      "records": [
+        {
+          "file": "raw.json",
+          "measured_revision": "ddaaf8de8cd06dfa836f1ca14298e579e84a12a9",
+          "measured_checkout_changed_production_paths": [
+            "fs.goose",
+            "fs.build",
+            "native/fs.c",
+            "native/fs.h",
+            "native/fs_internal.h",
+            "native/handles.c"
+          ],
+          "recorded_revision_references": [
+            {
+              "path": "source_revision",
+              "revision": "ddaaf8de8cd06dfa836f1ca14298e579e84a12a9"
+            },
+            {
+              "path": "build.source_revision",
+              "revision": "ddaaf8de8cd06dfa836f1ca14298e579e84a12a9"
+            },
+            {
+              "path": "build.toolchains.goose_revision",
+              "revision": "eadca409f68210893f366e60d0c2f0dc29a339be"
+            }
+          ],
+          "stdlib_hashes_recorded": false,
+          "stdlib_source_maps": []
+        }
+      ]
+    },
+    {
+      "profile": "2026-11-04-roots",
+      "status": "historical only; no current-main numerical claim",
+      "records": [
+        {
+          "file": "raw.json",
+          "measured_revision": "599604a6fecc66915c47944f9779b4e34f8a61db",
+          "measured_checkout_changed_production_paths": [
+            "fs.goose",
+            "fs.build",
+            "native/fs.c",
+            "native/fs.h",
+            "native/fs_internal.h",
+            "native/handles.c"
+          ],
+          "recorded_revision_references": [
+            {
+              "path": "source_revision",
+              "revision": "599604a6fecc66915c47944f9779b4e34f8a61db"
+            },
+            {
+              "path": "build.source_revision",
+              "revision": "599604a6fecc66915c47944f9779b4e34f8a61db"
+            },
+            {
+              "path": "build.toolchains.goose_revision",
+              "revision": "eadca409f68210893f366e60d0c2f0dc29a339be"
+            }
+          ],
+          "stdlib_hashes_recorded": false,
+          "stdlib_source_maps": []
+        }
+      ]
+    },
+    {
+      "profile": "2026-11-05-file-metadata",
+      "status": "historical only; no current-main numerical claim",
+      "records": [
+        {
+          "file": "raw.json",
+          "measured_revision": "d100cf58d719fde6e8a0b04fa0ad2895e3faff81",
+          "measured_checkout_changed_production_paths": [
+            "fs.goose",
+            "fs.build",
+            "native/fs.c",
+            "native/fs.h",
+            "native/fs_internal.h",
+            "native/handles.c"
+          ],
+          "recorded_revision_references": [
+            {
+              "path": "source_revision",
+              "revision": "d100cf58d719fde6e8a0b04fa0ad2895e3faff81"
+            },
+            {
+              "path": "build.source_revision",
+              "revision": "d100cf58d719fde6e8a0b04fa0ad2895e3faff81"
+            },
+            {
+              "path": "build.toolchains.goose_revision",
+              "revision": "eadca409f68210893f366e60d0c2f0dc29a339be"
+            }
+          ],
+          "stdlib_hashes_recorded": false,
+          "stdlib_source_maps": []
+        }
+      ]
+    },
+    {
+      "profile": "2026-11-05-listing-control",
+      "status": "historical only; no current-main numerical claim",
+      "records": [
+        {
+          "file": "final.json",
+          "measured_revision": "3fbe3923cd7c9f89a7e1e196ef91cd9d59b17076",
+          "measured_checkout_changed_production_paths": [
+            "fs.goose",
+            "fs.build",
+            "native/fs.c",
+            "native/fs.h",
+            "native/fs_internal.h",
+            "native/handles.c"
+          ],
+          "recorded_revision_references": [
+            {
+              "path": "source_revision",
+              "revision": "3fbe3923cd7c9f89a7e1e196ef91cd9d59b17076"
+            },
+            {
+              "path": "baseline_revision",
+              "revision": "edd94ced1d7ae76490efb497794b9ba19504d4da"
+            },
+            {
+              "path": "build_manifest.source_revision",
+              "revision": "3fbe3923cd7c9f89a7e1e196ef91cd9d59b17076"
+            },
+            {
+              "path": "build_manifest.baseline_revision",
+              "revision": "edd94ced1d7ae76490efb497794b9ba19504d4da"
+            },
+            {
+              "path": "goose_revision",
+              "revision": "eadca409f68210893f366e60d0c2f0dc29a339be"
+            }
+          ],
+          "stdlib_hashes_recorded": true,
+          "stdlib_source_maps": [
+            {
+              "path": "build_manifest.goose_stdlib",
+              "matches_current": true
+            }
+          ]
+        },
+        {
+          "file": "initial.json",
+          "measured_revision": "c9ddc0c00bd9e0118655d740a11b7b6c193ba3d8",
+          "measured_checkout_changed_production_paths": [
+            "fs.goose",
+            "fs.build",
+            "native/fs.c",
+            "native/fs.h",
+            "native/fs_internal.h",
+            "native/handles.c"
+          ],
+          "recorded_revision_references": [
+            {
+              "path": "source_revision",
+              "revision": "c9ddc0c00bd9e0118655d740a11b7b6c193ba3d8"
+            },
+            {
+              "path": "baseline_revision",
+              "revision": "edd94ced1d7ae76490efb497794b9ba19504d4da"
+            },
+            {
+              "path": "build_manifest.source_revision",
+              "revision": "c9ddc0c00bd9e0118655d740a11b7b6c193ba3d8"
+            },
+            {
+              "path": "build_manifest.baseline_revision",
+              "revision": "edd94ced1d7ae76490efb497794b9ba19504d4da"
+            },
+            {
+              "path": "goose_revision",
+              "revision": "eadca409f68210893f366e60d0c2f0dc29a339be"
+            }
+          ],
+          "stdlib_hashes_recorded": true,
+          "stdlib_source_maps": [
+            {
+              "path": "build_manifest.goose_stdlib",
+              "matches_current": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "2026-11-05-matched-listing",
+      "status": "historical only; no current-main numerical claim",
+      "records": [
+        {
+          "file": "raw.json",
+          "measured_revision": "0034683dfc1e556cd303df80013f59e98f1ea605",
+          "measured_checkout_changed_production_paths": [
+            "fs.goose",
+            "fs.build",
+            "native/fs.c",
+            "native/fs.h",
+            "native/fs_internal.h",
+            "native/handles.c"
+          ],
+          "recorded_revision_references": [
+            {
+              "path": "source_revision",
+              "revision": "0034683dfc1e556cd303df80013f59e98f1ea605"
+            },
+            {
+              "path": "baseline_revision",
+              "revision": "3456547b8465b4b803ced6c5065fddd06e3a604f"
+            },
+            {
+              "path": "candidate_revision",
+              "revision": "edd94ced1d7ae76490efb497794b9ba19504d4da"
+            },
+            {
+              "path": "build_manifest.source_revision",
+              "revision": "0034683dfc1e556cd303df80013f59e98f1ea605"
+            },
+            {
+              "path": "build_manifest.baseline_revision",
+              "revision": "3456547b8465b4b803ced6c5065fddd06e3a604f"
+            },
+            {
+              "path": "build_manifest.variant_revisions.a1",
+              "revision": "3456547b8465b4b803ced6c5065fddd06e3a604f"
+            },
+            {
+              "path": "build_manifest.variant_revisions.b1",
+              "revision": "edd94ced1d7ae76490efb497794b9ba19504d4da"
+            },
+            {
+              "path": "build_manifest.variant_revisions.a2",
+              "revision": "3456547b8465b4b803ced6c5065fddd06e3a604f"
+            },
+            {
+              "path": "build_manifest.variant_revisions.b2",
+              "revision": "edd94ced1d7ae76490efb497794b9ba19504d4da"
+            },
+            {
+              "path": "goose_revision",
+              "revision": "eadca409f68210893f366e60d0c2f0dc29a339be"
+            }
+          ],
+          "stdlib_hashes_recorded": true,
+          "stdlib_source_maps": [
+            {
+              "path": "build_manifest.goose_stdlib",
+              "matches_current": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "2026-11-05-read-aa",
+      "status": "historical only; no current-main numerical claim",
+      "records": [
+        {
+          "file": "aa-attempt-1.json",
+          "measured_revision": "5ec174fd07af943ad883dde90a82cf4dd4b4edc6",
+          "measured_checkout_changed_production_paths": [
+            "fs.goose",
+            "fs.build",
+            "native/fs.c",
+            "native/fs.h",
+            "native/fs_internal.h",
+            "native/handles.c"
+          ],
+          "recorded_revision_references": [
+            {
+              "path": "build.source_revision",
+              "revision": "5ec174fd07af943ad883dde90a82cf4dd4b4edc6"
+            }
+          ],
+          "stdlib_hashes_recorded": true,
+          "stdlib_source_maps": [
+            {
+              "path": "build.toolchains.stdlib",
+              "matches_current": true
+            }
+          ]
+        },
+        {
+          "file": "aa-attempt-2.json",
+          "measured_revision": "5ec174fd07af943ad883dde90a82cf4dd4b4edc6",
+          "measured_checkout_changed_production_paths": [
+            "fs.goose",
+            "fs.build",
+            "native/fs.c",
+            "native/fs.h",
+            "native/fs_internal.h",
+            "native/handles.c"
+          ],
+          "recorded_revision_references": [
+            {
+              "path": "build.source_revision",
+              "revision": "5ec174fd07af943ad883dde90a82cf4dd4b4edc6"
+            }
+          ],
+          "stdlib_hashes_recorded": true,
+          "stdlib_source_maps": [
+            {
+              "path": "build.toolchains.stdlib",
+              "matches_current": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "2026-11-05-read-contract",
+      "status": "historical only; no current-main numerical claim",
+      "records": [
+        {
+          "file": "attempt-1.json",
+          "measured_revision": "dee8b163244dfa62eea7016835e9d40a70920342",
+          "measured_checkout_changed_production_paths": [
+            "fs.goose",
+            "fs.build",
+            "native/fs.c",
+            "native/fs.h",
+            "native/fs_internal.h",
+            "native/handles.c"
+          ],
+          "recorded_revision_references": [
+            {
+              "path": "build.source_revision",
+              "revision": "dee8b163244dfa62eea7016835e9d40a70920342"
+            }
+          ],
+          "stdlib_hashes_recorded": true,
+          "stdlib_source_maps": [
+            {
+              "path": "build.toolchains.stdlib",
+              "matches_current": true
+            }
+          ]
+        },
+        {
+          "file": "attempt-2.json",
+          "measured_revision": "dee8b163244dfa62eea7016835e9d40a70920342",
+          "measured_checkout_changed_production_paths": [
+            "fs.goose",
+            "fs.build",
+            "native/fs.c",
+            "native/fs.h",
+            "native/fs_internal.h",
+            "native/handles.c"
+          ],
+          "recorded_revision_references": [
+            {
+              "path": "build.source_revision",
+              "revision": "dee8b163244dfa62eea7016835e9d40a70920342"
+            }
+          ],
+          "stdlib_hashes_recorded": true,
+          "stdlib_source_maps": [
+            {
+              "path": "build.toolchains.stdlib",
+              "matches_current": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "2026-11-05-read-growth",
+      "status": "historical only; no current-main numerical claim",
+      "records": [
+        {
+          "file": "attempt-1.json",
+          "measured_revision": "a6f1345bd1b69bb642d78763ddfc41b7b545ec14",
+          "measured_checkout_changed_production_paths": [
+            "fs.goose",
+            "fs.build",
+            "native/fs.c",
+            "native/fs.h",
+            "native/fs_internal.h",
+            "native/handles.c"
+          ],
+          "recorded_revision_references": [
+            {
+              "path": "build.source_revision",
+              "revision": "a6f1345bd1b69bb642d78763ddfc41b7b545ec14"
+            },
+            {
+              "path": "build.baseline_revision",
+              "revision": "ce3bdcf92c07c03761e73333526933d2db8b33b1"
+            }
+          ],
+          "stdlib_hashes_recorded": true,
+          "stdlib_source_maps": [
+            {
+              "path": "build.toolchains.stdlib",
+              "matches_current": true
+            }
+          ]
+        },
+        {
+          "file": "attempt-2.json",
+          "measured_revision": "a6f1345bd1b69bb642d78763ddfc41b7b545ec14",
+          "measured_checkout_changed_production_paths": [
+            "fs.goose",
+            "fs.build",
+            "native/fs.c",
+            "native/fs.h",
+            "native/fs_internal.h",
+            "native/handles.c"
+          ],
+          "recorded_revision_references": [
+            {
+              "path": "build.source_revision",
+              "revision": "a6f1345bd1b69bb642d78763ddfc41b7b545ec14"
+            },
+            {
+              "path": "build.baseline_revision",
+              "revision": "ce3bdcf92c07c03761e73333526933d2db8b33b1"
+            }
+          ],
+          "stdlib_hashes_recorded": true,
+          "stdlib_source_maps": [
+            {
+              "path": "build.toolchains.stdlib",
+              "matches_current": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "2026-11-05-read-link",
+      "status": "source-equivalent on recorded platform/toolchain",
+      "records": [
+        {
+          "file": "pass-1.json",
+          "measured_revision": "4a7b2c178695fb453b4303184303212ee3d85834",
+          "measured_checkout_changed_production_paths": [],
+          "recorded_revision_references": [
+            {
+              "path": "source_revision",
+              "revision": "4a7b2c178695fb453b4303184303212ee3d85834"
+            },
+            {
+              "path": "build.source_revision",
+              "revision": "4a7b2c178695fb453b4303184303212ee3d85834"
+            },
+            {
+              "path": "build.toolchains.goose_revision",
+              "revision": "eadca409f68210893f366e60d0c2f0dc29a339be"
+            }
+          ],
+          "stdlib_hashes_recorded": true,
+          "stdlib_source_maps": [
+            {
+              "path": "build.toolchains.goose_stdlib",
+              "matches_current": true
+            }
+          ]
+        },
+        {
+          "file": "pass-2.json",
+          "measured_revision": "4a7b2c178695fb453b4303184303212ee3d85834",
+          "measured_checkout_changed_production_paths": [],
+          "recorded_revision_references": [
+            {
+              "path": "source_revision",
+              "revision": "4a7b2c178695fb453b4303184303212ee3d85834"
+            },
+            {
+              "path": "build.source_revision",
+              "revision": "4a7b2c178695fb453b4303184303212ee3d85834"
+            },
+            {
+              "path": "build.toolchains.goose_revision",
+              "revision": "eadca409f68210893f366e60d0c2f0dc29a339be"
+            }
+          ],
+          "stdlib_hashes_recorded": true,
+          "stdlib_source_maps": [
+            {
+              "path": "build.toolchains.goose_stdlib",
+              "matches_current": true
+            }
+          ]
+        },
+        {
+          "file": "pass-3.json",
+          "measured_revision": "4a7b2c178695fb453b4303184303212ee3d85834",
+          "measured_checkout_changed_production_paths": [],
+          "recorded_revision_references": [
+            {
+              "path": "source_revision",
+              "revision": "4a7b2c178695fb453b4303184303212ee3d85834"
+            },
+            {
+              "path": "build.source_revision",
+              "revision": "4a7b2c178695fb453b4303184303212ee3d85834"
+            },
+            {
+              "path": "build.toolchains.goose_revision",
+              "revision": "eadca409f68210893f366e60d0c2f0dc29a339be"
+            }
+          ],
+          "stdlib_hashes_recorded": true,
+          "stdlib_source_maps": [
+            {
+              "path": "build.toolchains.goose_stdlib",
+              "matches_current": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "2026-11-05-sorted-listing",
+      "status": "historical only; no current-main numerical claim",
+      "records": [
+        {
+          "file": "native-api.json",
+          "measured_revision": "efa585c05eeb84151aed1d1cf5cf68532da0257d",
+          "measured_checkout_changed_production_paths": [
+            "fs.goose",
+            "fs.build",
+            "native/fs.c",
+            "native/fs.h",
+            "native/fs_internal.h",
+            "native/handles.c"
+          ],
+          "recorded_revision_references": [
+            {
+              "path": "source_revision",
+              "revision": "efa585c05eeb84151aed1d1cf5cf68532da0257d"
+            },
+            {
+              "path": "build.source_revision",
+              "revision": "efa585c05eeb84151aed1d1cf5cf68532da0257d"
+            },
+            {
+              "path": "build.toolchains.goose_revision",
+              "revision": "eadca409f68210893f366e60d0c2f0dc29a339be"
+            }
+          ],
+          "stdlib_hashes_recorded": true,
+          "stdlib_source_maps": [
+            {
+              "path": "build.toolchains.goose_stdlib",
+              "matches_current": true
+            }
+          ]
+        },
+        {
+          "file": "paired-shuffled.json",
+          "measured_revision": "d81bafa8255990d0244cea1f571717c41cfccf81",
+          "measured_checkout_changed_production_paths": [
+            "fs.goose",
+            "fs.build",
+            "native/fs.c",
+            "native/fs.h",
+            "native/fs_internal.h",
+            "native/handles.c"
+          ],
+          "recorded_revision_references": [
+            {
+              "path": "source_revision",
+              "revision": "d81bafa8255990d0244cea1f571717c41cfccf81"
+            },
+            {
+              "path": "baseline_revision",
+              "revision": "3456547b8465b4b803ced6c5065fddd06e3a604f"
+            },
+            {
+              "path": "build_manifest.baseline_revision",
+              "revision": "3456547b8465b4b803ced6c5065fddd06e3a604f"
+            },
+            {
+              "path": "build_manifest.source_revision",
+              "revision": "d81bafa8255990d0244cea1f571717c41cfccf81"
+            },
+            {
+              "path": "goose_revision",
+              "revision": "eadca409f68210893f366e60d0c2f0dc29a339be"
+            }
+          ],
+          "stdlib_hashes_recorded": true,
+          "stdlib_source_maps": [
+            {
+              "path": "build_manifest.goose_stdlib",
+              "matches_current": true
+            }
+          ]
+        },
+        {
+          "file": "paired.json",
+          "measured_revision": "efa585c05eeb84151aed1d1cf5cf68532da0257d",
+          "measured_checkout_changed_production_paths": [
+            "fs.goose",
+            "fs.build",
+            "native/fs.c",
+            "native/fs.h",
+            "native/fs_internal.h",
+            "native/handles.c"
+          ],
+          "recorded_revision_references": [
+            {
+              "path": "source_revision",
+              "revision": "efa585c05eeb84151aed1d1cf5cf68532da0257d"
+            },
+            {
+              "path": "baseline_revision",
+              "revision": "3456547b8465b4b803ced6c5065fddd06e3a604f"
+            },
+            {
+              "path": "build_manifest.baseline_revision",
+              "revision": "3456547b8465b4b803ced6c5065fddd06e3a604f"
+            },
+            {
+              "path": "build_manifest.source_revision",
+              "revision": "efa585c05eeb84151aed1d1cf5cf68532da0257d"
+            },
+            {
+              "path": "goose_revision",
+              "revision": "eadca409f68210893f366e60d0c2f0dc29a339be"
+            }
+          ],
+          "stdlib_hashes_recorded": true,
+          "stdlib_source_maps": [
+            {
+              "path": "build_manifest.goose_stdlib",
+              "matches_current": true
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "prose_inventory": [
+    {
+      "path": "CONTRIBUTING.md",
+      "sha256": "d166e669033a57d95b188db10e94ad75dc9d0a2aef9a8053c13aa2f11e45b54b",
+      "scope": "audited guide/protocol"
+    },
+    {
+      "path": "README.md",
+      "sha256": "1c6a2c2e133a005f1d5564805e24ac37c9a9bd2e5944efd20166d0b7a6cbdf13",
+      "scope": "audited guide/protocol"
+    },
+    {
+      "path": "SECURITY.md",
+      "sha256": "2c972cc15fc07315309ae60da31a776da3eb1acbd9aaee8b398ce79b05dbd0c8",
+      "scope": "audited guide/protocol"
+    },
+    {
+      "path": "bench/README.md",
+      "sha256": "4f1bc62531ebe8de25ebef5b6db7588f30c93a9e5994fcb1490a93f996969784",
+      "scope": "audited guide/protocol"
+    },
+    {
+      "path": "bench/compare/README.md",
+      "sha256": "301f070998088d73dc91eea806d2cdaeb881a3cb122d53e37f83ff0a51e65e1e",
+      "scope": "audited guide/protocol"
+    },
+    {
+      "path": "bench/listing-control.md",
+      "sha256": "0ae5f7ce55f751722cc128f379d53291ce035b8a411b710a00fcfb5ca37f0d26",
+      "scope": "audited guide/protocol"
+    },
+    {
+      "path": "bench/read-aa/README.md",
+      "sha256": "d7615286929f00d1202445dcb78c997ca4ff9245445f27a98978f2b1a5e003c9",
+      "scope": "audited guide/protocol"
+    },
+    {
+      "path": "bench/read-contract/README.md",
+      "sha256": "3f46767208d04cf7169c843ba5b9526d1124d7519a10eb071222bd4f5c7069be",
+      "scope": "audited guide/protocol"
+    },
+    {
+      "path": "bench/read-growth/README.md",
+      "sha256": "b114027d9ae1e0405c79800e94bb8b33d8df86fbe65f04410e73fb200058f702",
+      "scope": "audited guide/protocol"
+    },
+    {
+      "path": "bench/results/2026-11-04-adaptive-native-api/README.md",
+      "sha256": "34c217a39b08d0607b7709b0f1bba0a62b03807158c0324269af0a102c9b5151",
+      "scope": "historical result"
+    },
+    {
+      "path": "bench/results/2026-11-04-listing-staging/README.md",
+      "sha256": "236a23fad5d960ea04cd238b9d55467de9c64473284a03d2a23375b584860cfe",
+      "scope": "historical result"
+    },
+    {
+      "path": "bench/results/2026-11-04-locks/README.md",
+      "sha256": "527d122fe016444473c156592e12e8af437c48489f21c1990d3a27dc86b35a08",
+      "scope": "historical result"
+    },
+    {
+      "path": "bench/results/2026-11-04-native-api/README.md",
+      "sha256": "867f8c0f7cded2117c864cf131a03a156e0b072b286570d172d9e1ced40ae048",
+      "scope": "historical result"
+    },
+    {
+      "path": "bench/results/2026-11-04-read-reuse/README.md",
+      "sha256": "5f3b21e677892c8c97cb5c0d9a802ef04f54da93c39f8f4e9fb2279de3de3213",
+      "scope": "historical result"
+    },
+    {
+      "path": "bench/results/2026-11-04-rename/README.md",
+      "sha256": "594953755f76d2cd718b63d9503c28d041b464fe8af1cf8eb010242a8e285111",
+      "scope": "historical result"
+    },
+    {
+      "path": "bench/results/2026-11-04-retained/README.md",
+      "sha256": "69e30c5224bb4c748857dba5d236a3570fbb63fa59d1b84d7bcd67340296f0e2",
+      "scope": "historical result"
+    },
+    {
+      "path": "bench/results/2026-11-04-roots/README.md",
+      "sha256": "b59aa5177df151c9ebad3bccad5c9bc764fc0afb179a8349ad6035f27e87886a",
+      "scope": "historical result"
+    },
+    {
+      "path": "bench/results/2026-11-04/README.md",
+      "sha256": "1a58dbaf588196222c4bdbc0178257fc6278a1bf12d93f90ff0161079e97fb36",
+      "scope": "historical result"
+    },
+    {
+      "path": "bench/results/2026-11-05-file-metadata/README.md",
+      "sha256": "f49004e88a7a7cc9f039d081cc6bb14aab60a5f3e42fdf4a86c4d9ce7a81b355",
+      "scope": "historical result"
+    },
+    {
+      "path": "bench/results/2026-11-05-listing-control/README.md",
+      "sha256": "c0144c1ccd6cb7cf30faff09074a270e38f1c09fa883a94c2b52baffb99f769b",
+      "scope": "historical result"
+    },
+    {
+      "path": "bench/results/2026-11-05-matched-listing/README.md",
+      "sha256": "38b9b4c592086754773b1e5b5a3625af6ce8c1e1c80c690eb824d63280c1a630",
+      "scope": "historical result"
+    },
+    {
+      "path": "bench/results/2026-11-05-read-aa/README.md",
+      "sha256": "f74ecd0e47fb5c51925b7cf551dec2a004baf5778056038e3bc8e8b2ec2a23b9",
+      "scope": "historical result"
+    },
+    {
+      "path": "bench/results/2026-11-05-read-contract/README.md",
+      "sha256": "f7a77743503c699c2153c54765b990855fc0f4e2dfd2b4884470b98aa807f27d",
+      "scope": "historical result"
+    },
+    {
+      "path": "bench/results/2026-11-05-read-growth/README.md",
+      "sha256": "a7ff85353c14f1cebbcf281730a37369ab7f83dede3695b79b9032ada76961ba",
+      "scope": "historical result"
+    },
+    {
+      "path": "bench/results/2026-11-05-read-link/README.md",
+      "sha256": "353b629c15737050b6e7a68ef033c9bd94539dc2617b6d8f6e38d8237b5a1873",
+      "scope": "historical result"
+    },
+    {
+      "path": "bench/results/2026-11-05-sorted-listing/README.md",
+      "sha256": "0b24477df5880ca836e2c239c15f315fafe4ef1af12a99af7ba556c9b16ccfa1",
+      "scope": "historical result"
+    },
+    {
+      "path": "docs/ANNOUNCEMENT-AUDIT.md",
+      "sha256": "06de3d7258ec98738267efa433dc58071ccc0b56254e6d87ea8377fe5e894382",
+      "scope": "audited guide/protocol"
+    },
+    {
+      "path": "docs/API.md",
+      "sha256": "0bc10309b84960ea6ae861e04aa97a7ffc5eb5d6d6fcbd27769155b999c0974d",
+      "scope": "audited guide/protocol"
+    },
+    {
+      "path": "docs/FILE-METADATA.md",
+      "sha256": "091cf85f25f27f63447e779c24c049e608a4058ff1c18ec53bd0b07f2e3e90dc",
+      "scope": "audited guide/protocol"
+    },
+    {
+      "path": "docs/HANDLES.md",
+      "sha256": "ecff1a97653d1f12df2cc4bb423ed7e05477404f33737aaba5135be2adaf40a4",
+      "scope": "audited guide/protocol"
+    },
+    {
+      "path": "docs/LOCKS.md",
+      "sha256": "0a5ab72aeb04ee39a69fb5f6473a2a7d8b859ff0d793c9accd95999cde9427ad",
+      "scope": "audited guide/protocol"
+    },
+    {
+      "path": "docs/PERFORMANCE.md",
+      "sha256": "d7ebaeaa1c2f1c9ca9388a8a686e44516b5630a15e2d31c8ee1b6decc342372b",
+      "scope": "audited guide/protocol"
+    },
+    {
+      "path": "docs/READ-LINK.md",
+      "sha256": "2f9fff30403f96a6d0596a4c7902f03b98985b9b5270d04dc43d230b375e13de",
+      "scope": "audited guide/protocol"
+    },
+    {
+      "path": "docs/RENAME.md",
+      "sha256": "cbf709be7c54ab6c27e475c6be54f9c9c12eaa72232f4cd32f40b80ad4f30220",
+      "scope": "audited guide/protocol"
+    },
+    {
+      "path": "docs/ROOTS.md",
+      "sha256": "93e4913b187b5e2745710c6961e5d8bbdde6e648bde540fa660815f59ad91876",
+      "scope": "audited guide/protocol"
+    },
+    {
+      "path": "docs/comparison-research.md",
+      "sha256": "77c02e8a0a8d48cbc99bf884411ad6f8e8485844afb9e75b867a3395cb78e9e8",
+      "scope": "audited guide/protocol"
+    },
+    {
+      "path": "docs/feature-coverage.md",
+      "sha256": "41ffda90024265978dbc0d7a3b9c41f30c04c9c3727c13d130cda18ce2089128",
+      "scope": "audited guide/protocol"
+    }
+  ],
+  "local_links_checked": 216,
+  "limitations": [
+    "Current-source bridge is not a new measurement or hermetic executable/sysroot capture",
+    "Historical timings remain historical even when an operation body is unchanged",
+    "Quantiles/ranges describe recorded means; seven means in a process are not independent process replicas"
+  ]
+}

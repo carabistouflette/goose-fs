@@ -96,8 +96,10 @@ offsets and truncate sizes are signed nonnegative 64-bit values; offset plus
 request length must not exceed INT64_MAX. Seek allows negative Current/End offsets
 when the resulting OS position is valid. Access errors retain EBADF even for
 empty requests. Sync success reflects filesystem/kernel guarantees, not an
-independent power-loss guarantee; parent-directory publication requires separate
-operations not provided in this stage.
+independent power-loss guarantee; file data and parent directories need separate
+synchronization.
+[Rename](RENAME.md) can request checked parent-directory sync; it does not sync
+the file contents.
 
 Calls on one File entry coordinate through a lock. Cursor operations, truncation,
 sync and writes hold an exclusive entry lock; positioned reads and metadata may
@@ -106,10 +108,9 @@ have independent locks despite sharing the OS cursor, so seek/write through a
 duplicate can interleave between those short writes. There is no atomic-record
 or cross-descriptor transaction guarantee. Disjoint positioned writes on a single
 token currently serialize. All calls also hold a shared Context lock; the global
-allocator mutex is used only for allocation/close bookkeeping. Initialization
-creates 4160 locks, allocation scans up to 4096 slots, and context closure scans
-those slots using a 16 KiB native stack index array. No retained-handle speed
-superiority is claimed without separate sequential/concurrent measurements.
+allocator mutex is used only for allocation/close bookkeeping. Resource allocation
+and Context closure scan the bounded registry. See [measurement scope](PERFORMANCE.md)
+before comparing costs.
 
 Directory-relative [Root operations](ROOTS.md) share the same Context and resource
 capacity; Files and Roots use distinct native kind checks.
@@ -126,8 +127,8 @@ create and retain the Context in the surviving parent, pass it to the worker, th
 close it after `thread_wait`, including a false (aborted) result. Published native
 calls invoke no Goose callbacks while holding locks. A contained Goose abort
 between calls therefore leaves no held native lock. Parent-owned cleanup is
-validated by compiled worker tests; thread completion does not have to wait for
-TLS destructors because this registry uses no TLS ownership.
+validated by compiled worker tests; the surviving owner must still close the
+Context after the worker finishes.
 
 A Context created inside an aborting worker or aborted JIT main is not reclaimed
 automatically. The surviving parent/embedding host must retain and close its token;

@@ -30,7 +30,8 @@ The [four-implementation harness](../bench/compare/README.md) measures matching
 read, sorted-listing and metadata tasks through each public native API. It rejects
 stale binaries using build-time provenance, validates common fixtures and retains
 all samples. It does not establish equal-security performance or full feature
-parity. A separately labelled hardened-adapter comparison is still required.
+parity. The [bounded-read adapter comparison](../bench/results/2026-11-05-read-contract/README.md)
+uses a stricter shared contract; its repeatability controls were inconclusive.
 
 Retained-resource ownership addresses both normal return and parent-owned cleanup after contained worker
 abort. The pinned Goose runtime does not expose a native lifecycle cleanup hook;

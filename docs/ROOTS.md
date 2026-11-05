@@ -42,7 +42,8 @@ Only ENOSYS/EPERM falls back to a duplicated-root descriptor walk with
 O_PATH/O_DIRECTORY/O_NOFOLLOW/CLOEXEC. Other lookup failures are returned unchanged.
 A simple leaf duplicates the Root descriptor. Parent descriptors are always owned
 and closed by that call. Final metadata can inspect a symlink, and remove_file_at
-can unlink it; read/list/open reject final links. Listings open a fresh readable
+can unlink it; regular-file reads, listing and File/Root open reject final links.
+Listings open a fresh readable
 directory descriptor, giving repeated/concurrent calls independent cursors.
 
 No native pointers into Goose storage or original pathnames are retained. A Root
@@ -55,8 +56,8 @@ not an additional allowance. Open reserves a slot before create/truncate effects
 One-shot relative operations require no new retained slot and can remain usable
 when the table is full, subject to ordinary kernel descriptor/memory limits.
 
-Relative native operations hold Context R and the anchor Root's entry R through completion.
-New File/Root allocation uses the same free-target-slot exception as duplication;
+Relative native operations hold shared Context and anchor-Root locks through completion.
+New File/Root allocation locks only a free destination slot;
 no registry allocator lock is held while waiting for a target lock. Closing a Root
 or Context waits for native calls using it. Parent-owned abnormal-exit cleanup and
 cross-worker rules are in [HANDLES.md](HANDLES.md). I/O has no deadline.

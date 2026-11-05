@@ -1,5 +1,12 @@
 # Native filesystem task costs — 2026-11-04
 
+Recorded experiment, with the source and toolchain identities stated below.
+These tables are not automatically measurements of current main. See
+[the currentness inventory](../../../docs/PERFORMANCE.md) before applying them.
+To rebuild an experiment, use its measured source revision in a separate checkout.
+For the retained raw artifacts and original replay scripts, use publication
+`60cec1e1956962772fff6091b4c7ff1876533f9e`. Historical raw artifacts are unchanged.
+
 Measured source: `81e304c7938373355ac3c20b9135ac4eeb9bc843` (clean source tree). The raw result embeds the build manifest, source/binary/fixture SHA256 values, exact toolchains, flags, selected inherited settings, process order and all samples. Later documentation does not change the measured implementation.
 
 This compares public native APIs with different safety, ownership and output contracts. **It does not establish equal-security performance or full feature parity.** goose-fs rejects ancestor links and enforces strict absolute paths, regular reads and byte bounds; ordinary comparators follow links during traversal. All fixtures are trusted, stable and ASCII. See [policies and limitations](../../compare/README.md).

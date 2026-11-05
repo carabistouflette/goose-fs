@@ -1,5 +1,12 @@
 # Matched-path identical-code listing controls
 
+Recorded experiment, with the source and toolchain identities stated below.
+These tables are not automatically measurements of current main. See
+[the currentness inventory](../../../docs/PERFORMANCE.md) before applying them.
+To rebuild an experiment, use its measured source revision in a separate checkout.
+For the retained raw artifacts and original replay scripts, use publication
+`60cec1e1956962772fff6091b4c7ff1876533f9e`. Historical raw artifacts are unchanged.
+
 Two independent A/A records, 5,320 rows each: [initial](initial.json) at `c9ddc0c00bd9e0118655d740a11b7b6c193ba3d8` and [final](final.json) at `3fbe3923cd7c9f89a7e1e196ef91cd9d59b17076`. Both export library revision `edd94ced1d7ae76490efb497794b9ba19504d4da`. [Interactive observations](comparison.html).
 
 Within each build pair, complete executable and text/rodata section hashes match. Each build independently compiles the native package and runtime in the same source, harness, output, CWD and fresh GOOSE_HOME paths. Temporary base paths differ between records; executable identity is required within a pair, not across records. Saved execution paths a/b differ and are recorded. Sources, compiler, stdlib and hashes are verified before/after timing. Post-measurement tooling hardening adds atomic artifact publication and stronger rejection fixtures; it changes no measured library code.

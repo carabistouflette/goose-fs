@@ -1,5 +1,12 @@
 # Bounded-read contract comparison — 2026-11-05
 
+Recorded experiment, with the source and toolchain identities stated below.
+These tables are not automatically measurements of current main. See
+[the currentness inventory](../../../docs/PERFORMANCE.md) before applying them.
+To rebuild an experiment, use its measured source revision in a separate checkout.
+For the retained raw artifacts and original replay scripts, use publication
+`60cec1e1956962772fff6091b4c7ff1876533f9e`. Historical raw artifacts are unchanged.
+
 No cell qualifies for an FS lead under the [preregistered rules](../../read-contract/README.md).
 All eleven cells are inconclusive: none passes every language’s replica control in both
 attempts. Every cell also fails the required 1.10 reference/FS ratio in at least one

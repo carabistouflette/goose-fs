@@ -1,5 +1,12 @@
 # Filesystem performance and security audit — 2026-11-04
 
+Recorded experiment, with the source and toolchain identities stated below.
+These tables are not automatically measurements of current main. See
+[the currentness inventory](../../../docs/PERFORMANCE.md) before applying them.
+To rebuild an experiment, use its measured source revision in a separate checkout.
+For the retained raw artifacts and original replay scripts, use publication
+`60cec1e1956962772fff6091b4c7ff1876533f9e`. Historical raw artifacts are unchanged.
+
 Library baseline: `6b8c079ba0414115713b16ae216327197fceb27d`. Measured candidate: `3c863ca2171a347d878b4708f189597eb2244e2d` (clean tree). Later result-documentation commits do not change measured production code. Both use the identical current benchmark harness; its SHA256 and both executable SHA256 values are in the raw data.
 
 Host: Intel(R) Core(TM) Ultra 7 258V; Linux-7.2.11-arch1-1-x86_64-with-glibc2.44; temporary filesystem `tmpfs`. Compiler source pin: `eadca409f68210893f366e60d0c2f0dc29a339be`. Native compiler versions:

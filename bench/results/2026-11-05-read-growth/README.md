@@ -1,5 +1,12 @@
 # Bounded read growth: candidate not adopted
 
+Recorded experiment, with the source and toolchain identities stated below.
+These tables are not automatically measurements of current main. See
+[the currentness inventory](../../../docs/PERFORMANCE.md) before applying them.
+To rebuild an experiment, use its measured source revision in a separate checkout.
+For the retained raw artifacts and original replay scripts, use publication
+`60cec1e1956962772fff6091b4c7ff1876533f9e`. Historical raw artifacts are unchanged.
+
 The sole 1KiB initialization candidate did not meet the [preregistered rules](../../read-growth/README.md). The released FS runtime is retained. Replica controls failed, not every target comparison reached 1.10, and other cells raised descriptive regression flags. These results establish neither a causal regression nor a speedup, SOTA performance, security ranking or overall leadership. No fill-size sweep or replacement timing was performed.
 
 ## Source and qualification

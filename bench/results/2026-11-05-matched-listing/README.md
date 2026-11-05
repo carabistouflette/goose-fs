@@ -1,5 +1,12 @@
 # Matched-path baseline/candidate listing comparison
 
+Recorded experiment, with the source and toolchain identities stated below.
+These tables are not automatically measurements of current main. See
+[the currentness inventory](../../../docs/PERFORMANCE.md) before applying them.
+To rebuild an experiment, use its measured source revision in a separate checkout.
+For the retained raw artifacts and original replay scripts, use publication
+`60cec1e1956962772fff6091b4c7ff1876533f9e`. Historical raw artifacts are unchanged.
+
 Clean measured harness `0034683dfc1e556cd303df80013f59e98f1ea605`; baseline **a1/a2** exports `3456547b8465b4b803ced6c5065fddd06e3a604f`, candidate **b1/b2** exports published `edd94ced1d7ae76490efb497794b9ba19504d4da`. No new runtime or native source change. [Raw data/provenance](raw.json) · [Interactive observations](comparison.html).
 
 Two independently built replicas per revision use identical absolute export, harness, output, CWD and fresh GOOSE_HOME paths. The entire tree/cache is reset between builds, in order a1,b1,a2,b2. Each same-revision pair must match whole ELF and text/rodata hashes before recording. Cross-revision differences are allowed. Source maps, pins, four executable hashes, sections, paths, build settings/log digests, compiler and stdlib hashes are retained. Execution paths a1/a2/b1/b2 differ. Inputs are checked before/after recording; a shared lock excludes cooperating rebuilds. No host settings change.

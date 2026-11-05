@@ -1,5 +1,12 @@
 # Explicit listing staging costs — 2026-11-04
 
+Recorded experiment, with the source and toolchain identities stated below.
+These tables are not automatically measurements of current main. See
+[the currentness inventory](../../../docs/PERFORMANCE.md) before applying them.
+To rebuild an experiment, use its measured source revision in a separate checkout.
+For the retained raw artifacts and original replay scripts, use publication
+`60cec1e1956962772fff6091b4c7ff1876533f9e`. Historical raw artifacts are unchanged.
+
 Measured clean source: `070a899ad7491596f7dc743fe386cf58ffbf8517`; published baseline: `caf5fc3e9d86e9963393781115027cf2a75774d1`. [All raw samples and build provenance](raw.json) · [Interactive chart](comparison.html).
 
 Existing list/list_sorted/list_at/list_sorted_at signatures retain full-budget staging and one enumeration. ListOptions also defaults to adaptive=false. Explicit adaptive=true starts at min(byte_limit, 64 KiB), counts the full accepted directory on spill, closes all native resources, then grows/retries. Stable large directories need two passes. This is an explicit cost tradeoff, with identical limits, owned results, sorting and clear-on-error contracts.

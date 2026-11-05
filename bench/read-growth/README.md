@@ -1,5 +1,17 @@
 # Bounded read growth experiment (Linux x86-64)
 
+Historical experiment protocol. It describes the recorded revision, not current
+main or an ongoing run. [Results](../results/2026-11-05-read-growth/README.md) retain the outcome.
+For reproduction, use a separate checkout first:
+
+```sh
+git checkout --detach a6f1345bd1b69bb642d78763ddfc41b7b545ec14
+```
+
+Then follow the protocol below in that checkout. Do not run its old commands on
+main and describe the result as the original experiment. For current costs see
+[performance scope](../../docs/PERFORMANCE.md).
+
 Baseline: `ce3bdcf92c07c03761e73333526933d2db8b33b1`. One candidate only:
 absolute `fs::read` initializes growth with fills of at most 1024 bytes rather
 than one full resize fill. Invalid inputs, shrinking, full tail initialization,

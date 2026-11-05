@@ -1,5 +1,8 @@
 # Filesystem comparison research
 
+Historical design snapshot. Its gap inventory describes the recorded revisions,
+not current main. For current capabilities use [feature coverage](feature-coverage.md).
+
 Research snapshot: 2026-11-04. This is a design and measurement specification, not an implementation or a claim of speed or complete parity. Primary comparators are **Rust `std::fs`, Go `os` filesystem APIs, and Goose `os`**. Honk is a secondary consumer/reference. Process execution, signals, environment management and pipes are outside this filesystem inventory; subprocess work belongs to goose-process.
 
 ## Reproducible sources and scope

@@ -1,5 +1,12 @@
 # Uncontended locks and native task measurements — 2026-11-04
 
+Recorded experiment, with the source and toolchain identities stated below.
+These tables are not automatically measurements of current main. See
+[the currentness inventory](../../../docs/PERFORMANCE.md) before applying them.
+To rebuild an experiment, use its measured source revision in a separate checkout.
+For the retained raw artifacts and original replay scripts, use publication
+`60cec1e1956962772fff6091b4c7ff1876533f9e`. Historical raw artifacts are unchanged.
+
 Measured clean source: `42db4b6abca3cad711146bce83419ca2387a4ca6`. Lock implementation: `ea82d8f` (full implementation is an ancestor of the measured commit). [All raw samples and verified build provenance](raw.json) · [Interactive chart](comparison.html). Source/binary/fixture hashes and toolchain versions/settings are retained, including the Goose compiler executable hash.
 
 Five shuffled process rounds, seven sample means per workload/runner/round, 200 calls per sample. 3,080 rows, including 280 unsupported rows. Values below are median sample means in ns/call. Warm tmpfs, GCC16.2.1/O2, Rust1.99.1/O2, recorded Go toolchain; shared Intel Core Ultra7 258V Linux host, CPU6 affinity. No exclusive core or CPU-frequency isolation; small changes may be noise.

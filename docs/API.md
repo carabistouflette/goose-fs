@@ -1,6 +1,7 @@
 # Interface contract
 
-Experimental 64-bit Linux interface; byte-oriented paths and contents. No release yet.
+Experimental 64-bit Linux interface; byte-oriented paths and contents. This guide
+describes main, not a tagged release; see [version status](../README.md).
 
 The absolute-path APIs require paths of at most 4095 bytes, with no NUL, empty, `.` or `..`
 components, and no trailing slash. `/` is accepted by read/list/metadata and predicates (read reports
@@ -11,7 +12,7 @@ Parent directories are resolved with Linux openat2 RESOLVE_NO_SYMLINKS. If the
 syscall returns ENOSYS (older kernel) or EPERM (including seccomp denial), a
 component-by-component O_NOFOLLOW/O_DIRECTORY descriptor walk enforces the same
 policy. EPERM is retried by that walker; its final result/errno is returned.
-Other lookup failures are propagated without retry. Reads/listing reject final symlinks too. No process
+Other lookup failures are propagated without retry. Regular-file reads and directory listing reject final symlinks too. No process
 cwd/umask changes. One-shot operations retain no native pointers or descriptors;
 [retained Files](HANDLES.md) use a synchronized registry with explicit Context ownership.
 
@@ -21,6 +22,10 @@ if those directories are subsequently moved. Paths may change during traversal.
 Final read targets are opened before fstat rejects nonregular types; device-open
 callbacks can run even when a read is rejected. Ordinary filesystem I/O may block indefinitely; there is no deadline guarantee.
 
+- `read_link(path, limit, out)` / `read_link_at(root, path, limit, out)`:
+  return complete symlink target bytes without resolving them. Adaptive staging
+  distinguishes exact-limit targets from truncated results; errors clear output.
+  See [the link contract](READ-LINK.md) for retries, ownership and concurrent changes.
 - `read(path, limit, out)`: require a regular file, replace out with its bytes.
   Accept zero limit for an empty file. Inspect up to limit+1 bytes, independent
   of stat size; files may change while reading, so this is not a snapshot.
@@ -62,7 +67,8 @@ callbacks can run even when a read is rejected. Ordinary filesystem I/O may bloc
 Status has Error {None, InvalidInput, LimitExceeded, NotRegular, SystemError}
 and os_error (errno only for SystemError; zero otherwise). Read/list clear output
 on every error, including invalid input. No error embeds path or content bytes.
-Inputs must not borrow output storage, which Goose checks. Owned names survive
+For reads/listings, inputs must not borrow output storage, which Goose checks.
+The link-inspection APIs explicitly support that alias by using separate staging. Owned names survive
 later calls. Allocation failure follows Goose runtime behavior, not Status.
 
 Limits are fixed: 1 MiB read/write/list payload, 4096 listing entries, 4095 path

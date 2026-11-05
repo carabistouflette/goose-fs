@@ -1,5 +1,12 @@
 # Held-file metadata task costs — 2026-11-05
 
+Recorded experiment, with the source and toolchain identities stated below.
+These tables are not automatically measurements of current main. See
+[the currentness inventory](../../../docs/PERFORMANCE.md) before applying them.
+To rebuild an experiment, use its measured source revision in a separate checkout.
+For the retained raw artifacts and original replay scripts, use publication
+`60cec1e1956962772fff6091b4c7ff1876533f9e`. Historical raw artifacts are unchanged.
+
 Measured clean source: `d100cf58d719fde6e8a0b04fa0ad2895e3faff81`; setter core: `e2414156fa1043b9fe9ac39d1fff024cb31f18d8`. [All raw samples and provenance](raw.json) · [Interactive chart](comparison.html). The run timestamp is 2026-11-04T23:20:47Z (2026-11-05 in the author's local timezone).
 
 Five shuffled process rounds, seven sample means per workload/runner/round, 200 iterations per sample. All 4,760 rows, including 1,015 unsupported, are retained across 34 workloads. Values below are median sample means. Setter rows are **ns per single setter call**; rename rows are ns per two-operation pair. Warm tmpfs, shared Intel Core Ultra7 258V Linux host, CPU6 affinity, without exclusive-core or frequency isolation.

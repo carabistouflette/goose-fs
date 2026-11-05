@@ -51,4 +51,5 @@ policies must remain visible in task-cost comparisons; unsupported rows are not
 substituted with file reads or canonicalization.
 
 [Three-record native-API task costs and reproducible evidence](../bench/results/2026-11-05-read-link/README.md)
-retain different policies, unsupported APIs and slower cases without a SOTA claim.
+describe different policies, unsupported APIs and slower cases. See
+[performance currentness](PERFORMANCE.md) before applying recorded costs to main.

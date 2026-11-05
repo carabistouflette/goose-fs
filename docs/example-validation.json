@@ -1,0 +1,29 @@
+{
+  "task": "GL-DOCSFS-01",
+  "published_runtime_revision": "60cec1e1956962772fff6091b4c7ff1876533f9e",
+  "compiler_revision": "eadca409f68210893f366e60d0c2f0dc29a339be",
+  "standalone_setup": {
+    "command": "make setup JOBS=1",
+    "exit_code": 0,
+    "compiler_sha256": "9b3ff093c7cd9d558d2ecd6a15cbcbd91539171cfcde7d2faa34e6f4704ebcb5",
+    "version": "goose eadca40 (runtime 3025e5810379)"
+  },
+  "quickstart_outputs": [
+    "read 6 bytes",
+    "read 6 bytes in bounded chunks",
+    "listed 3 owned entries"
+  ],
+  "updated_examples": {
+    "recorded_compiler_cases": 9,
+    "fresh_compiler_cases": 9,
+    "recorded_compiler_exit_code": 0,
+    "fresh_compiler_exit_code": 0
+  },
+  "api_check_exit_code": 0,
+  "examples_sha256": {
+    "examples/read.goose": "40ad579775d767de099dc7637550b36d3b1ebde7bd9cec4a81e355a66240a846",
+    "examples/root.goose": "816699f4ca2eb212b950ecf584aab6a20f65d695af1ad3b098ae21a8d8096d9a",
+    "examples/stream.goose": "4ec05c81192fe1306301233594acf30447415004881651e4b8d21f7a5811e135"
+  },
+  "scope": "Correctness only; no timing run or compiler-binary equivalence claim"
+}

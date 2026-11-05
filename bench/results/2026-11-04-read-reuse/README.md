@@ -1,5 +1,12 @@
 # Read output reuse — 2026-11-04
 
+Recorded experiment, with the source and toolchain identities stated below.
+These tables are not automatically measurements of current main. See
+[the currentness inventory](../../../docs/PERFORMANCE.md) before applying them.
+To rebuild an experiment, use its measured source revision in a separate checkout.
+For the retained raw artifacts and original replay scripts, use publication
+`60cec1e1956962772fff6091b4c7ff1876533f9e`. Historical raw artifacts are unchanged.
+
 Baseline: `3157fd2d0183d994e481c778a51e193bb93da340`. Candidate: `81e304c7938373355ac3c20b9135ac4eeb9bc843` (clean tree; production change is `c483607`). Identical benchmark source and compiler; raw data retain both binary SHA256 values, harness hash, compiler pin/flags, host/load/affinity and all 1,050 samples.
 
 Five alternating baseline/candidate rounds, seven sample means per workload/variant/round, 300 calls per sample. Warm tmpfs, GCC 16.2.1 -O2, shared Linux host, CPU6 affinity with no exclusive-core/frequency guarantee. Values are median sample means in ns/call.

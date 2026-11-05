@@ -1,5 +1,17 @@
 # Preregistered bounded-read contract (Linux x86-64)
 
+Historical experiment protocol. It describes the recorded revision, not current
+main or an ongoing run. [Results](../results/2026-11-05-read-contract/README.md) retain the outcome.
+For reproduction, use a separate checkout first:
+
+```sh
+git checkout --detach dee8b163244dfa62eea7016835e9d40a70920342
+```
+
+Then follow the protocol below in that checkout. Do not run its old commands on
+main and describe the result as the original experiment. For current costs see
+[performance scope](../../docs/PERFORMANCE.md).
+
 This profile compares goose-fs `read` against independently implemented Rust and
 Go + Linux adapters. It is not a Rust std::fs or Go os native-API guarantee, a
 sandbox, or proof of security equivalence outside the tested contract. It adds

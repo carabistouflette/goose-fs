@@ -3,8 +3,10 @@
 This harness compares goose-fs with stable Rust std::fs (1.99.1), Go os (the
 installed toolchain, recorded), and the pinned Goose standard library.
 It is a **task-cost comparison with different safety contracts**, not an
-equal-security ranking. See docs/comparison-research.md for the hardened-adapter
-profile still required before equal-security performance conclusions.
+equal-security ranking. The [bounded-read adapter comparison](../results/2026-11-05-read-contract/README.md)
+already tested a stricter common contract, but its repeatability controls were
+inconclusive. Other operations still need policy-matched measurements before
+equal-security performance conclusions.
 
 ```sh
 python3 bench/compare/build.py --goose /absolute/path/to/goose --cc gcc
@@ -134,7 +136,9 @@ sources and forces that directory during builds. This binds these harnesses' std
 imports; it is not a general compiler import-resolution manifest. Source edits,
 including standard-library edits, require a rebuild before measurement.
 
-## Bounded symlink inspection checkpoint
+<a id="bounded-symlink-inspection-checkpoint"></a>
+
+## Recorded symlink-inspection protocol
 
 The six readlink rows use stable 64-, 256- and 4095-byte targets and a 1MiB
 consumer budget. FS calls the public bounded absolute/Root API with reusable
@@ -147,7 +151,7 @@ Full target bytes are checked before and after timing; status, exact length and
 endpoint checksum remain inside. These are descriptive native-API task costs,
 not policy-matched security or allocation comparisons.
 
-Finite initial publication schedule: exactly three separately launched recordings,
+The 2026-11-05 recordings used this finite schedule: exactly three separately launched recordings,
 three shuffled rounds each, seven means per workload/runner, 100 calls per mean;
 seeds 65811,65812,65813. All existing suite workloads remain retained and labelled;
 report the new readlink rows without discarding slower cases. Warmup count1 and
@@ -156,7 +160,7 @@ no exclusive-core/cache/frequency claim. Retain all raw outputs, provenance and
 external completion statuses; no replacements, normalization, throughput/SOTA or
 small-difference claims. The earlier failed matched read controls do not become
 qualified through this separate descriptive profile. Freeze clean reviewed source
-before the first recording; no adaptive threshold sweep is authorized here.
+before the first recording; no adaptive threshold sweep was part of those recordings.
 
 Recorder outputs and journals are reserved with exclusive creation and remain
 reserved after failure. Completed child streams are flushed losslessly before
@@ -168,3 +172,13 @@ prevent cleanup/final markers. Such incomplete records and any nonzero/unknown
 external completion status are ineligible and cannot be replaced. Private output
 parents and no concurrent writers remain required. No guarantee of recovering
 bytes after an uncatchable termination is made.
+
+## Which results apply to this code?
+
+See [performance currentness](../../docs/PERFORMANCE.md). The recorded source is
+`4a7b2c178695fb453b4303184303212ee3d85834`; published evidence is in
+`60cec1e1956962772fff6091b4c7ff1876533f9e`. Later documentation edits change the
+all-input manifest but not the implementation. The source bridge checks each
+production/driver/dependency identity separately instead of using the date.
+For exact artifact replay use the recorded publication checkout; this guide's
+new-run commands do not reproduce an old executable bit for bit.

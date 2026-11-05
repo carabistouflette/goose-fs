@@ -1,5 +1,12 @@
 # Adaptive listing and native task costs — 2026-11-04
 
+Recorded experiment, with the source and toolchain identities stated below.
+These tables are not automatically measurements of current main. See
+[the currentness inventory](../../../docs/PERFORMANCE.md) before applying them.
+To rebuild an experiment, use its measured source revision in a separate checkout.
+For the retained raw artifacts and original replay scripts, use publication
+`60cec1e1956962772fff6091b4c7ff1876533f9e`. Historical raw artifacts are unchanged.
+
 Measured clean source: `070a899ad7491596f7dc743fe386cf58ffbf8517`. [All raw samples and verified provenance](raw.json) · [Interactive chart](comparison.html). This profile explicitly opts goose-fs sorted absolute/Root listings into ListOptions.adaptive=true; existing/default full staging is unchanged. [The three-variant long-name profile](../2026-11-04-listing-staging/README.md) retains adaptive regressions and refactor controls.
 
 Five shuffled process rounds, seven sample means per workload/runner/round, 200 calls per sample. All 3,500 rows, including 490 unsupported, are retained. Values are median sample means in ns/call. Warm tmpfs, shared Intel Core Ultra7 258V Linux host, CPU6 affinity, without exclusive-core/frequency isolation.

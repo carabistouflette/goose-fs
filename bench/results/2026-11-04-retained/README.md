@@ -1,5 +1,12 @@
 # Retained File and native task measurements — 2026-11-04
 
+Recorded experiment, with the source and toolchain identities stated below.
+These tables are not automatically measurements of current main. See
+[the currentness inventory](../../../docs/PERFORMANCE.md) before applying them.
+To rebuild an experiment, use its measured source revision in a separate checkout.
+For the retained raw artifacts and original replay scripts, use publication
+`60cec1e1956962772fff6091b4c7ff1876533f9e`. Historical raw artifacts are unchanged.
+
 Measured source: `ddaaf8de8cd06dfa836f1ca14298e579e84a12a9` (clean source/build). File implementation: `bf763fd89a291ce0108059e473b226c34b81a74c`. [Raw data](raw.json) include the verified build manifest, source/binary/fixture hashes and toolchain versions/settings (including the Goose compiler hash), compiler flags, inherited settings, affinity/load and every sample. [Interactive chart](comparison.html).
 
 Five shuffled process rounds; seven sample means per workload/runner/round; 200 calls per sample. 2,940 rows, including 210 unsupported rows (Goose stdlib lacks general metadata and retained Files). Median sample means below are nanoseconds per call, not individual-call latency. Warm tmpfs on shared Intel Core Ultra 7 258V Linux host, CPU6 affinity; no exclusive-core/frequency isolation.

@@ -6,7 +6,7 @@ regular-file descriptor. They do not resolve a pathname again, including after
 rename or unlink. A replacement at the old pathname remains a separate inode.
 Hard links and duplicate handles see changes to the same original object.
 
-These calls acquire Context R and that File entry's write lock, then invoke one
+These calls acquire a shared Context lock and that File entry's write lock, then invoke one
 native mutation syscall. They create no descriptors, retained slots or operation-owned heap
 allocations and do not move the file cursor or write content. A read-only-open
 File may change metadata when the OS permits; access mode is not a substitute for
@@ -59,6 +59,6 @@ request full file metadata/data synchronization; data_only=true is not an explic
 request to flush every metadata change. Accepted sync requests remain subject to
 filesystem and hardware guarantees.
 
-This increment supports regular File handles. Path, Root and directory-handle
+These setters support regular File handles. Path, Root and directory-handle
 metadata changes remain separate Linux coverage work; it does not claim full
 Rust/Go feature parity or another platform backend.

@@ -1,5 +1,12 @@
 # Directory Root and native task costs — 2026-11-04
 
+Recorded experiment, with the source and toolchain identities stated below.
+These tables are not automatically measurements of current main. See
+[the currentness inventory](../../../docs/PERFORMANCE.md) before applying them.
+To rebuild an experiment, use its measured source revision in a separate checkout.
+For the retained raw artifacts and original replay scripts, use publication
+`60cec1e1956962772fff6091b4c7ff1876533f9e`. Historical raw artifacts are unchanged.
+
 Measured clean source: `599604a6fecc66915c47944f9779b4e34f8a61db`; Root implementation `6b4807960f9869c10be2741bdf4074d385a9aecc`. [All raw samples and verified provenance](raw.json) · [Interactive chart](comparison.html). Source/binary/fixture hashes and toolchain versions/settings are retained, including the Goose compiler hash.
 
 Five shuffled process rounds, seven sample means per workload/runner/round, 200 calls per sample. 3,500 rows including 490 unsupported; table values are median sample means in ns/call. Warm tmpfs, shared Intel Core Ultra7 258V Linux host, CPU6 affinity. No exclusive-core/frequency isolation; small differences may be noise.

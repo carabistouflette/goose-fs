@@ -1,5 +1,12 @@
 # Bounded symlink inspection: Linux API and task costs
 
+Recorded experiment, with the source and toolchain identities stated below.
+These tables are not automatically measurements of current main. See
+[the currentness inventory](../../../docs/PERFORMANCE.md) before applying them.
+To rebuild an experiment, use its measured source revision in a separate checkout.
+For the retained raw artifacts and original replay scripts, use publication
+`60cec1e1956962772fff6091b4c7ff1876533f9e`. Historical raw artifacts are unchanged.
+
 `read_link(path, limit, out)` and `read_link_at(root, path, limit, out)` now inspect
 complete symlink target bytes with bounded adaptive staging, strict no-follow
 ancestors and clear-on-error output. Targets are never followed or normalized.

@@ -17,6 +17,10 @@ jobs:
           path: .toolchain
           key: goose-${{ runner.os }}-${{ hashFiles('GOOSE_REVISION', 'scripts/setup-goose.sh') }}
       - run: make setup
+      - if: matrix.cc == 'gcc'
+        run: |
+          python3 tests/examples.py .toolchain/goose/build/goose
+          python3 tests/docs_audit.py
       - run: make check test
         env:
           CC: ${{ matrix.cc }}

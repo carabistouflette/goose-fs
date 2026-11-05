@@ -1,5 +1,17 @@
 # Finite read A/A scheduling diagnostic — Linux x86-64
 
+Historical experiment protocol. It describes the recorded revision, not current
+main or an ongoing run. [Results](../results/2026-11-05-read-aa/README.md) retain the outcome.
+For reproduction, use a separate checkout first:
+
+```sh
+git checkout --detach 5ec174fd07af943ad883dde90a82cf4dd4b4edc6
+```
+
+Then follow the protocol below in that checkout. Do not run its old commands on
+main and describe the result as the original experiment. For current costs see
+[performance scope](../../docs/PERFORMANCE.md).
+
 This is a new diagnostic checkpoint, not a replacement for earlier recordings.
 The released runtime (`c4411fdf5d1e73e4d74bda74d843627fb4365caa`, with library
 bytes identical to ce3bdcf) stays unchanged. No optimization candidate, timing

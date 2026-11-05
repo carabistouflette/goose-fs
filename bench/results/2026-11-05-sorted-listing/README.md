@@ -1,5 +1,12 @@
 # Sorted listing performance — 2026-11-05
 
+Recorded experiment, with the source and toolchain identities stated below.
+These tables are not automatically measurements of current main. See
+[the currentness inventory](../../../docs/PERFORMANCE.md) before applying them.
+To rebuild an experiment, use its measured source revision in a separate checkout.
+For the retained raw artifacts and original replay scripts, use publication
+`60cec1e1956962772fff6091b4c7ff1876533f9e`. Historical raw artifacts are unchanged.
+
 Initial natural-creation and native API measured clean source: `efa585c05eeb84151aed1d1cf5cf68532da0257d`; production change: `8195b5d706b282950c8f41076a540dd7e2627610`; published baseline: `3456547b8465b4b803ced6c5065fddd06e3a604f`.
 
 [Natural-creation raw results/provenance](paired.json) · [Shuffled-creation raw results/provenance](paired-shuffled.json) · [Four-library raw results/provenance](native-api.json) · [Interactive chart](comparison.html).

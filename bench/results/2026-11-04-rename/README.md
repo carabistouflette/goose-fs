@@ -1,5 +1,12 @@
 # Rename policies and native task costs — 2026-11-04
 
+Recorded experiment, with the source and toolchain identities stated below.
+These tables are not automatically measurements of current main. See
+[the currentness inventory](../../../docs/PERFORMANCE.md) before applying them.
+To rebuild an experiment, use its measured source revision in a separate checkout.
+For the retained raw artifacts and original replay scripts, use publication
+`60cec1e1956962772fff6091b4c7ff1876533f9e`. Historical raw artifacts are unchanged.
+
 Measured clean source: `15a4951f680c7c9d1abcebc96296dc672189183c`; public rename core: `cd0bd29c78c435caaebf75bfecd8e3e2083636eb`. [All raw samples and verified provenance](raw.json) · [Interactive chart](comparison.html).
 
 Five shuffled process rounds, seven sample means per workload/runner/round, 200 iterations per sample. All 4,340 rows, including 875 unsupported, are retained across 31 workloads. Values are median sample means. Rename rows are **ns per pair: two namespace operations**; other rows remain ns/call. Warm tmpfs, shared Intel Core Ultra7 258V Linux host, CPU6 affinity, without exclusive-core/frequency isolation.

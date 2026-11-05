@@ -1,5 +1,9 @@
 # Identical-code listing controls
 
+Historical diagnostic protocol. Recorded controls and their failures are indexed
+in [performance scope](../docs/PERFORMANCE.md). Select the recorded full revision
+in a separate checkout; running a new revision creates a new experiment.
+
 Independently build one trusted revision twice at the same absolute source,
 harness, output, CWD and GOOSE_HOME paths. Remove the private build tree and
 caches between builds. Compiler, stdlib and flags match. Saved executables have
