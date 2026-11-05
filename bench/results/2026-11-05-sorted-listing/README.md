@@ -1,10 +1,12 @@
 # Sorted listing performance — 2026-11-05
 
-Measured clean source: `efa585c05eeb84151aed1d1cf5cf68532da0257d`; production change: `8195b5d706b282950c8f41076a540dd7e2627610`; published baseline: `3456547b8465b4b803ced6c5065fddd06e3a604f`.
+Initial natural-creation and native API measured clean source: `efa585c05eeb84151aed1d1cf5cf68532da0257d`; production change: `8195b5d706b282950c8f41076a540dd7e2627610`; published baseline: `3456547b8465b4b803ced6c5065fddd06e3a604f`.
 
-[Paired raw results/provenance](paired.json) · [Four-library raw results/provenance](native-api.json) · [Interactive chart](comparison.html).
+[Natural-creation raw results/provenance](paired.json) · [Shuffled-creation raw results/provenance](paired-shuffled.json) · [Four-library raw results/provenance](native-api.json) · [Interactive chart](comparison.html).
 
-The paired run compares the old full-staging implementation, current full staging, and current opt-in adaptive staging. On the same full-staging policy, 4,096 short-name sorted listings improve **1.59–1.90×**, and 4,080 long shared-prefix names improve **4.07–4.90×**, across absolute/Root and exact/maximum budgets. Empty/single-entry sorted results do not establish a win: median speed ratios span 0.869–1.062×. Unsorted controls span 0.830–1.295× with unchanged operation code; host noise and binary-layout effects were not isolated. A ratio below 1 means the candidate is slower. Every cell, including regressions, is retained below.
+The initial paired run uses natural name-creation order and compares the old full-staging implementation, current full staging, and current opt-in adaptive staging. On the same full-staging policy, 4,096 short-name sorted listings improve **1.59–1.90×**, and 4,080 long shared-prefix names improve **4.07–4.90×**, across absolute/Root and exact/maximum budgets. Empty/single-entry sorted results do not establish a win: median speed ratios span 0.869–1.062×. Unsorted controls span 0.830–1.295× with unchanged operation code; host noise and binary-layout effects were not isolated. A ratio below 1 means the candidate is slower. Every cell, including regressions, is retained below.
+
+The added shuffled-creation series measured clean benchmark source `d81bafa8255990d0244cea1f571717c41cfccf81`, with byte-identical library sources and the same compiler/stdlib inputs. Same-policy improvements are **1.21–1.76×** for 4,096 short names and **3.47–3.70×** for long shared-prefix names. Its empty/single sorted speed ratios span 0.820–1.175×; unsorted controls span 0.859–1.625×. All data from the initial run remains intact. Across both paired runs and the native API run, **20,720 raw rows** are retained.
 
 In the separate four-library native API run, sorted 4,096-name listing takes goose-fs 2,266,564 ns, Goose stdlib 2,859,321 ns, Rust 2,655,530 ns and Go 4,335,837 ns. goose-fs is about **1.26×/1.17×/1.91× as fast** respectively for that task in this run. Small listings remain slower than Goose/Rust; the 128-name absolute row remains slower than Rust. These APIs have different safety/output contracts. This is not a universal state-of-the-art, equal-security, full-parity or regression-free claim. Hardened-adapter comparisons remain outstanding.
 
@@ -14,15 +16,17 @@ An initial user-space cycle profile of the baseline's 4,096 short-name sorted ca
 
 Native enumeration, bounds, symlink policy, error clearing, cleanup, staging defaults and result ownership remain unchanged. The final implementation still owns temporary unsorted names and copies names into the sorted result; it makes no copy-count, allocation-free or lower-peak-memory claim. A scalar-loop alternative and a borrowed-view/single-copy prototype were tried diagnostically and rejected after mixed results or regressions; neither is part of this measured source.
 
-Both final series ran sequentially on CPU6, warm tmpfs, shared Intel Core Ultra7 258V Linux host, GCC 16.2.1 -O2 and the pinned Goose compiler eadca409. The pinned Rust 1.99.1 and installed Go 1.27.3-X:nodwarf5 versions/settings are recorded in raw data. No other heavy goose-fs job ran during either final series; other projects and host load were not excluded. There is no exclusive-core or frequency-isolation claim. UTC timestamps are in the raw files (the runs fall on November 5 in Paris).
+All three final series ran sequentially on CPU6, warm tmpfs, shared Intel Core Ultra7 258V Linux host, GCC 16.2.1 -O2 and the pinned Goose compiler eadca409. The pinned Rust 1.99.1 and installed Go 1.27.3-X:nodwarf5 versions/settings are recorded in raw data. No other heavy goose-fs job ran during any final series; other projects and host load were not excluded. There is no exclusive-core or frequency-isolation claim. UTC timestamps are in the raw files (the runs fall on November 5 in Paris).
 
 The paired series has five shuffled rounds × 76 workloads × 3 variants × 7 sample means = **7,980 rows**, five calls per sample mean. Complete independent filename/order checks precede timing. Timed checksums consume counts, lengths and endpoint bytes. Existing 68 cases are preserved; eight new cases use 4,080 unique 255-byte names with 250 shared prefix bytes, totaling 1,048,560 packed bytes, 16 below MAX. Full/adaptive staging stays distinct. Adaptive large results can need another enumeration and remain slower than full staging; the sorting change does not remove that tradeoff.
+
+Natural fixtures create names in deterministic byte order; filesystem enumeration order can differ. Standard sort can benefit from existing runs. The extra paired series instead shuffles file creation with separate seed 61938, keeping process shuffle 61937 unchanged. It records creation-order hashes and actual unsorted preflight output hashes; all variants/budgets for each fixture observed the same unsorted preflight order. This establishes matching preflight inputs within that run, not a filesystem ordering guarantee. Separate runs do not isolate ordering from host effects. The native API suite also shuffles creation order with its recorded seed.
 
 The native API series has five shuffled process rounds × 34 tasks × 4 runners × 7 sample means = **4,760 rows**, including 1,015 unsupported, 200 iterations per mean. FS listings explicitly select adaptive staging. Owned-name/output work differs across runners; the pinned Goose list API uses sorted newline names and cannot represent arbitrary filenames. These common fixtures are ASCII. All existing read, metadata, locking, Root, rename and setter tasks remain visible. Rename rows are ns per pair of two operations; other rows are ns/call. Goose basic rename always requests best-effort destination-parent sync, while other basic rows request none. Checked compositions and Root lookup/error contracts also differ. See [all native API policies](../../compare/README.md).
 
 Both builders/runners verify source, executable, compiler and selected standard-library hashes before/after measurement. The new provenance records all 15 Goose standard-library source files, not only the compiler executable, and forces the resolved directory during builds. This binds the harnesses' std/os imports; it is not a general compiler import-resolution manifest. The selected compiler checkout and stdlib were clean at the pinned revision. Fixture hashes, flags, runtime settings, CPU affinity/load and raw process order are retained. Whole-process VmHWM in the native profile includes setup, registry initialization, validation, allocator/GC history and retained sinks; it is not per-operation memory or allocations.
 
-## Paired results
+## Paired results — natural creation
 
 Median sample means, ns/call. Speed ratio is old-full/current-full, comparing the same staging policy. Current adaptive is a separate option, not the default.
 
@@ -105,6 +109,89 @@ Median sample means, ns/call. Speed ratio is old-full/current-full, comparing th
 | short4096/49152/root | 1,630,579 | 1,542,767 | 1,511,850 | 1.057× |
 | short4096/49152/root-sorted | 2,244,829 | 1,411,634 | 1,618,609 | 1.590× |
 
+## Paired results — shuffled creation
+
+Same library implementation and staging policies; separately recorded run. Median ns/call and old-full/current-full ratio. See paired-shuffled.json for all hashes and raw samples.
+
+| Workload: fixture/budget/API | Old full ns | Current full ns | Current adaptive ns | Full-policy speed ratio |
+| --- | ---: | ---: | ---: | ---: |
+| above128k/1048576/absolute | 493,327 | 303,654 | 392,926 | 1.625× |
+| above128k/1048576/absolute-sorted | 387,764 | 372,652 | 581,149 | 1.041× |
+| above128k/1048576/root | 336,149 | 292,558 | 388,746 | 1.149× |
+| above128k/1048576/root-sorted | 430,576 | 363,869 | 478,366 | 1.183× |
+| above128k/131073/absolute | 248,769 | 266,271 | 439,945 | 0.934× |
+| above128k/131073/absolute-sorted | 386,204 | 300,247 | 486,716 | 1.286× |
+| above128k/131073/root | 269,049 | 262,721 | 435,281 | 1.024× |
+| above128k/131073/root-sorted | 342,243 | 299,955 | 433,157 | 1.141× |
+| above512k/1048576/absolute | 1,526,618 | 1,604,970 | 2,299,763 | 0.951× |
+| above512k/1048576/absolute-sorted | 2,474,766 | 1,837,048 | 2,757,487 | 1.347× |
+| above512k/1048576/root | 1,763,285 | 1,612,125 | 2,750,033 | 1.094× |
+| above512k/1048576/root-sorted | 2,510,513 | 1,938,307 | 2,764,597 | 1.295× |
+| above512k/524289/absolute | 1,248,892 | 1,453,954 | 2,112,560 | 0.859× |
+| above512k/524289/absolute-sorted | 2,488,666 | 1,776,361 | 2,586,659 | 1.401× |
+| above512k/524289/root | 1,360,991 | 1,406,026 | 1,668,407 | 0.968× |
+| above512k/524289/root-sorted | 2,375,154 | 2,090,086 | 2,612,818 | 1.136× |
+| above64k/1048576/absolute | 167,986 | 160,978 | 213,676 | 1.044× |
+| above64k/1048576/absolute-sorted | 225,330 | 177,503 | 249,673 | 1.269× |
+| above64k/1048576/root | 169,194 | 169,876 | 209,326 | 0.996× |
+| above64k/1048576/root-sorted | 220,178 | 209,953 | 233,515 | 1.049× |
+| above64k/65537/absolute | 136,108 | 122,792 | 209,314 | 1.108× |
+| above64k/65537/absolute-sorted | 172,937 | 145,885 | 255,205 | 1.185× |
+| above64k/65537/root | 133,904 | 135,228 | 197,634 | 0.990× |
+| above64k/65537/root-sorted | 199,605 | 148,031 | 241,196 | 1.348× |
+| at64k/1048576/absolute | 182,578 | 169,445 | 138,057 | 1.078× |
+| at64k/1048576/absolute-sorted | 223,227 | 196,839 | 148,762 | 1.134× |
+| at64k/1048576/root | 170,514 | 169,127 | 136,045 | 1.008× |
+| at64k/1048576/root-sorted | 216,296 | 185,174 | 148,383 | 1.168× |
+| at64k/65536/absolute | 127,561 | 129,964 | 135,664 | 0.982× |
+| at64k/65536/absolute-sorted | 167,765 | 150,054 | 146,194 | 1.118× |
+| at64k/65536/root | 135,632 | 138,905 | 121,722 | 0.976× |
+| at64k/65536/root-sorted | 186,140 | 149,835 | 157,244 | 1.242× |
+| below64k/1048576/absolute | 164,078 | 163,677 | 130,249 | 1.002× |
+| below64k/1048576/absolute-sorted | 208,376 | 193,573 | 179,497 | 1.076× |
+| below64k/1048576/root | 176,888 | 181,927 | 139,677 | 0.972× |
+| below64k/1048576/root-sorted | 185,377 | 182,828 | 157,159 | 1.014× |
+| below64k/65535/absolute | 134,764 | 125,846 | 136,958 | 1.071× |
+| below64k/65535/absolute-sorted | 177,481 | 149,660 | 154,260 | 1.186× |
+| below64k/65535/root | 133,876 | 134,168 | 142,406 | 0.998× |
+| below64k/65535/root-sorted | 174,355 | 148,496 | 138,772 | 1.174× |
+| empty/0/absolute | 4,472 | 4,556 | 4,615 | 0.982× |
+| empty/0/absolute-sorted | 4,651 | 4,633 | 4,852 | 1.004× |
+| empty/0/root | 3,862 | 3,657 | 3,791 | 1.056× |
+| empty/0/root-sorted | 3,765 | 4,135 | 3,642 | 0.911× |
+| empty/1048576/absolute | 38,969 | 44,389 | 7,588 | 0.878× |
+| empty/1048576/absolute-sorted | 39,651 | 46,178 | 6,944 | 0.859× |
+| empty/1048576/root | 40,580 | 40,820 | 6,209 | 0.994× |
+| empty/1048576/root-sorted | 39,992 | 40,838 | 6,246 | 0.979× |
+| max1m/1048576/absolute | 4,014,478 | 3,998,015 | 6,539,343 | 1.004× |
+| max1m/1048576/absolute-sorted | 5,807,269 | 4,548,970 | 7,314,632 | 1.277× |
+| max1m/1048576/root | 3,770,842 | 4,022,285 | 6,587,811 | 0.937× |
+| max1m/1048576/root-sorted | 5,675,387 | 4,484,741 | 7,708,135 | 1.265× |
+| one/1048576/absolute | 42,046 | 41,645 | 7,494 | 1.010× |
+| one/1048576/absolute-sorted | 49,285 | 41,933 | 7,415 | 1.175× |
+| one/1048576/root | 40,087 | 36,013 | 6,274 | 1.113× |
+| one/1048576/root-sorted | 37,093 | 45,252 | 6,579 | 0.820× |
+| one/12/absolute | 4,795 | 4,473 | 5,366 | 1.072× |
+| one/12/absolute-sorted | 4,617 | 4,573 | 4,860 | 1.010× |
+| one/12/root | 3,988 | 3,800 | 3,939 | 1.049× |
+| one/12/root-sorted | 3,812 | 4,253 | 4,072 | 0.896× |
+| prefix255/1048560/absolute | 3,990,821 | 4,075,731 | 7,123,782 | 0.979× |
+| prefix255/1048560/absolute-sorted | 19,239,299 | 5,412,805 | 7,804,720 | 3.554× |
+| prefix255/1048560/root | 3,831,243 | 4,005,632 | 6,870,315 | 0.956× |
+| prefix255/1048560/root-sorted | 19,150,102 | 5,172,835 | 7,962,073 | 3.702× |
+| prefix255/1048576/absolute | 3,783,914 | 3,737,277 | 7,075,109 | 1.012× |
+| prefix255/1048576/absolute-sorted | 17,343,362 | 4,997,315 | 8,415,000 | 3.471× |
+| prefix255/1048576/root | 3,977,118 | 3,831,586 | 7,080,327 | 1.038× |
+| prefix255/1048576/root-sorted | 18,447,885 | 5,259,515 | 8,010,840 | 3.508× |
+| short4096/1048576/absolute | 1,614,935 | 1,702,737 | 1,534,461 | 0.948× |
+| short4096/1048576/absolute-sorted | 3,139,625 | 2,512,688 | 2,061,261 | 1.250× |
+| short4096/1048576/root | 2,004,939 | 1,770,134 | 1,711,340 | 1.133× |
+| short4096/1048576/root-sorted | 3,043,006 | 2,508,074 | 1,919,798 | 1.213× |
+| short4096/49152/absolute | 1,322,963 | 1,280,405 | 1,375,136 | 1.033× |
+| short4096/49152/absolute-sorted | 2,385,033 | 1,946,122 | 1,983,630 | 1.226× |
+| short4096/49152/root | 1,434,911 | 1,404,292 | 1,168,312 | 1.022× |
+| short4096/49152/root-sorted | 3,388,551 | 1,929,677 | 1,802,567 | 1.756× |
+
 ## Native API task results
 
 Median sample means; ns/call except rename pairs. Unsupported cells remain explicit.
@@ -163,6 +250,8 @@ python3 bench/compare/build.py --goose .toolchain/goose/build/goose --cc gcc --a
 taskset -c 6 python3 bench/compare/run.py --goose .toolchain/goose/build/goose --cc gcc --adaptive-listing \
   --iterations 200 --rounds 5 --seed 20261105 --output .build/compare/sort-final.json
 ```
+
+For the additional shuffled series, check out its benchmark source d81bafa8255990d0244cea1f571717c41cfccf81, rebuild the three listing runners, and repeat the listing-measure command with `--creation-order shuffled --output .build/listing-pair/sort-shuffled.json`. The production source hashes match the initial series. The first command block reproduces the initial natural/native series at efa585c. No library implementation changed for this extra run.
 
 Two independent security and quality/performance reviewers checked the implementation, including reference-slot swaps, bounded sorting, ABI guards, lifetime rules and the actual consumer-overload regression. Stable-source GCC/Clang full check/test and ASan/UBSan matrices passed; native static analysis passed. Native guard pages cover every 0..255 input-length pair, equal/prefix/high-byte/mismatch cases and malformed/null slices. Public JIT/optimized/debug tests verify sorted names survive later calls, allocation pressure and Context closure, with mixed-kind association and failure clearing. Consumer overloads for sort and its public-reference helpers cannot intercept internal dispatch. Binary/prefix ordering and 4,096-entry oracles, all 12 public listing routes, byte/entry boundaries, fallback/fault/race/resource tests passed.
 
