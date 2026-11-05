@@ -26,6 +26,8 @@ with tempfile.TemporaryDirectory(dir=ROOT/'.build') as t:
                         ('variant_revisions',dict(record['variant_revisions'],a1=record['variant_revisions']['b1'],b1=record['variant_revisions']['a1'])),
                         ('sections_sha256',dict(record['sections_sha256'],b2={})),
                         ('variant_revisions',dict(record['variant_revisions'],b2='0'*40))]:
+        # CI may use one revision in both roles, making a role swap a no-op.
+        if value==record.get(field):continue
         bad=copy.deepcopy(record);bad[field]=value;manifest.write_text(json.dumps(bad))
         result=subprocess.run([*command,'--build-manifest',str(manifest),'--output',str(temp/'absent.json')],capture_output=True)
         assert result.returncode!=0 and b'AssertionError' in result.stderr and not (temp/'absent.json').exists(),field
@@ -36,7 +38,9 @@ with tempfile.TemporaryDirectory(dir=ROOT/'.build') as t:
     result=subprocess.run([*command,'--build-manifest',str(manifest),'--output',str(temp/'symlink.json')],capture_output=True)
     assert result.returncode!=0 and not (temp/'symlink.json').exists()
     (temp/'b2').unlink();shutil.copy2(directory/'b2',temp/'b2')
-    (temp/'a2').write_bytes((temp/'a2').read_bytes()+b'changed')
-    result=subprocess.run([*command,'--build-manifest',str(manifest),'--output',str(temp/'changed.json')],capture_output=True)
-    assert result.returncode!=0 and not (temp/'changed.json').exists()
+    for label in ('a2','b2'):
+        original=(temp/label).read_bytes();(temp/label).write_bytes(original+b'changed')
+        result=subprocess.run([*command,'--build-manifest',str(manifest),'--output',str(temp/'changed.json')],capture_output=True)
+        assert result.returncode!=0 and not (temp/'changed.json').exists()
+        (temp/label).write_bytes(original)
 print('Four-replica checksums, profile/source/revision/eligibility and modified-replica rejection passed')
