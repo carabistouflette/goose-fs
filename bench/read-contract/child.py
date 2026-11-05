@@ -11,7 +11,9 @@ def run_captured(command,timeout):
         stdout,stderr=proc.communicate()  # drain pipes and reap before returning evidence
         e.stdout=stdout;e.stderr=stderr
         raise
-    except BaseException:
-        proc.kill();proc.communicate()
+    except BaseException as e:
+        proc.kill()
+        stdout,stderr=proc.communicate()
+        e.stdout=stdout;e.stderr=stderr
         raise
     return subprocess.CompletedProcess(command,proc.returncode,stdout,stderr)

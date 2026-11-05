@@ -133,3 +133,38 @@ Build/run provenance also hashes the selected complete Goose standard library's
 sources and forces that directory during builds. This binds these harnesses' std/os
 imports; it is not a general compiler import-resolution manifest. Source edits,
 including standard-library edits, require a rebuild before measurement.
+
+## Bounded symlink inspection checkpoint
+
+The six readlink rows use stable 64-, 256- and 4095-byte targets and a 1MiB
+consumer budget. FS calls the public bounded absolute/Root API with reusable
+caller output and fresh adaptive staging. Rust std::fs::read_link and Go
+os.Readlink/Root.Readlink allocate native PathBuf/string results, then check the
+consumer bound. Their ordinary ancestor-following/Root policies differ from
+FS strict no-follow lookup. Root lifecycle is outside timing. Goose stdlib has
+no readlink; Rust stdlib has no Root interface. Unsupported rows stay explicit.
+Full target bytes are checked before and after timing; status, exact length and
+endpoint checksum remain inside. These are descriptive native-API task costs,
+not policy-matched security or allocation comparisons.
+
+Finite initial publication schedule: exactly three separately launched recordings,
+three shuffled rounds each, seven means per workload/runner, 100 calls per mean;
+seeds 65811,65812,65813. All existing suite workloads remain retained and labelled;
+report the new readlink rows without discarding slower cases. Warmup count1 and
+build qualification are ineligible. Record on CPU6 after owned heavy jobs finish;
+no exclusive-core/cache/frequency claim. Retain all raw outputs, provenance and
+external completion statuses; no replacements, normalization, throughput/SOTA or
+small-difference claims. The earlier failed matched read controls do not become
+qualified through this separate descriptive profile. Freeze clean reviewed source
+before the first recording; no adaptive threshold sweep is authorized here.
+
+Recorder outputs and journals are reserved with exclusive creation and remain
+reserved after failure. Completed child streams are flushed losslessly before
+parsing; timeout and caught interruption tails are drained/reaped and retained.
+Summaries are written through the originally reserved descriptor, never reopened
+through a pathname. Python -O is rejected. No supervisor is added to this native
+API profile: default SIGTERM, hard kills, power loss or repeated interruption can
+prevent cleanup/final markers. Such incomplete records and any nonzero/unknown
+external completion status are ineligible and cannot be replaced. Private output
+parents and no concurrent writers remain required. No guarantee of recovering
+bytes after an uncatchable termination is made.

@@ -12,8 +12,12 @@ import platform
 import random
 import re
 import subprocess
+import sys
 import tempfile
 from provenance import ROOT, RUNNERS, runtime_settings, sha256, sources, toolchains
+sys.path.insert(0,str(ROOT/'bench/read-contract'))
+from child import run_captured
+if not __debug__:raise SystemExit('Python optimization disables validation')
 p=argparse.ArgumentParser(description=__doc__)
 p.add_argument('--goose',required=True)
 p.add_argument('--cc',default='gcc')
@@ -25,6 +29,7 @@ p.add_argument('--seed',type=int,default=20261104)
 p.add_argument('--timeout',type=float,default=300)
 p.add_argument('--output',type=Path,default=ROOT/'.build/compare/native-api.json')
 a=p.parse_args()
+if a.output.exists():p.error(f'output already exists; retain it and choose a new recording: {a.output}')
 if not 1<=a.iterations<=1000000: p.error('iterations must be1..1000000')
 if not 1<=a.rounds<=100: p.error('rounds must be1..100')
 if not math.isfinite(a.timeout) or a.timeout<=0: p.error('timeout must be finite and positive')
@@ -40,7 +45,22 @@ def verify_build():
     if (build.get('schema')!=1 or build.get('adaptive_listing')!=a.adaptive_listing or build.get('source_sha256')!=sources()
         or build.get('binaries_sha256')!={name:sha256(path) for name,path in paths.items()}
         or build.get('toolchains')!=toolchains(str(Path(a.goose).resolve()),a.cc,a.rust_toolchain)):
-        p.error('build source, binary, profile or toolchain mismatch; rebuild runners with the requested profile/toolchains')
+        raise RuntimeError('build source, binary, profile or toolchain mismatch; rebuild runners with the requested profile/toolchains')
+a.output.parent.mkdir(parents=True,exist_ok=True)
+# Hold exclusive artifact descriptors throughout; never reopen their pathnames.
+output_file=a.output.open('x')
+journal=a.output.with_suffix('.jsonl').open('x')
+def emit(event):
+    journal.write(json.dumps(event)+'\n');journal.flush();os.fsync(journal.fileno())
+def save(value):
+    output_file.seek(0);output_file.truncate()
+    output_file.write(json.dumps(value,indent=2)+'\n');output_file.flush();os.fsync(output_file.fileno())
+def failed(kind,error,traceback):
+    emit(dict(kind='failure',error=repr(error)))
+    save(dict(status='failed',error=repr(error),samples=globals().get('samples',[]),batches=globals().get('batches',[])))
+    sys.__excepthook__(kind,error,traceback)
+sys.excepthook=failed
+emit(dict(kind='start',timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),build=build,arguments=vars(a)|{'output':str(a.output)}))
 verify_build()
 runtime=runtime_settings()
 read_sizes=[0,64,4096,65536,1048576]
@@ -60,12 +80,25 @@ expected.update({case:1 for case in rename_cases})
 root_cases={'root-read-fresh-64','root-metadata-file','root-list-sorted-128'} | {w for w in rename_cases if w.startswith('root-')}
 expected.update({'root-read-fresh-64':expected['read-fresh-64'],
                  'root-metadata-file':65,'root-list-sorted-128':expected['list-sorted-128']})
+link_cases={f'readlink-{n}' for n in (64,256,4095)}
+root_link_cases={f'root-readlink-{n}' for n in (64,256,4095)}
+expected.update({f'{prefix}readlink-{n}':n+240 for prefix in ('','root-') for n in (64,256,4095)})
 unsupported_cases={
     'goose-stdlib':{'metadata-file','lock-exclusive-pair','rename-parents-sync-pair','rename-noreplace-pair'}|root_cases|setter_cases|{w for w in expected if w.startswith('read-retained-')},
     'rust':root_cases|{'rename-noreplace-pair'},'go':{'lock-exclusive-pair','rename-noreplace-pair','root-rename-noreplace-pair','file-set-times'},'goose-fs':set()}
+unsupported_cases['goose-stdlib'] |= link_cases | root_link_cases
+unsupported_cases['rust'] |= root_link_cases
 def capture(args): return subprocess.check_output(args,cwd=ROOT,text=True,timeout=30).strip()
 def execute(name,root,iterations):
-    result=subprocess.run([str(paths[name]),str(root),str(iterations)],cwd=ROOT,capture_output=True,text=True,check=True,timeout=a.timeout)
+    command=[str(paths[name]),str(root),str(iterations)]
+    try:result=run_captured(command,a.timeout)
+    except BaseException as error:
+        emit(dict(kind='process-failure',runner=name,iterations=iterations,command=command,error=repr(error),stdout_hex=(getattr(error,'stdout',None) or b'').hex(),stderr_hex=(getattr(error,'stderr',None) or b'').hex()))
+        raise
+    emit(dict(kind='process',runner=name,iterations=iterations,command=command,returncode=result.returncode,stdout_hex=result.stdout.hex(),stderr_hex=result.stderr.hex()))
+    result.check_returncode()
+    assert not result.stderr,(name,result.stderr)
+    result.stdout=result.stdout.decode()
     rows=[];seen=set();rss=None
     for line in result.stdout.splitlines():
         if line.startswith('MEMORY\t'):
@@ -102,6 +135,9 @@ with tempfile.TemporaryDirectory(prefix='goose-fs-compare-') as temp:
         names=[f'entry-{i:04d}' for i in range(count)];rng.shuffle(names)
         for name in names: (folder/name).touch()
         fixture_hashes[f'list-{count}']=hashlib.sha256(b'\0'.join(n.encode() for n in sorted(names))).hexdigest()
+    for n in (64,256,4095):
+        os.symlink('x'*n,root/f'symlink-{n}')
+        fixture_hashes[f'symlink-{n}']=hashlib.sha256(b'x'*n).hexdigest()
     (root/'rename').mkdir();(root/'rename/left').write_bytes(b'rename fixture')
     fixture_hashes['rename/left']=hashlib.sha256(b'rename fixture').hexdigest()
     (root/'file-metadata').write_bytes(b'metadata fixture')
@@ -118,7 +154,7 @@ with tempfile.TemporaryDirectory(prefix='goose-fs-compare-') as temp:
             for row in rows: samples.append(dict(round=round_id,position=position,runner=name,**row))
             print(f'round {round_id+1}/{a.rounds}: {name} complete',flush=True)
 verify_build()
-metadata=dict(profile='native-public-api-task-costs',timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),
+metadata=dict(status='complete',profile='native-public-api-task-costs',timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),
     source_revision=capture(['git','rev-parse','HEAD']),source_dirty=bool(capture(['git','status','--porcelain'])),
     build=build,runtime_settings=runtime,
     platform=platform.platform(),cpu_info=Path('/proc/cpuinfo').read_text().split('\n\n')[0],filesystem=filesystem,
@@ -126,6 +162,7 @@ metadata=dict(profile='native-public-api-task-costs',timestamp=datetime.datetime
     iterations=a.iterations,rounds=a.rounds,seed=a.seed,fixtures_sha256=fixture_hashes,
     listing_limits={'goose-fs':{'byte_limit':1048576,'entry_limit':4096,'adaptive':a.adaptive_listing}},
     metadata_consumption='All callers test regular kind and size; Rust/Go additionally retain full native metadata objects, Goose may elide unused wrapper fields.',
+    readlink_policy='FS bounded adaptive staging plus owned output reuse, strict no-follow parents; Rust/Go native link-following ancestor lookup and fresh PathBuf/string with post-read bound check. All return verbatim targets, limit1MiB; short/truncation/failure semantics not benchmarked. FS staging freshly initialized per call. Root lifecycle excluded; Go Root permits in-tree links, Rust stdlib Root unsupported; Goose stdlib readlink unsupported. Stable64/256/4095-byte targets, full bytes checked outside timers, status/length/endpoint checksum inside. Descriptive task costs, not equal-security matched adapters or leadership.',
     file_setter_policy='Held readonly File; open, identity capture, seek setup, validation and close outside timing. Each timed call sets mode0640, captured current uid/gid, or exact atime1000.123456789/mtime2200000000.987654321. Repeated same-value calls remain real syscalls, not no-ops; no implicit sync. Status checks/checksum included. Go File has no time setter in the recorded os API; path Chtimes is not substituted. Goose stdlib lacks retained Files. Native syscall counts not instrumented.',
     rename_policy='Each pair moves left to absent right and back; two renames, no existing-target overwrite latency measured. fs uses explicit Replace/NoReplace and optional checked both-parent fsync. Rust/Go checked rows compose two readable-parent opens before each rename, both fsyncs, then cleanup; Rust Drop does not report close errors. Pinned Goose rename_file always best-effort syncs destination parent even in basic row and cannot report checked sync; Root lifecycle excluded. Absolute Rust/Go compositions re-resolve paths during rename; fixtures are stable, so concurrent-parent identity is not measured. Different nofollow/outcome policies, not equal-security ranking.',
     locking_policy='goose-fs/Rust retained readonly Files; exclusive try-acquire plus unlock per iteration; untimed warm pair; no contention or polling; Go os/Goose stdlib unsupported.',
@@ -139,5 +176,7 @@ metadata=dict(profile='native-public-api-task-costs',timestamp=datetime.datetime
     limitation='Trusted stable ASCII fixtures; public native API semantics differ. Not an equal-security ranking. No durability/cold-storage/concurrency claim. Whole-process batches shuffled; allocator state retained between workloads. Timed checksums consume length and endpoint bytes; independent full-content/ordered-name preflight outside timers. Fresh timed reads do not receive a full-content postcheck. VmHWM sampled after all workloads includes validation and retained sinks; not per-operation memory or allocations.',
     samples=samples,batches=batches)
 a.output.parent.mkdir(parents=True,exist_ok=True)
-a.output.write_text(json.dumps(metadata,indent=2)+'\n')
+save(metadata)
+emit(dict(kind='finish',status='complete',samples=len(samples)))
+output_file.close();journal.close()
 print(f'Wrote {len(samples)} samples to {a.output}')

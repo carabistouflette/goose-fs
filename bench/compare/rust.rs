@@ -74,6 +74,20 @@ fn rename_cases(path: &Path, count: u64) {
         for sample in 0..7 { println!("{label}\t{sample}\t0\t0\tunsupported"); }
     }
 }
+fn link_cases(root: &Path, count: u64) {
+    use std::os::unix::ffi::OsStrExt;
+    for size in [64usize, 256, 4095] {
+        let path = root.join(format!("symlink-{size}"));
+        let before = fs::read_link(&path).unwrap(); assert_eq!(before.as_os_str().as_bytes(), vec![b'x';size]);
+        samples(&format!("readlink-{size}"),count,|| {
+            let target=fs::read_link(&path).unwrap();let bytes=target.as_os_str().as_bytes();
+            assert_eq!(bytes.len(),size);assert!(bytes.len()<=1048576);
+            let value=checksum(bytes);black_box(target);value
+        });
+        assert_eq!(fs::read_link(&path).unwrap().as_os_str().as_bytes(),vec![b'x';size]);
+        for sample in 0..7 { println!("root-readlink-{size}\t{sample}\t0\t0\tunsupported"); }
+    }
+}
 fn main() {
     let args: Vec<_> = std::env::args().collect();
     assert_eq!(args.len(), 3);
@@ -128,6 +142,7 @@ fn main() {
     }
     rename_cases(&root.join("rename"), count);
     file_setters(&root.join("file-metadata"), count);
+    link_cases(root,count);
     let status = fs::read_to_string("/proc/self/status").unwrap();
     for line in status.lines().filter(|s| s.starts_with("VmHWM:")) { println!("MEMORY\t{line}"); }
 }

@@ -19,7 +19,7 @@ def sha256(path):
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
 def sources():
-    paths = [ROOT/'fs.goose', ROOT/'fs.build', ROOT/'GOOSE_REVISION',
+    paths = [ROOT/'tests/native_compare.py', ROOT/'bench/read-contract/child.py', ROOT/'fs.goose', ROOT/'fs.build', ROOT/'GOOSE_REVISION',
              *sorted((ROOT/'native').glob('*')), *sorted((ROOT/'bench/compare').glob('*'))]
     return {str(path.relative_to(ROOT)): sha256(path) for path in paths if path.is_file()}
 

@@ -118,6 +118,21 @@ func renameCases(path string, count int) {
         for sample:=0;sample<7;sample++ { fmt.Printf("%s\t%d\t0\t0\tunsupported\n",label,sample) }
     }
 }
+var linkSink string
+func linkCases(directory string,count int) {
+    held,err:=os.OpenRoot(directory);must(err)
+    for _,size:=range []int{64,256,4095} {
+        name:=fmt.Sprintf("symlink-%d",size);path:=filepath.Join(directory,name)
+        for _,relative:=range []bool{false,true} {
+            label:=fmt.Sprintf("readlink-%d",size);if relative { label="root-"+label }
+            read:=func()string { var value string;var err error;if relative { value,err=held.Readlink(name) } else { value,err=os.Readlink(path) };must(err);return value }
+            if read()!=strings.Repeat("x",size) { panic("link bytes") }
+            samples(label,count,func()uint64 { data:=read();if len(data)!=size || len(data)>1048576 { panic("link size") };linkSink=data;return uint64(len(data))+uint64(data[0])+uint64(data[len(data)-1]) })
+            if read()!=strings.Repeat("x",size) { panic("link bytes after") }
+        }
+    }
+    must(held.Close())
+}
 func main() {
     if len(os.Args)!=3 { panic("root and iterations required") }
     root := os.Args[1]; count, err := strconv.Atoi(os.Args[2]); must(err)
@@ -207,6 +222,7 @@ func main() {
     position, err = metadataFile.Seek(0,io.SeekCurrent); must(err); if position!=3 { panic("metadata cursor changed") }
     must(metadataFile.Close())
     for sample:=0;sample<7;sample++ { fmt.Printf("file-set-times\t%d\t0\t0\tunsupported\n",sample) }
+    linkCases(root,count)
     status, err := os.ReadFile("/proc/self/status"); must(err)
     for _, line := range strings.Split(string(status),"\n") {
         if strings.HasPrefix(line,"VmHWM:") { fmt.Printf("MEMORY\t%s\n",line) }

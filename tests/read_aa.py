@@ -13,6 +13,7 @@ import sys
 import tempfile
 import time
 import unittest
+import unittest.mock
 from unittest.mock import patch
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/'bench/read-aa'))
@@ -115,6 +116,35 @@ class Children(unittest.TestCase):
         events=[];code='import os,time;os.write(1,bytes([255,0]));time.sleep(5)'
         with self.assertRaises(subprocess.TimeoutExpired):observe([sys.executable,'-c',code],{},events.append,timeout=0.3)
         self.assertEqual(bytes.fromhex(events[0]['stdout_hex']),bytes([255,0]));self.assertTrue(events[0]['timeout']);self.assertIn('resources',events[0])
+    def test_real_interruption_preserves_binary_prefix(self):
+        import child
+        import signal
+        self.assertEqual(signal.getitimer(signal.ITIMER_REAL),(0.0,0.0))
+        def interrupt(*args):raise KeyboardInterrupt()
+        previous=signal.signal(signal.SIGALRM,interrupt)
+        try:
+            signal.setitimer(signal.ITIMER_REAL,0.3)
+            with self.assertRaises(KeyboardInterrupt) as caught:
+                child.run_captured([sys.executable,'-c',"import os,time;os.write(1,bytes([0,255])+b'prefix');os.write(2,b'err'+bytes([0]));time.sleep(5)"],10)
+            self.assertEqual(caught.exception.stdout,bytes([0,255])+b'prefix')
+            self.assertEqual(caught.exception.stderr,b'err'+bytes([0]))
+        finally:
+            signal.setitimer(signal.ITIMER_REAL,0)
+            signal.signal(signal.SIGALRM,previous)
+    def test_interruption_retains_drained_pipe_tails(self):
+        import child
+        class Fake:
+            returncode=-9
+            def __init__(self,*a,**k):self.count=0
+            def kill(self):pass
+            def communicate(self,**kwargs):
+                self.count+=1
+                if self.count==1:raise KeyboardInterrupt()
+                return b'partial-tail',b'error-tail'
+        with unittest.mock.patch.object(child.subprocess,'Popen',Fake):
+            with self.assertRaises(KeyboardInterrupt) as caught:child.run_captured(['fixture'],1)
+        self.assertEqual(caught.exception.stdout,b'partial-tail')
+        self.assertEqual(caught.exception.stderr,b'error-tail')
     def test_timeout_drains_bytes_queued_after_first_communicate(self):
         holder=[]
         class Child:
