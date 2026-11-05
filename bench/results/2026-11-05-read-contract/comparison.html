@@ -1,0 +1,664 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Bounded read: medians and replica controls</title><style>
+:root{color-scheme:light dark}body{margin:0;color:var(--foreground,CanvasText);font:14px/1.5 var(--font-sans,system-ui)}h2{font-size:18px;margin:0 0 8px}p{margin:8px 0;color:var(--muted-foreground,GrayText)}label{display:inline-block;margin:8px 16px 8px 0}select{padding:5px;background:var(--card,Canvas);color:var(--foreground,CanvasText);border:1px solid var(--border,GrayText);border-radius:var(--radius,6px)}.plot{height:245px}.row{display:grid;grid-template-columns:60px 1fr 80px;align-items:center;gap:8px;height:38px}.track{height:18px;background:var(--secondary,ButtonFace);border-radius:4px}.bar{height:18px;border-radius:4px}.fs{background:var(--chart-1,Highlight)}.rust{background:var(--chart-2,Highlight)}.go{background:var(--chart-3,Highlight)}.number{text-align:right;font-variant-numeric:tabular-nums}table{width:100%;border-collapse:collapse;margin:8px 0}td,th{text-align:left;border-bottom:1px solid var(--border,GrayText);padding:6px 2px}a{color:var(--primary,LinkText)}.status{font-weight:600;color:var(--warning-foreground,CanvasText)}small{color:var(--muted-foreground,GrayText)}</style>
+<h2>Bounded read: all cells inconclusive</h2><p>4,620 retained means · Linux x86-64 · shared CPU6 · matching bounded/no-follow policy.</p>
+<label>Attempt <select id="attempt"><option value="0">1</option><option value="1">2</option></select></label><label>Cell <select id="cell"></select></label>
+<div class="plot" id="plot" role="img" aria-label="Per-replica median read times"></div>
+<p><small>ns/call medians; shorter bars mean lower observed time. Two independently built replicas per language. Initial allocation is outside timing; subsequent growth/zeroing stays inside.</small></p>
+<table><thead><tr><th>Replica control</th><th>max/min</th><th>≤1.05?</th></tr></thead><tbody id="controls"></tbody></table>
+<p id="ratios"></p><p class="status" id="status"></p>
+<p>Rust uses a Linux adapter with a narrow stat ABI bridge; Go uses an independent Linux adapter. These are not plain std::fs/os calls or a claim of optimal reference implementations.</p>
+<p>No cell passes all controls in both attempts. No reruns, pooling, normalization, isolation claim or overall leadership label. The library runtime is unchanged.</p>
+<small><a href="https://github.com/carabistouflette/goose-fs/tree/dee8b163244dfa62eea7016835e9d40a70920342/bench/read-contract">Frozen contract and source</a> · Full raw data and all ratios accompany this chart.</small>
+<script id="data" type="application/json">{
+  "records": [
+    {
+      "attempt": 1,
+      "cells": {
+        "empty": {
+          "medians_ns": {
+            "fs1": 4383,
+            "rust1": 4286,
+            "go1": 5344,
+            "fs2": 4373,
+            "rust2": 4281,
+            "go2": 5301
+          },
+          "controls": {
+            "fs": 1.0022867596615597,
+            "rust": 1.0011679514132212,
+            "go": 1.0081116770420675
+          },
+          "reference_over_fs": {
+            "rust1/fs1": 0.9778690394706822,
+            "rust1/fs2": 0.9801051909444317,
+            "rust2/fs1": 0.9767282683093771,
+            "rust2/fs2": 0.978961811113652,
+            "go1/fs1": 1.2192562172028292,
+            "go1/fs2": 1.2220443631374343,
+            "go2/fs1": 1.2094455852156059,
+            "go2/fs2": 1.212211296592728
+          },
+          "controls_pass": true,
+          "all_reference_ratios_pass": false,
+          "descriptive_regression": false
+        },
+        "tiny": {
+          "medians_ns": {
+            "fs1": 4913,
+            "rust1": 4911,
+            "go1": 5814,
+            "fs2": 4964,
+            "rust2": 4826,
+            "go2": 5536
+          },
+          "controls": {
+            "fs": 1.0103806228373702,
+            "rust": 1.0176129299627021,
+            "go": 1.0502167630057804
+          },
+          "reference_over_fs": {
+            "rust1/fs1": 0.9995929167514757,
+            "rust1/fs2": 0.9893231265108783,
+            "rust2/fs1": 0.982291878689192,
+            "rust2/fs2": 0.9721998388396454,
+            "go1/fs1": 1.1833910034602075,
+            "go1/fs2": 1.1712328767123288,
+            "go2/fs1": 1.1268064319153266,
+            "go2/fs2": 1.1152296535052377
+          },
+          "controls_pass": false,
+          "all_reference_ratios_pass": false,
+          "descriptive_regression": false
+        },
+        "page": {
+          "medians_ns": {
+            "fs1": 5054,
+            "rust1": 4963,
+            "go1": 6245,
+            "fs2": 5142,
+            "rust2": 5120,
+            "go2": 5960
+          },
+          "controls": {
+            "fs": 1.0174119509299564,
+            "rust": 1.0316340922828935,
+            "go": 1.0478187919463087
+          },
+          "reference_over_fs": {
+            "rust1/fs1": 0.981994459833795,
+            "rust1/fs2": 0.9651886425515364,
+            "rust2/fs1": 1.0130589631974674,
+            "rust2/fs2": 0.9957215091404122,
+            "go1/fs1": 1.235654926790661,
+            "go1/fs2": 1.2145079735511475,
+            "go2/fs1": 1.1792639493470518,
+            "go2/fs2": 1.1590820692337611
+          },
+          "controls_pass": true,
+          "all_reference_ratios_pass": false,
+          "descriptive_regression": false
+        },
+        "chunk": {
+          "medians_ns": {
+            "fs1": 9386,
+            "rust1": 9389,
+            "go1": 9666,
+            "fs2": 9722,
+            "rust2": 9296,
+            "go2": 10324
+          },
+          "controls": {
+            "fs": 1.0357979970168336,
+            "rust": 1.0100043029259897,
+            "go": 1.0680736602524312
+          },
+          "reference_over_fs": {
+            "rust1/fs1": 1.0003196249733646,
+            "rust1/fs2": 0.9657477885208805,
+            "rust2/fs1": 0.9904112507990624,
+            "rust2/fs2": 0.9561818555852705,
+            "go1/fs1": 1.0298316641806946,
+            "go1/fs2": 0.9942398683398478,
+            "go2/fs1": 1.099936075005327,
+            "go2/fs2": 1.0619214153466365
+          },
+          "controls_pass": false,
+          "all_reference_ratios_pass": false,
+          "descriptive_regression": false
+        },
+        "max": {
+          "medians_ns": {
+            "fs1": 76853,
+            "rust1": 82123,
+            "go1": 93029,
+            "fs2": 86803,
+            "rust2": 88823,
+            "go2": 86674
+          },
+          "controls": {
+            "fs": 1.1294679452981666,
+            "rust": 1.0815849396636752,
+            "go": 1.0733207190160832
+          },
+          "reference_over_fs": {
+            "rust1/fs1": 1.0685724695197325,
+            "rust1/fs2": 0.9460848127368869,
+            "rust2/fs1": 1.1557518899717643,
+            "rust2/fs2": 1.0232710851007454,
+            "go1/fs1": 1.210479747049562,
+            "go1/fs2": 1.0717256316025945,
+            "go2/fs1": 1.1277894161581201,
+            "go2/fs2": 0.9985138762485167
+          },
+          "controls_pass": false,
+          "all_reference_ratios_pass": false,
+          "descriptive_regression": true
+        },
+        "large-budget": {
+          "medians_ns": {
+            "fs1": 48659,
+            "rust1": 46096,
+            "go1": 52217,
+            "fs2": 52679,
+            "rust2": 46109,
+            "go2": 47812
+          },
+          "controls": {
+            "fs": 1.0826157545366737,
+            "rust": 1.0002820201318987,
+            "go": 1.0921316824228227
+          },
+          "reference_over_fs": {
+            "rust1/fs1": 0.9473273186871904,
+            "rust1/fs2": 0.8750355929307694,
+            "rust2/fs1": 0.9475944840625578,
+            "rust2/fs2": 0.8752823705841037,
+            "go1/fs1": 1.0731211081197722,
+            "go1/fs2": 0.9912299018584255,
+            "go2/fs1": 0.982593148235681,
+            "go2/fs2": 0.907610243170903
+          },
+          "controls_pass": false,
+          "all_reference_ratios_pass": false,
+          "descriptive_regression": true
+        },
+        "missing": {
+          "medians_ns": {
+            "fs1": 2940,
+            "rust1": 2822,
+            "go1": 3269,
+            "fs2": 2965,
+            "rust2": 2657,
+            "go2": 3506
+          },
+          "controls": {
+            "fs": 1.0085034013605443,
+            "rust": 1.0621001129092962,
+            "go": 1.0724992352401346
+          },
+          "reference_over_fs": {
+            "rust1/fs1": 0.9598639455782313,
+            "rust1/fs2": 0.95177065767285,
+            "rust2/fs1": 0.9037414965986394,
+            "rust2/fs2": 0.8961214165261383,
+            "go1/fs1": 1.111904761904762,
+            "go1/fs2": 1.102529510961214,
+            "go2/fs1": 1.192517006802721,
+            "go2/fs2": 1.1824620573355817
+          },
+          "controls_pass": false,
+          "all_reference_ratios_pass": false,
+          "descriptive_regression": false
+        },
+        "overflow": {
+          "medians_ns": {
+            "fs1": 5063,
+            "rust1": 4940,
+            "go1": 6022,
+            "fs2": 5254,
+            "rust2": 4859,
+            "go2": 6149
+          },
+          "controls": {
+            "fs": 1.0377246691684772,
+            "rust": 1.0166700967277218,
+            "go": 1.0210893390900033
+          },
+          "reference_over_fs": {
+            "rust1/fs1": 0.9757061031009283,
+            "rust1/fs2": 0.9402360106585459,
+            "rust2/fs1": 0.9597076831917836,
+            "rust2/fs2": 0.9248191853825657,
+            "go1/fs1": 1.189413391269998,
+            "go1/fs2": 1.1461743433574418,
+            "go2/fs1": 1.2144973335966818,
+            "go2/fs2": 1.1703464027407688
+          },
+          "controls_pass": true,
+          "all_reference_ratios_pass": false,
+          "descriptive_regression": false
+        },
+        "zero-overflow": {
+          "medians_ns": {
+            "fs1": 4523,
+            "rust1": 4504,
+            "go1": 5505,
+            "fs2": 4600,
+            "rust2": 4540,
+            "go2": 5095
+          },
+          "controls": {
+            "fs": 1.0170240990493036,
+            "rust": 1.007992895204263,
+            "go": 1.0804710500490677
+          },
+          "reference_over_fs": {
+            "rust1/fs1": 0.9957992482865354,
+            "rust1/fs2": 0.9791304347826087,
+            "rust2/fs1": 1.0037585673225735,
+            "rust2/fs2": 0.9869565217391304,
+            "go1/fs1": 1.2171125359274817,
+            "go1/fs2": 1.1967391304347825,
+            "go2/fs1": 1.1264647357948265,
+            "go2/fs2": 1.107608695652174
+          },
+          "controls_pass": false,
+          "all_reference_ratios_pass": false,
+          "descriptive_regression": false
+        },
+        "nonregular": {
+          "medians_ns": {
+            "fs1": 4474,
+            "rust1": 4729,
+            "go1": 5362,
+            "fs2": 4600,
+            "rust2": 4377,
+            "go2": 5197
+          },
+          "controls": {
+            "fs": 1.0281627179257935,
+            "rust": 1.0804203792551976,
+            "go": 1.0317490860111602
+          },
+          "reference_over_fs": {
+            "rust1/fs1": 1.056995976754582,
+            "rust1/fs2": 1.0280434782608696,
+            "rust2/fs1": 0.9783191774698257,
+            "rust2/fs2": 0.9515217391304348,
+            "go1/fs1": 1.1984801072865445,
+            "go1/fs2": 1.1656521739130434,
+            "go2/fs1": 1.161600357621815,
+            "go2/fs2": 1.1297826086956522
+          },
+          "controls_pass": false,
+          "all_reference_ratios_pass": false,
+          "descriptive_regression": false
+        },
+        "deep": {
+          "medians_ns": {
+            "fs1": 6359,
+            "rust1": 6245,
+            "go1": 7185,
+            "fs2": 6328,
+            "rust2": 5978,
+            "go2": 6942
+          },
+          "controls": {
+            "fs": 1.0048988621997472,
+            "rust": 1.0446637671462027,
+            "go": 1.0350043215211755
+          },
+          "reference_over_fs": {
+            "rust1/fs1": 0.9820726529328511,
+            "rust1/fs2": 0.9868836915297092,
+            "rust2/fs1": 0.9400849190124233,
+            "rust2/fs2": 0.9446902654867256,
+            "go1/fs1": 1.129894637521623,
+            "go1/fs2": 1.1354298356510746,
+            "go2/fs1": 1.0916810819311213,
+            "go2/fs2": 1.0970290771175726
+          },
+          "controls_pass": true,
+          "all_reference_ratios_pass": false,
+          "descriptive_regression": false
+        }
+      }
+    },
+    {
+      "attempt": 2,
+      "cells": {
+        "empty": {
+          "medians_ns": {
+            "fs1": 4643,
+            "rust1": 4236,
+            "go1": 4982,
+            "fs2": 4638,
+            "rust2": 4622,
+            "go2": 5320
+          },
+          "controls": {
+            "fs": 1.0010780508840018,
+            "rust": 1.091123701605288,
+            "go": 1.0678442392613408
+          },
+          "reference_over_fs": {
+            "rust1/fs1": 0.9123411587335775,
+            "rust1/fs2": 0.9133247089262613,
+            "rust2/fs1": 0.9954770622442386,
+            "rust2/fs2": 0.9965502371711945,
+            "go1/fs1": 1.0730131380572905,
+            "go1/fs2": 1.0741699008193186,
+            "go2/fs1": 1.1458108981262114,
+            "go2/fs2": 1.1470461405778354
+          },
+          "controls_pass": false,
+          "all_reference_ratios_pass": false,
+          "descriptive_regression": true
+        },
+        "tiny": {
+          "medians_ns": {
+            "fs1": 4929,
+            "rust1": 4687,
+            "go1": 5468,
+            "fs2": 5014,
+            "rust2": 4732,
+            "go2": 5612
+          },
+          "controls": {
+            "fs": 1.0172448772570502,
+            "rust": 1.0096010241092384,
+            "go": 1.0263350402340892
+          },
+          "reference_over_fs": {
+            "rust1/fs1": 0.9509028200446338,
+            "rust1/fs2": 0.9347826086956522,
+            "rust2/fs1": 0.960032460945425,
+            "rust2/fs2": 0.9437574790586358,
+            "go1/fs1": 1.1093528099005883,
+            "go1/fs2": 1.090546469884324,
+            "go2/fs1": 1.1385676607831203,
+            "go2/fs2": 1.1192660550458715
+          },
+          "controls_pass": true,
+          "all_reference_ratios_pass": false,
+          "descriptive_regression": true
+        },
+        "page": {
+          "medians_ns": {
+            "fs1": 5076,
+            "rust1": 4847,
+            "go1": 6432,
+            "fs2": 5410,
+            "rust2": 5226,
+            "go2": 6382
+          },
+          "controls": {
+            "fs": 1.065799842395587,
+            "rust": 1.0781926965133073,
+            "go": 1.007834534628643
+          },
+          "reference_over_fs": {
+            "rust1/fs1": 0.9548857368006304,
+            "rust1/fs2": 0.8959334565619224,
+            "rust2/fs1": 1.029550827423168,
+            "rust2/fs2": 0.965988909426987,
+            "go1/fs1": 1.2671394799054374,
+            "go1/fs2": 1.188909426987061,
+            "go2/fs1": 1.2572892040977148,
+            "go2/fs2": 1.1796672828096118
+          },
+          "controls_pass": false,
+          "all_reference_ratios_pass": false,
+          "descriptive_regression": true
+        },
+        "chunk": {
+          "medians_ns": {
+            "fs1": 9390,
+            "rust1": 9584,
+            "go1": 10659,
+            "fs2": 9452,
+            "rust2": 9221,
+            "go2": 9469
+          },
+          "controls": {
+            "fs": 1.0066027689030883,
+            "rust": 1.0393666630517298,
+            "go": 1.125673249551167
+          },
+          "reference_over_fs": {
+            "rust1/fs1": 1.0206602768903088,
+            "rust1/fs2": 1.0139652983495557,
+            "rust2/fs1": 0.9820021299254527,
+            "rust2/fs2": 0.9755607278882776,
+            "go1/fs1": 1.135143769968051,
+            "go1/fs2": 1.1276978417266188,
+            "go2/fs1": 1.0084132055378061,
+            "go2/fs2": 1.0017985611510791
+          },
+          "controls_pass": false,
+          "all_reference_ratios_pass": false,
+          "descriptive_regression": false
+        },
+        "max": {
+          "medians_ns": {
+            "fs1": 80147,
+            "rust1": 84212,
+            "go1": 76951,
+            "fs2": 76607,
+            "rust2": 81992,
+            "go2": 78090
+          },
+          "controls": {
+            "fs": 1.0462098763820538,
+            "rust": 1.0270758122743682,
+            "go": 1.0148016270093956
+          },
+          "reference_over_fs": {
+            "rust1/fs1": 1.0507193032802227,
+            "rust1/fs2": 1.0992729123970395,
+            "rust2/fs1": 1.0230202003817985,
+            "rust2/fs2": 1.0702938373777853,
+            "go1/fs1": 0.9601232734849714,
+            "go1/fs2": 1.0044904512642447,
+            "go2/fs1": 0.9743346600621359,
+            "go2/fs2": 1.0193585442583577
+          },
+          "controls_pass": true,
+          "all_reference_ratios_pass": false,
+          "descriptive_regression": false
+        },
+        "large-budget": {
+          "medians_ns": {
+            "fs1": 49610,
+            "rust1": 44666,
+            "go1": 49537,
+            "fs2": 43138,
+            "rust2": 45324,
+            "go2": 48121
+          },
+          "controls": {
+            "fs": 1.1500301358431082,
+            "rust": 1.014731563157659,
+            "go": 1.0294258224060182
+          },
+          "reference_over_fs": {
+            "rust1/fs1": 0.9003426728482161,
+            "rust1/fs2": 1.0354212063609811,
+            "rust2/fs1": 0.9136061277968152,
+            "rust2/fs2": 1.0506745792572674,
+            "go1/fs1": 0.9985285224753074,
+            "go1/fs2": 1.1483378923454959,
+            "go2/fs1": 0.969985889941544,
+            "go2/fs2": 1.115513004775372
+          },
+          "controls_pass": false,
+          "all_reference_ratios_pass": false,
+          "descriptive_regression": true
+        },
+        "missing": {
+          "medians_ns": {
+            "fs1": 2959,
+            "rust1": 2751,
+            "go1": 3400,
+            "fs2": 3057,
+            "rust2": 2832,
+            "go2": 3585
+          },
+          "controls": {
+            "fs": 1.0331192970598175,
+            "rust": 1.029443838604144,
+            "go": 1.0544117647058824
+          },
+          "reference_over_fs": {
+            "rust1/fs1": 0.9297059817505914,
+            "rust1/fs2": 0.8999018645731109,
+            "rust2/fs1": 0.9570800946265631,
+            "rust2/fs2": 0.9263984298331698,
+            "go1/fs1": 1.1490368367691788,
+            "go1/fs2": 1.1122015047432123,
+            "go2/fs1": 1.2115579587698546,
+            "go2/fs2": 1.1727183513248283
+          },
+          "controls_pass": false,
+          "all_reference_ratios_pass": false,
+          "descriptive_regression": false
+        },
+        "overflow": {
+          "medians_ns": {
+            "fs1": 4957,
+            "rust1": 4965,
+            "go1": 5805,
+            "fs2": 4830,
+            "rust2": 4699,
+            "go2": 6024
+          },
+          "controls": {
+            "fs": 1.0262939958592132,
+            "rust": 1.0566077888912535,
+            "go": 1.0377260981912144
+          },
+          "reference_over_fs": {
+            "rust1/fs1": 1.0016138793625176,
+            "rust1/fs2": 1.0279503105590062,
+            "rust2/fs1": 0.9479523905588058,
+            "rust2/fs2": 0.9728778467908903,
+            "go1/fs1": 1.1710712124268712,
+            "go1/fs2": 1.2018633540372672,
+            "go2/fs1": 1.2152511599757918,
+            "go2/fs2": 1.2472049689440994
+          },
+          "controls_pass": false,
+          "all_reference_ratios_pass": false,
+          "descriptive_regression": false
+        },
+        "zero-overflow": {
+          "medians_ns": {
+            "fs1": 4834,
+            "rust1": 4404,
+            "go1": 5310,
+            "fs2": 4590,
+            "rust2": 4527,
+            "go2": 5901
+          },
+          "controls": {
+            "fs": 1.0531590413943355,
+            "rust": 1.0279291553133516,
+            "go": 1.1112994350282486
+          },
+          "reference_over_fs": {
+            "rust1/fs1": 0.9110467521721142,
+            "rust1/fs2": 0.9594771241830066,
+            "rust2/fs1": 0.9364915184112537,
+            "rust2/fs2": 0.9862745098039216,
+            "go1/fs1": 1.0984691766652876,
+            "go1/fs2": 1.1568627450980393,
+            "go2/fs1": 1.2207281754240795,
+            "go2/fs2": 1.2856209150326798
+          },
+          "controls_pass": false,
+          "all_reference_ratios_pass": false,
+          "descriptive_regression": false
+        },
+        "nonregular": {
+          "medians_ns": {
+            "fs1": 4435,
+            "rust1": 4361,
+            "go1": 5555,
+            "fs2": 4572,
+            "rust2": 4271,
+            "go2": 5393
+          },
+          "controls": {
+            "fs": 1.030890642615558,
+            "rust": 1.0210723483961601,
+            "go": 1.0300389393658447
+          },
+          "reference_over_fs": {
+            "rust1/fs1": 0.983314543404735,
+            "rust1/fs2": 0.9538495188101487,
+            "rust2/fs1": 0.9630214205186021,
+            "rust2/fs2": 0.93416447944007,
+            "go1/fs1": 1.2525366403607667,
+            "go1/fs2": 1.2150043744531933,
+            "go2/fs1": 1.2160090191657271,
+            "go2/fs2": 1.1795713035870516
+          },
+          "controls_pass": true,
+          "all_reference_ratios_pass": false,
+          "descriptive_regression": false
+        },
+        "deep": {
+          "medians_ns": {
+            "fs1": 6524,
+            "rust1": 6071,
+            "go1": 7805,
+            "fs2": 6180,
+            "rust2": 6304,
+            "go2": 7082
+          },
+          "controls": {
+            "fs": 1.055663430420712,
+            "rust": 1.038379179706803,
+            "go": 1.102089805139791
+          },
+          "reference_over_fs": {
+            "rust1/fs1": 0.930564071122011,
+            "rust1/fs2": 0.9823624595469256,
+            "rust2/fs1": 0.9662783568362967,
+            "rust2/fs2": 1.020064724919094,
+            "go1/fs1": 1.196351931330472,
+            "go1/fs2": 1.2629449838187703,
+            "go2/fs1": 1.0855303494788473,
+            "go2/fs2": 1.1459546925566344
+          },
+          "controls_pass": false,
+          "all_reference_ratios_pass": false,
+          "descriptive_regression": false
+        }
+      }
+    }
+  ],
+  "labels": {
+    "empty": "inconclusive",
+    "tiny": "inconclusive",
+    "page": "inconclusive",
+    "chunk": "inconclusive",
+    "max": "inconclusive",
+    "large-budget": "inconclusive",
+    "missing": "inconclusive",
+    "overflow": "inconclusive",
+    "zero-overflow": "inconclusive",
+    "nonregular": "inconclusive",
+    "deep": "inconclusive"
+  },
+  "no_overall_leadership_label": true
+}
+</script><script>
+const data=JSON.parse(document.getElementById('data').textContent),cell=document.getElementById('cell'),attempt=document.getElementById('attempt');
+for(const c of Object.keys(data.labels)){const o=document.createElement('option');o.value=c;o.textContent=c;cell.append(o)}cell.value='tiny';
+function render(){const c=cell.value,x=data.records[+attempt.value].cells[c],m=x.medians_ns,max=Math.max(...Object.values(m)),names=['fs1','fs2','rust1','rust2','go1','go2'];
+document.getElementById('plot').innerHTML=names.map(n=>'<div class="row"><span>'+n+'</span><div class="track"><div class="bar '+n.replace(/[12]/g,'')+'" style="width:'+100*m[n]/max+'%"></div></div><span class="number">'+m[n].toLocaleString()+'</span></div>').join('');
+document.getElementById('controls').innerHTML=Object.entries(x.controls).map(([n,v])=>'<tr><td>'+n+'</td><td>'+v.toFixed(4)+'</td><td>'+(v<=1.05?'Pass':'Fail')+'</td></tr>').join('');
+const ratios=Object.values(x.reference_over_fs);document.getElementById('ratios').textContent='All eight reference/FS ratios: '+Math.min(...ratios).toFixed(4)+'–'+Math.max(...ratios).toFixed(4)+'. Required: every ratio ≥1.10 in both attempts.';
+document.getElementById('status').textContent='Cell label across both attempts: '+data.labels[c]+(x.descriptive_regression?'. Descriptive primary regression flag in this attempt.':'.');}
+cell.onchange=render;attempt.onchange=render;render();</script></html>

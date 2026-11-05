@@ -173,6 +173,11 @@ The [matched-path follow-up](bench/results/2026-11-05-matched-listing/README.md)
 compares two independent replicas per revision and keeps all four cross-revision
 ratios alongside the same-revision controls.
 
+The [bounded-read contract comparison](bench/results/2026-11-05-read-contract/README.md)
+compares independent Rust/Go Linux adapters under matching safety and error policies.
+All 4620 observations are retained; every cell is inconclusive under the preregistered
+replica controls and lead thresholds. It establishes no overall performance leadership.
+
 The current version excludes recursive operations, temp-directory lifecycle,
 path normalization, byte publication/installation helpers, streaming directory
 cursors and Windows support.
