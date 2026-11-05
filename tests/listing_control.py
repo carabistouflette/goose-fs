@@ -33,6 +33,8 @@ with tempfile.TemporaryDirectory(dir=ROOT/'.build') as t:
     negative=command.copy()
     negative[negative.index('--baseline')+1]=str(temp/'a')
     negative[negative.index('--full')+1]=str(temp/'b')
+    alias=temp/'cc-control';alias.symlink_to(record['cc_path'])
+    negative[negative.index('--cc')+1]=str(alias)
     copied=temp/'copied.json';copied.write_text(json.dumps(record))
     subprocess.run([*negative,'--build-manifest',str(copied),'--output',str(temp/'copied-result.json')],check=True)
     for field,value in [('profile','listing'),('identical_executables',False),
