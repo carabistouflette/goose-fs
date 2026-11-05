@@ -19,7 +19,9 @@ Use the shared [read contract](../read-contract/README.md), independent Rust and
 Go Linux adapters, full byte/errno/fault/descriptor qualification, and matched
 fresh builds. Build order is base1/fs1/rust1/go1/base2/fs2/rust2/go2 at one reset
 source/output/cache path. Require identical whole ELF and text/rodata within
-all four same-source pairs. Record actual library bytes per revision, adapters,
+all four same-source pairs. Execute all variants at one canonical path, atomically
+staging and hashing the selected frozen executable outside timers. Retain actual
+command paths and source executable hashes per process. Record actual library bytes per revision, adapters,
 compiler/libc/CPU identities, commands and executable hashes. Test dirty retained
 capacity, 1023/1024/1025 growth gaps, equal-length and shrinking outputs before
 and after measurements. No interposition/profiling is used in throughput runs.
@@ -55,3 +57,20 @@ contract runner before this controlled profile. It is ineligible for acceptance:
 Callgrind models instructions, user-cycle sampling excludes kernel/blocked time,
 and profiled/nonmatched timings cannot establish an improvement. Raw diagnostics
 and failed profiler invocations will be retained separately from throughput data.
+
+## Reproduction
+
+Requires the full baseline Git object (use a full clone), the pinned Goose compiler,
+Linux x86-64, Python without optimization, GCC/binutils, Rust1.99.1 and Go1.27.3.
+No toolchain/dependency download is performed by these experiment scripts.
+
+```sh
+python3 tests/read_contract.py
+python3 tests/read_growth.py
+taskset -c 6 python3 bench/read-contract/build.py --goose /absolute/path/to/goose --baseline-revision ce3bdcf92c07c03761e73333526933d2db8b33b1 --output-dir .build/read-growth-matched
+python3 tests/read_growth.py --build-dir .build/read-growth-matched
+# After review and a clean frozen checkpoint, first two attempts only:
+taskset -c 6 python3 bench/read-contract/measure.py --matched-growth --build-dir .build/read-growth-matched --attempt 1
+taskset -c 6 python3 bench/read-contract/measure.py --matched-growth --build-dir .build/read-growth-matched --attempt 2
+python3 bench/read-growth/analyze.py .build/read-growth-matched/attempt-1.json .build/read-growth-matched/attempt-2.json
+```

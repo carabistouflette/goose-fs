@@ -24,9 +24,17 @@ func value(p []byte) int64 {
 	return v
 }
 func fdCount() int { entries, e := os.ReadDir("/proc/self/fd"); must(e); return len(entries) }
+func freshValue(path string, limit, expected int) int64 {
+	var out []byte
+	s := boundedRead(path, limit, &out)
+	if s.Code != expected || (expected != 0 && len(out) != 0) {
+		panic("status mismatch")
+	}
+	return value(out) + int64(expected+1)
+}
 func main() {
 	a := os.Args
-	if len(a) == 5 && (a[1] == "probe" || a[1] == "growth") {
+	if len(a) == 5 && (a[1] == "probe" || a[1] == "growth" || a[1] == "empty-probe") {
 		path, e := hex.DecodeString(a[2])
 		must(e)
 		limit, e := strconv.Atoi(a[3])
@@ -38,6 +46,9 @@ func main() {
 		}
 		before := fdCount()
 		out := []byte("sentinel")
+		if a[1] == "empty-probe" {
+			out = nil
+		}
 		if a[1] == "growth" {
 			if limit < 0 || limit > maxBytes || loops < 0 || loops > limit {
 				panic("growth bounds")
@@ -51,6 +62,9 @@ func main() {
 		}
 		var s status
 		for i := 0; i < loops; i++ {
+			if a[1] == "empty-probe" {
+				out = nil
+			}
 			s = boundedRead(string(path), limit, &out)
 		}
 		finishFault()
@@ -60,7 +74,7 @@ func main() {
 		must(e)
 		return
 	}
-	if len(a) != 6 || a[1] != "measure" {
+	if len(a) != 6 || (a[1] != "measure" && a[1] != "fresh") {
 		panic("probe HEX LIMIT LOOPS or measure PATH LIMIT EXPECTED_CODE COUNT")
 	}
 	limit, e := strconv.Atoi(a[3])
@@ -79,13 +93,23 @@ func main() {
 			panic("status mismatch")
 		}
 	}
-	check()
+	if a[1] == "fresh" {
+		_ = freshValue(a[2], limit, expected)
+	} else {
+		check()
+	}
 	for sample := 0; sample < 7; sample++ {
 		var sum int64
 		start := time.Now()
-		for i := 0; i < count; i++ {
-			check()
-			sum += value(out) + int64(expected+1)
+		if a[1] == "fresh" {
+			for i := 0; i < count; i++ {
+				sum += freshValue(a[2], limit, expected)
+			}
+		} else {
+			for i := 0; i < count; i++ {
+				check()
+				sum += value(out) + int64(expected+1)
+			}
 		}
 		elapsed := time.Since(start).Nanoseconds() / int64(count)
 		fmt.Printf("%d\t%d\t%d\n", sample, elapsed, sum)

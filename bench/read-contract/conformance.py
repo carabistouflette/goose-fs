@@ -90,7 +90,7 @@ def probe(binary,case,loops=1,fault=None,growth_old=None):
     env.pop('READ_CONTRACT_FAULT',None)
     if fault:
         env['READ_CONTRACT_FAULT']=fault
-    p = subprocess.run([str(binary),'probe' if growth_old is None else 'growth',case['path'].hex(),str(case['limit']),str(loops if growth_old is None else growth_old)],
+    p = subprocess.run([str(binary),('empty-probe' if case.get('mode')=='fresh' else 'probe') if growth_old is None else 'growth',case['path'].hex(),str(case['limit']),str(loops if growth_old is None else growth_old)],
                        stdout=subprocess.PIPE,stderr=subprocess.PIPE,env=env,timeout=30)
     if p.returncode:
         raise AssertionError((str(binary),case['name'],fault,p.returncode,p.stderr.decode(errors='replace')))
@@ -103,11 +103,23 @@ def probe(binary,case,loops=1,fault=None,growth_old=None):
         assert not p.stderr, p.stderr
     return counters
 
+def add_fresh_case(cases):
+    cases.append(dict(next(c for c in cases if c['name']=='max'),name='fresh-max',mode='fresh',count=100))
+
+def fresh_smoke(binary,c):
+    env=dict(os.environ);env.pop('READ_CONTRACT_FAULT',None)
+    p=subprocess.run([str(binary),'fresh',os.fsdecode(c['path']),str(c['limit']),str(c['code']),'1'],env=env,stdout=subprocess.PIPE,stderr=subprocess.PIPE,timeout=30)
+    assert p.returncode==0 and not p.stderr, (binary,p.returncode,p.stderr)
+    rows=[list(map(int,line.split(b'\t'))) for line in p.stdout.splitlines()]
+    value=len(c['data'])+(c['data'][0]+c['data'][-1] if c['data'] else 0)+c['code']+1
+    assert len(rows)==7 and all(len(r)==3 and r[0]==i and r[1]>0 and r[2]==value for i,r in enumerate(rows)), (binary,rows)
+
 def check_release(binaries,cases,extra):
     count=0
     for binary in binaries:
         for c in cases+extra:
             probe(binary,c); count+=1
+            if c.get('mode')=='fresh':fresh_smoke(binary,c);count+=1
         for name in ('tiny','missing','nonregular','overflow'):
             probe(binary,next(c for c in cases if c['name']==name),loops=1000); count+=1
     return count

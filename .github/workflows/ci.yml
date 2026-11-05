@@ -37,6 +37,8 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
       - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: .toolchain
@@ -51,3 +53,6 @@ jobs:
           python3 tests/read_contract.py
           python3 bench/read-contract/build.py --goose .toolchain/goose/build/goose
           python3 tests/read_contract.py --build-dir .build/read-contract
+          python3 tests/read_growth.py
+          python3 bench/read-contract/build.py --goose .toolchain/goose/build/goose --baseline-revision ce3bdcf92c07c03761e73333526933d2db8b33b1 --output-dir .build/read-growth
+          python3 tests/read_growth.py --build-dir .build/read-growth

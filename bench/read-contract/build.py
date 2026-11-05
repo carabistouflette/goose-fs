@@ -8,6 +8,7 @@ import json
 import os
 from pathlib import Path
 import platform
+import re
 import shutil
 import subprocess
 import sys
@@ -17,9 +18,12 @@ HERE=Path(__file__).resolve().parent
 ROOT=HERE.parents[1]
 sys.path.append(str(ROOT/'bench'))
 from compare.provenance import sha256,goose_stdlib,runtime_settings,GO_SETTINGS
-from conformance import fixtures,check_release,check_faults
+from conformance import fixtures,check_release,check_faults,add_fresh_case
 LABELS=('fs1','rust1','go1','fs2','rust2','go2')
 PAIRS=(('fs1','fs2'),('rust1','rust2'),('go1','go2'))
+GROWTH_LABELS=('base1','fs1','rust1','go1','base2','fs2','rust2','go2')
+GROWTH_PAIRS=(('base1','base2'),*PAIRS)
+BASELINE='ce3bdcf92c07c03761e73333526933d2db8b33b1'
 WRAP='-Wl,--wrap=syscall,--wrap=openat,--wrap=open,--wrap=fstat,--wrap=read,--wrap=__read_chk,--wrap=close'
 
 def capture(args):
@@ -27,18 +31,33 @@ def capture(args):
 
 def inputs():
     paths=[ROOT/'fs.goose',ROOT/'fs.build',ROOT/'GOOSE_REVISION',*sorted((ROOT/'native').glob('*')),
-           *sorted(HERE.rglob('*')),ROOT/'bench/compare/provenance.py',ROOT/'tests/read_contract.py']
+           *sorted(HERE.rglob('*')),*sorted((ROOT/'bench/read-growth').rglob('*')),ROOT/'bench/compare/provenance.py',ROOT/'tests/read_contract.py',ROOT/'tests/read_growth.py']
     return {str(p.relative_to(ROOT)):sha256(p) for p in paths
             if p.is_file() and '__pycache__' not in p.parts}
 
 def tools(goose,cc,rust):
     rustc=capture(['rustup','which','--toolchain',rust,'rustc'])
     go=str(Path(shutil.which('go')).resolve())
-    return dict(goose_path=goose,goose_sha256=sha256(goose),goose=capture([goose,'--version']),
+    cpus=[]
+    for block in Path('/proc/cpuinfo').read_text().strip().split('\n\n'):
+        fields=dict(line.split(':',1) for line in block.splitlines() if ':' in line)
+        cpus.append({k.strip():v.strip() for k,v in fields.items() if k.strip() in ('processor','vendor_id','cpu family','model','model name','stepping','flags')})
+    return dict(libc=capture(['getconf','GNU_LIBC_VERSION']),cpu_info=cpus,goose_path=goose,goose_sha256=sha256(goose),goose=capture([goose,'--version']),
         stdlib=goose_stdlib(goose),cc_path=cc,cc_sha256=sha256(cc),cc=capture([cc,'--version']),
         rust_toolchain=rust,rustc_path=rustc,rustc_sha256=sha256(rustc),
         rust=capture([rustc,'--version','--verbose']),go_path=go,go_sha256=sha256(go),
         go=capture([go,'version']),go_environment=subprocess.check_output([go,'env','-json',*GO_SETTINGS,'GOVERSION','GOROOT','GOTOOLDIR','GOWORK'],cwd=ROOT,text=True,timeout=30,env=dict(os.environ,CGO_ENABLED='0',GOTOOLCHAIN='local',GOFLAGS='',GOWORK='off')).strip())
+
+def library_export(revision):
+    assert re.fullmatch('[0-9a-f]{40}',revision), 'full trusted commit required'
+    entries=subprocess.check_output(['git','ls-tree','-r','-z',revision,'--','fs.goose','fs.build','GOOSE_REVISION','native'],cwd=ROOT).split(b'\0')
+    result={}
+    for entry in filter(None,entries):
+        header,name=entry.split(b'\t',1);mode,kind,_=header.split();name=name.decode()
+        assert mode in (b'100644',b'100755') and kind==b'blob' and not name.startswith('/') and '..' not in Path(name).parts
+        result[name]=subprocess.check_output(['git','show',f'{revision}:{name}'],cwd=ROOT)
+    assert {'fs.goose','fs.build','GOOSE_REVISION','native/fs.c','native/fs.h'}<=result.keys()
+    return result
 
 def publish(out,name,data,executable=False):
     with tempfile.TemporaryDirectory(prefix='publish-',dir=out) as t:
@@ -50,12 +69,16 @@ def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--goose',required=True);p.add_argument('--cc',default='gcc')
     p.add_argument('--rust-toolchain',default='1.99.1')
+    p.add_argument('--baseline-revision',choices=(BASELINE,),help='explicit bounded-growth profile; trusted frozen baseline')
     p.add_argument('--output-dir',type=Path,default=ROOT/'.build/read-contract')
     a=p.parse_args()
     if (platform.system(),platform.machine())!=('Linux','x86_64'):p.error('Linux x86-64 only')
     allowed=(ROOT/'.build').resolve();out=a.output_dir.resolve()
     if out==allowed or not out.is_relative_to(allowed):p.error('output must be a child of this checkout .build')
     out.mkdir(parents=True,exist_ok=True)
+    labels=GROWTH_LABELS if a.baseline_revision else LABELS
+    pairs=GROWTH_PAIRS if a.baseline_revision else PAIRS
+    baseline=library_export(a.baseline_revision) if a.baseline_revision else None
     goose=str(Path(a.goose).resolve());cc=shutil.which(a.cc)
     if not cc:p.error('C compiler not found')
     cc=str(Path(cc).resolve())
@@ -68,11 +91,14 @@ def main():
         bins={};sections={};logs={};commands={}
         with tempfile.TemporaryDirectory(prefix='read-contract-build-',dir=allowed) as tmp:
             build=Path(tmp)/'build'
-            def reset():
+            def reset(use_baseline=False):
                 if build.exists():shutil.rmtree(build)
                 for name in before:
                     target=build/name;target.parent.mkdir(parents=True,exist_ok=True)
                     target.write_bytes((ROOT/name).read_bytes())
+                if use_baseline:
+                    for name,data in baseline.items():
+                        target=build/name;target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes(data)
                 (build/'bench/read-contract/fault-cc.sh').chmod(0o700)
             def environment():
                 return dict(os.environ,GOOSE_HOME=str(build/'goose-home'),GOOSE_STDLIB=versions['stdlib']['directory'],
@@ -111,29 +137,33 @@ def main():
                             publish(out,'failed-build-'+stamp+'.log',log.read_bytes())
                             raise
                 return result,log,[dict(command=c,cwd=str(w)) for c,w in cmds]
-            for label in LABELS:
-                reset();binary,log,cmd=compile_one(label.rstrip('12'))
+            library_hashes={}
+            for label in labels:
+                is_base=label.startswith('base')
+                reset(is_base);binary,log,cmd=compile_one('fs' if is_base else label.rstrip('12'))
+                library_hashes[label]=({n:sha256(build/n) for n in before if n in ('fs.goose','fs.build','GOOSE_REVISION') or n.startswith('native/')} if label.startswith(('base','fs')) else {})
                 publish(out,label,binary.read_bytes(),True);publish(out,label+'-build.log',log.read_bytes())
                 bins[label]=sha256(out/label);logs[label]=sha256(out/(label+'-build.log'));commands[label]=cmd
                 subprocess.run(['objcopy','--dump-section',f'.text={build}/text','--dump-section',f'.rodata={build}/rodata',str(out/label),str(build/'probe')],check=True,timeout=30)
                 sections[label]={n:sha256(build/n) for n in ('text','rodata')}
-            assert all(bins[x]==bins[y] and sections[x]==sections[y] for x,y in PAIRS),'replicas differ; timing ineligible'
+            assert all(bins[x]==bins[y] and sections[x]==sections[y] for x,y in pairs),'replicas differ; timing ineligible'
             fault_bins=[];fault_hashes={}
-            for language in ('fs','rust','go'):
-                reset();binary,log,cmd=compile_one(language,True)
+            for language in (('base',) if baseline else ())+('fs','rust','go'):
+                reset(language=='base');binary,log,cmd=compile_one('fs' if language=='base' else language,True)
                 label=language+'-fault';publish(out,label,binary.read_bytes(),True);publish(out,label+'-build.log',log.read_bytes())
                 fault_bins.append(out/label);fault_hashes[label]=sha256(out/label);logs[label]=sha256(out/(label+'-build.log'));commands[label]=cmd
             cases,extra=fixtures(Path(tmp)/'fixtures')
-            checks=dict(release=check_release([out/n for n in LABELS],cases,extra),faults=check_faults(fault_bins,cases))
+            if baseline:add_fresh_case(cases)
+            checks=dict(release=check_release([out/n for n in labels],cases,extra),faults=check_faults(fault_bins,cases))
             build_path=str(build)
         assert inputs()==before and tools(goose,cc,a.rust_toolchain)==versions and capture(['git','rev-parse','HEAD'])==revision,'build inputs changed'
-        record=dict(schema=1,profile='bounded-read-contract',timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        record=dict(schema=1,profile='bounded-read-growth' if baseline else 'bounded-read-contract',timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),
             source_revision=revision,source_dirty=dirty,sources_sha256=before,toolchains=versions,
-            binaries_sha256=bins,fault_binaries_sha256=fault_hashes,sections_sha256=sections,replica_pairs=PAIRS,build_logs_sha256=logs,
+            binaries_sha256=bins,fault_binaries_sha256=fault_hashes,sections_sha256=sections,replica_pairs=pairs,baseline_revision=a.baseline_revision,variant_library_sha256=library_hashes,build_logs_sha256=logs,
             commands=commands,build_path=build_path,conformance=checks,
             effective_go_overrides=dict(CGO_ENABLED='0',GOTOOLCHAIN='local',GOFLAGS='',GOWORK='off',GOPROXY='off',GOSUMDB='off',GOCACHE=build_path+'/go-cache',GOMODCACHE=build_path+'/go-mod-cache'),
             runtime_settings=runtime_settings(),build_environment={k:os.environ.get(k) for k in
-                ('CFLAGS','CPPFLAGS','LDFLAGS','RUSTFLAGS','SOURCE_DATE_EPOCH','LD_PRELOAD','GLIBC_TUNABLES')},
+                ('CFLAGS','CPPFLAGS','LDFLAGS','RUSTFLAGS','SOURCE_DATE_EPOCH','LD_PRELOAD','LD_LIBRARY_PATH','LD_AUDIT','GLIBC_TUNABLES')},
             identical_executables=True,identical_sections=True)
         publish(out,'build.json',(json.dumps(record,indent=2)+'\n').encode())
         print(json.dumps(dict(replica_pairs='byte-identical',conformance=checks,source_dirty=dirty)))
