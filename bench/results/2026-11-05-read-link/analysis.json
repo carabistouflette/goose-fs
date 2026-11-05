@@ -1,0 +1,145 @@
+{
+  "measured_source": "4a7b2c178695fb453b4303184303212ee3d85834",
+  "rows": 10080,
+  "timed_rows": 7686,
+  "unsupported_rows": 2394,
+  "streams": 48,
+  "preflight_streams": 12,
+  "timed_streams": 36,
+  "readlink_rows": 1512,
+  "readlink_timed_rows": 945,
+  "readlink_unsupported_rows": 567,
+  "passes": [
+    {
+      "pass_number": 1,
+      "medians_ns": {
+        "readlink-64": {
+          "goose-fs": 1883,
+          "goose-stdlib": null,
+          "rust": 791,
+          "go": 949
+        },
+        "readlink-256": {
+          "goose-fs": 4452,
+          "goose-stdlib": null,
+          "rust": 1950,
+          "go": 4738
+        },
+        "readlink-4095": {
+          "goose-fs": 24783,
+          "goose-stdlib": null,
+          "rust": 17321,
+          "go": 31045
+        },
+        "root-readlink-64": {
+          "goose-fs": 1218,
+          "goose-stdlib": null,
+          "rust": null,
+          "go": 1010
+        },
+        "root-readlink-256": {
+          "goose-fs": 2906,
+          "goose-stdlib": null,
+          "rust": null,
+          "go": 4318
+        },
+        "root-readlink-4095": {
+          "goose-fs": 20508,
+          "goose-stdlib": null,
+          "rust": null,
+          "go": 31332
+        }
+      }
+    },
+    {
+      "pass_number": 2,
+      "medians_ns": {
+        "readlink-64": {
+          "goose-fs": 2024,
+          "goose-stdlib": null,
+          "rust": 764,
+          "go": 1022
+        },
+        "readlink-256": {
+          "goose-fs": 4545,
+          "goose-stdlib": null,
+          "rust": 1942,
+          "go": 4611
+        },
+        "readlink-4095": {
+          "goose-fs": 23476,
+          "goose-stdlib": null,
+          "rust": 16975,
+          "go": 34782
+        },
+        "root-readlink-64": {
+          "goose-fs": 1238,
+          "goose-stdlib": null,
+          "rust": null,
+          "go": 978
+        },
+        "root-readlink-256": {
+          "goose-fs": 2902,
+          "goose-stdlib": null,
+          "rust": null,
+          "go": 5711
+        },
+        "root-readlink-4095": {
+          "goose-fs": 19341,
+          "goose-stdlib": null,
+          "rust": null,
+          "go": 31557
+        }
+      }
+    },
+    {
+      "pass_number": 3,
+      "medians_ns": {
+        "readlink-64": {
+          "goose-fs": 1974,
+          "goose-stdlib": null,
+          "rust": 870,
+          "go": 970
+        },
+        "readlink-256": {
+          "goose-fs": 4351,
+          "goose-stdlib": null,
+          "rust": 2190,
+          "go": 3861
+        },
+        "readlink-4095": {
+          "goose-fs": 23005,
+          "goose-stdlib": null,
+          "rust": 20509,
+          "go": 28485
+        },
+        "root-readlink-64": {
+          "goose-fs": 1203,
+          "goose-stdlib": null,
+          "rust": null,
+          "go": 1014
+        },
+        "root-readlink-256": {
+          "goose-fs": 2839,
+          "goose-stdlib": null,
+          "rust": null,
+          "go": 4058
+        },
+        "root-readlink-4095": {
+          "goose-fs": 19705,
+          "goose-stdlib": null,
+          "rust": null,
+          "go": 27328
+        }
+      }
+    }
+  ],
+  "assessment": "descriptive native API task costs; no matched-policy or SOTA claim",
+  "external_statuses": {
+    "tool_exit_codes": {
+      "1": 0,
+      "2": 0,
+      "3": 0
+    }
+  }
+}

@@ -43,8 +43,12 @@ filesystem snapshot or confinement. Returned bytes can become stale immediately.
 Root invalidation, abnormal worker cleanup and descriptor limits retain the
 [Root](ROOTS.md) and [File/Context](HANDLES.md) contracts.
 
-Rust std::fs::read_link and Go os.Readlink/Root.Readlink are useful feature
+[Rust std::fs::read_link](https://doc.rust-lang.org/std/fs/fn.read_link.html) and
+[Go os.Readlink/Root.Readlink](https://pkg.go.dev/os#Readlink) are useful feature
 references, but their native allocation, bounds and ancestor-following policies
 differ. The pinned Goose standard library has no readlink operation. Those
 policies must remain visible in task-cost comparisons; unsupported rows are not
 substituted with file reads or canonicalization.
+
+[Three-record native-API task costs and reproducible evidence](../bench/results/2026-11-05-read-link/README.md)
+retain different policies, unsupported APIs and slower cases without a SOTA claim.

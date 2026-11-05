@@ -189,6 +189,10 @@ retains all 1512 means and whole-process resource observations. Only two of nine
 long-batch controls qualified in both attempts; broader repeatability remains
 inconclusive, with no runtime change or correction of earlier data.
 
+The [symlink inspection measurements](bench/results/2026-11-05-read-link/README.md)
+retain three native-API recordings, unsupported operations and slower cases.
+Allocation and lookup policies differ; these results establish no SOTA ranking.
+
 The current version excludes recursive operations, temp-directory lifecycle,
 path normalization, byte publication/installation helpers, streaming directory
 cursors and Windows support.
