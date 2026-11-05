@@ -10,6 +10,7 @@ import os
 from pathlib import Path
 import platform
 import random
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -54,9 +55,11 @@ if a.identical_control:
     assert build['identical_executables'] and build['identical_sections']
     assert initial_bins['a']==initial_bins['b']
     assert build['cc_sha256']==digest(build['cc_path'])
+    assert str(Path(shutil.which(a.cc) or a.cc).resolve())==build['cc_path'], 'C compiler identity mismatch'
 assert build['sources_sha256']==initial_sources and build['binaries_sha256']==initial_bins
 assert build['baseline_revision']==a.baseline_revision
-assert build['cc']==capture([a.cc,'--version'])
+cc=build['cc_path'] if a.identical_control else a.cc
+assert build['cc']==capture([cc,'--version'])
 rendered={name:digest(a.build_manifest.parent/name) for name in build['rendered_sources_sha256']}
 assert rendered==build['rendered_sources_sha256']
 initial_revision=capture(['git','rev-parse','HEAD']);initial_dirty=bool(capture(['git','status','--porcelain']))
@@ -104,7 +107,7 @@ with tempfile.TemporaryDirectory(prefix='goose-fs-listing-bench-') as temp:
         print(f'finished paired round {round_id+1}/{a.rounds}',flush=True)
 assert sources()==initial_sources and {k:digest(v) for k,v in binaries.items()}==initial_bins
 assert capture(['git','rev-parse','HEAD'])==initial_revision and digest(goose)==compiler_hash
-assert capture([a.cc,'--version'])==build['cc']
+assert capture([cc,'--version'])==build['cc']
 assert build['goose_stdlib']==goose_stdlib(goose)
 if a.identical_control:assert build['cc_sha256']==digest(build['cc_path'])
 assert {name:digest(a.build_manifest.parent/name) for name in rendered}==rendered
@@ -114,7 +117,7 @@ metadata=dict(profile='identical-control' if a.identical_control else 'listing-c
               source_revision=initial_revision,source_dirty=initial_dirty,baseline_revision=a.baseline_revision,
               sources_sha256=initial_sources,binaries_sha256=initial_bins,binaries_paths={k:str(v) for k,v in binaries.items()},goose=capture([goose,'--version']),
               goose_sha256=compiler_hash,build_manifest=build,goose_revision=(ROOT/'GOOSE_REVISION').read_text().strip(),
-              cc=capture([a.cc,'--version']),flags=['-O2'],shuffle_seed=61937,rounds=a.rounds,iterations=a.iterations,
+              cc=capture([cc,'--version']),flags=['-O2'],shuffle_seed=61937,rounds=a.rounds,iterations=a.iterations,
               creation_order=a.creation_order,creation_shuffle_seed=61938,
               runtime_environment={key:os.environ.get(key) for key in ['LD_PRELOAD','GLIBC_TUNABLES','MALLOC_CONF']},
               fixtures=fixtures,samples=rows)
