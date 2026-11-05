@@ -31,3 +31,5 @@ jobs:
         run: |
           python3 bench/listing-control-build.py --revision "$(git rev-parse HEAD)" --goose .toolchain/goose/build/goose --cc gcc
           python3 tests/listing_control.py --goose .toolchain/goose/build/goose
+          python3 bench/listing-control-build.py --revision "$(git rev-parse HEAD)" --candidate-revision "$(git rev-parse HEAD)" --goose .toolchain/goose/build/goose --cc gcc
+          python3 tests/listing_matched.py --goose .toolchain/goose/build/goose

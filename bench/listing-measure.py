@@ -25,40 +25,55 @@ p.add_argument('--goose',required=True)
 p.add_argument('--cc',default='gcc')
 p.add_argument('--baseline',type=Path,required=True)
 p.add_argument('--baseline-revision',required=True)
+p.add_argument('--candidate-revision')
 p.add_argument('--full',type=Path,required=True)
 p.add_argument('--adaptive',type=Path)
-p.add_argument('--identical-control',action='store_true')
+group=p.add_mutually_exclusive_group()
+group.add_argument('--identical-control',action='store_true')
+group.add_argument('--matched-comparison',action='store_true')
 p.add_argument('--rounds',type=int,default=5)
 p.add_argument('--iterations',type=int,default=5)
 p.add_argument('--creation-order',choices=['natural','shuffled'],default='natural')
 p.add_argument('--output',type=Path,required=True)
 p.add_argument('--build-manifest',type=Path,required=True)
 a=p.parse_args()
-if a.identical_control and os.path.lexists(a.output):p.error('control output already exists; choose a new output path')
+controlled=a.identical_control or a.matched_comparison
+if a.matched_comparison and not a.candidate_revision:p.error('--candidate-revision is required for matched comparisons')
+if not a.matched_comparison and a.candidate_revision:p.error('--candidate-revision requires --matched-comparison')
+labels=('a1','b1','a2','b2') if a.matched_comparison else ('a','b')
+if controlled and os.path.lexists(a.output):p.error('control output already exists; choose a new output path')
 if not 1<=a.rounds<=100 or not 1<=a.iterations<=1000000:p.error('invalid rounds/iterations')
 a.output.parent.mkdir(parents=True,exist_ok=True)
 def capture(args):return subprocess.check_output(args,cwd=ROOT,text=True,timeout=30).strip()
 def digest(path):return hashlib.sha256(Path(path).read_bytes()).hexdigest()
-if a.identical_control and a.adaptive is not None:p.error('--adaptive is not used in identical-control mode')
-if a.identical_control and a.adaptive is not None:p.error('--adaptive is not used in identical-control mode')
-if not a.identical_control and a.adaptive is None:p.error('--adaptive is required outside identical-control mode')
-binaries={'a':a.baseline.resolve(),'b':a.full.resolve()} if a.identical_control else {'baseline':a.baseline.resolve(),'full':a.full.resolve(),'adaptive':a.adaptive.resolve()}
+if controlled and a.adaptive is not None:p.error('--adaptive is not used in identical-control mode')
+if not controlled and a.adaptive is None:p.error('--adaptive is required outside identical-control mode')
+binaries={label:a.build_manifest.resolve().parent/label for label in labels} if controlled else {'baseline':a.baseline.resolve(),'full':a.full.resolve(),'adaptive':a.adaptive.resolve()}
 control_lock=None
-if a.identical_control:
+if controlled:
     control_lock=(a.build_manifest.resolve().parent/'build.lock').open('a')
     fcntl.flock(control_lock,fcntl.LOCK_SH)
-    assert binaries=={k:a.build_manifest.resolve().parent/k for k in ('a','b')}, 'control binaries must share their manifest directory'
+    assert a.baseline.resolve()==binaries[labels[0]] and a.full.resolve()==binaries[labels[1]], 'binary paths must match their manifest directory'
+    assert all(path.resolve()==path for path in binaries.values()), 'binary symlinks are not allowed'
 initial_sources=sources();initial_bins={k:digest(v) for k,v in binaries.items()}
 build=json.loads(a.build_manifest.read_text())
-assert (build.get('profile')=='identical-control')==a.identical_control
-if a.identical_control:
+expected_profile='matched-comparison' if a.matched_comparison else 'identical-control' if a.identical_control else None
+assert build.get('profile')==expected_profile
+if controlled:
     assert build['identical_executables'] and build['identical_sections']
-    assert initial_bins['a']==initial_bins['b']
+    pairs=[('a1','a2'),('b1','b2')] if a.matched_comparison else [('a','b')]
+    assert build['replica_pairs']==[list(pair) for pair in pairs]
+    assert all(initial_bins[x]==initial_bins[y] and build['sections_sha256'][x]==build['sections_sha256'][y] for x,y in pairs)
+    if a.identical_control:assert build['variant_revisions']=={'a':a.baseline_revision,'b':a.baseline_revision}
+    if a.matched_comparison:
+        assert set(build['variant_revisions'])==set(labels)
+        assert build['variant_revisions']['a1']==build['variant_revisions']['a2']==a.baseline_revision
+        assert build['variant_revisions']['b1']==build['variant_revisions']['b2']==a.candidate_revision
     assert build['cc_sha256']==digest(build['cc_path'])
     assert str(Path(shutil.which(a.cc) or a.cc).resolve())==build['cc_path'], 'C compiler identity mismatch'
 assert build['sources_sha256']==initial_sources and build['binaries_sha256']==initial_bins
 assert build['baseline_revision']==a.baseline_revision
-cc=build['cc_path'] if a.identical_control else a.cc
+cc=build['cc_path'] if controlled else a.cc
 assert build['cc']==capture([cc,'--version'])
 rendered={name:digest(a.build_manifest.parent/name) for name in build['rendered_sources_sha256']}
 assert rendered==build['rendered_sources_sha256']
@@ -109,19 +124,19 @@ assert sources()==initial_sources and {k:digest(v) for k,v in binaries.items()}=
 assert capture(['git','rev-parse','HEAD'])==initial_revision and digest(goose)==compiler_hash
 assert capture([cc,'--version'])==build['cc']
 assert build['goose_stdlib']==goose_stdlib(goose)
-if a.identical_control:assert build['cc_sha256']==digest(build['cc_path'])
+if controlled:assert build['cc_sha256']==digest(build['cc_path'])
 assert {name:digest(a.build_manifest.parent/name) for name in rendered}==rendered
-metadata=dict(profile='identical-control' if a.identical_control else 'listing-comparison',started_utc=started,finished_utc=datetime.datetime.now(datetime.timezone.utc).isoformat(),
+metadata=dict(profile=expected_profile or 'listing-comparison',started_utc=started,finished_utc=datetime.datetime.now(datetime.timezone.utc).isoformat(),
               platform=platform.platform(),cpu_info=Path('/proc/cpuinfo').read_text().split('\n\n')[0],filesystem=filesystem,
               cpu_affinity=sorted(os.sched_getaffinity(0)),loadavg_start=load_start,loadavg_end=os.getloadavg(),
-              source_revision=initial_revision,source_dirty=initial_dirty,baseline_revision=a.baseline_revision,
+              source_revision=initial_revision,source_dirty=initial_dirty,baseline_revision=a.baseline_revision,candidate_revision=a.candidate_revision,
               sources_sha256=initial_sources,binaries_sha256=initial_bins,binaries_paths={k:str(v) for k,v in binaries.items()},goose=capture([goose,'--version']),
               goose_sha256=compiler_hash,build_manifest=build,goose_revision=(ROOT/'GOOSE_REVISION').read_text().strip(),
               cc=capture([cc,'--version']),flags=['-O2'],shuffle_seed=61937,rounds=a.rounds,iterations=a.iterations,
               creation_order=a.creation_order,creation_shuffle_seed=61938,
               runtime_environment={key:os.environ.get(key) for key in ['LD_PRELOAD','GLIBC_TUNABLES','MALLOC_CONF']},
               fixtures=fixtures,samples=rows)
-if a.identical_control:
+if controlled:
     with a.output.open('x') as stream:stream.write(json.dumps(metadata,indent=2)+'\n')
 else:a.output.write_text(json.dumps(metadata,indent=2)+'\n')
 print(f'Wrote {len(rows)} checked samples to {a.output}')

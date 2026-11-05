@@ -31,3 +31,22 @@ allocator history, temperature/frequency and host work are not held constant.
 A/A recording refuses an existing output path and creates new records exclusively.
 Old results remain unchanged. Future A/B work needs matched-path builds and its
 own control. No host settings change or isolation claim is made.
+
+## Matched baseline/candidate profile
+
+```sh
+python3 bench/listing-control-build.py --revision BASELINE_FULL_SHA --candidate-revision CANDIDATE_FULL_SHA --goose /path/to/goose
+python3 tests/listing_matched.py --goose /path/to/goose
+taskset -c 6 python3 bench/listing-measure.py --matched-comparison --goose /path/to/goose --baseline .build/listing-matched/a1 --full .build/listing-matched/b1 --baseline-revision BASELINE_FULL_SHA --candidate-revision CANDIDATE_FULL_SHA --build-manifest .build/listing-matched/build.json --creation-order shuffled --rounds 5 --iterations 5 --output .build/listing-matched/raw.json
+```
+
+Build order is a1, b1, a2, b2. Reset the entire private build/cache tree between
+builds. a1/a2 export baseline; b1/b2 export candidate. Within each revision, both
+complete executables and text/rodata must match before timing. Cross-revision
+executables may differ. Identity flags apply to the recorded replica pairs, not
+all four collectively. Source maps and hashes for all labels remain visible.
+Exact pins and profiles are checked. Five rounds retain 10,640 sample means.
+Report all four medians, all four baseline/candidate ratios and both same-revision
+controls, without pooling, favorable-replica selection or normalization. Execution
+paths and host effects remain uncontrolled. CI tests this profile using one
+revision in both roles and makes no performance claim.
