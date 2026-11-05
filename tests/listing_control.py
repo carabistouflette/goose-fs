@@ -22,6 +22,9 @@ with tempfile.TemporaryDirectory(dir=ROOT/'.build') as t:
     output=temp/'valid.json'
     subprocess.run([*command,'--build-manifest',str(manifest),'--output',str(output)],check=True)
     rows=json.loads(output.read_text())['samples'];assert len(rows)==1064
+    saved=output.read_bytes()
+    duplicate=subprocess.run([*command,'--build-manifest',str(manifest),'--output',str(output)],capture_output=True)
+    assert duplicate.returncode!=0 and output.read_bytes()==saved
     assert {r['variant'] for r in rows}=={'a','b'}
     # Give copied manifests otherwise valid inputs; missing files must not
     # mask a missing gate in a negative test.

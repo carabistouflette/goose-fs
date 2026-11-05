@@ -28,5 +28,6 @@ Five rounds produce 5,320 sample means for two identical full-staging binaries.
 There is no adaptive comparison. A/A variation is an observation, not a speed
 gain, correction, normalization factor or proof of cause. ASLR, execution paths,
 allocator history, temperature/frequency and host work are not held constant.
+A/A recording refuses an existing output path and creates new records exclusively.
 Old results remain unchanged. Future A/B work needs matched-path builds and its
 own control. No host settings change or isolation claim is made.

@@ -33,6 +33,7 @@ p.add_argument('--creation-order',choices=['natural','shuffled'],default='natura
 p.add_argument('--output',type=Path,required=True)
 p.add_argument('--build-manifest',type=Path,required=True)
 a=p.parse_args()
+if a.identical_control and os.path.lexists(a.output):p.error('control output already exists; choose a new output path')
 if not 1<=a.rounds<=100 or not 1<=a.iterations<=1000000:p.error('invalid rounds/iterations')
 a.output.parent.mkdir(parents=True,exist_ok=True)
 def capture(args):return subprocess.check_output(args,cwd=ROOT,text=True,timeout=30).strip()
@@ -117,5 +118,7 @@ metadata=dict(profile='identical-control' if a.identical_control else 'listing-c
               creation_order=a.creation_order,creation_shuffle_seed=61938,
               runtime_environment={key:os.environ.get(key) for key in ['LD_PRELOAD','GLIBC_TUNABLES','MALLOC_CONF']},
               fixtures=fixtures,samples=rows)
-a.output.write_text(json.dumps(metadata,indent=2)+'\n')
+if a.identical_control:
+    with a.output.open('x') as stream:stream.write(json.dumps(metadata,indent=2)+'\n')
+else:a.output.write_text(json.dumps(metadata,indent=2)+'\n')
 print(f'Wrote {len(rows)} checked samples to {a.output}')
