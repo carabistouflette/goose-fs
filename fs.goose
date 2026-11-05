@@ -51,8 +51,13 @@ fn read(path: const u8[:], limit: i64, out: u8[>..]&) -> Status {
         out.clear();
         return Status { error: Error.InvalidInput };
     }
-    // Existing bytes are initialized already. Only growth needs initialization.
-    out.resize(limit, 0);
+    // Initialize the entire new logical tail, including retained capacity.
+    if out.len >= limit { out.resize(limit); }
+    else {
+        while out.len < limit {
+            out.resize(if limit - out.len > 1024 { out.len + 1024 } else { limit }, 0);
+        }
+    }
     var meta: i64[3] = [0, 0, 0];
     let code = native_call(0, path, "", 0, out[..], meta[..]);
     if code == 0 { out.resize(meta[1]); } else { out.clear(); }
