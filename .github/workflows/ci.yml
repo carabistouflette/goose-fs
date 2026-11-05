@@ -33,3 +33,21 @@ jobs:
           python3 tests/listing_control.py --goose .toolchain/goose/build/goose
           python3 bench/listing-control-build.py --revision "$(git rev-parse HEAD)" --candidate-revision "$(git rev-parse HEAD)" --goose .toolchain/goose/build/goose --cc gcc
           python3 tests/listing_matched.py --goose .toolchain/goose/build/goose
+  read-contract:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .toolchain
+          key: goose-${{ runner.os }}-${{ hashFiles('GOOSE_REVISION', 'scripts/setup-goose.sh') }}
+      - uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6
+        with:
+          go-version: '1.27.3'
+          cache: false
+      - run: rustup toolchain install 1.99.1 --profile minimal
+      - run: make setup
+      - run: |
+          python3 tests/read_contract.py
+          python3 bench/read-contract/build.py --goose .toolchain/goose/build/goose
+          python3 tests/read_contract.py --build-dir .build/read-contract

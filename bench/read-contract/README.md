@@ -3,8 +3,11 @@
 This profile compares goose-fs `read` against independently implemented Rust and
 Go + Linux adapters. It is not a Rust std::fs or Go os native-API guarantee, a
 sandbox, or proof of security equivalence outside the tested contract. It adds
-no runtime/library API or native variant. No shared C implementation is timed in
-place of the Rust/Go adapters. The pinned toolchains and actual source bytes,
+no runtime/library API or native variant. The Rust + Linux adapter uses a narrow
+C stat ABI bridge (one fstat, immediately captured errno and mode output only on
+success); all traversal, ownership and read policy remain independently Rust.
+The bridge compiler, flags, bytes and cost are included. No shared C policy
+implementation is timed in place of the Rust/Go adapters. The pinned toolchains and actual source bytes,
 flags, stdlib, executable hashes and settings must be bound before timing.
 
 ## Shared contract
@@ -42,10 +45,17 @@ builds with identical complete ELF and text/rodata bytes. Failure means no eligi
 measurement, not a faster result. Keep every observation and failed eligibility
 record. No old data is overwritten or normalized.
 
+The fixed recording schedule is five shuffled rounds, seven in-process means
+per invocation, 200 read calls per mean, six labels (two builds per language),
+and all eleven cells. Two attempts yield 4620 raw means if both complete.
+Creation and process-order seeds are fixed separately; all processes run
+sequentially pinned to CPU6 on this shared host, without isolation claims.
+
 Primary cells: reused-output successful reads of 0,64,4096,65536,1048576 bytes
 with exact budgets, plus 64-byte input with 1MiB budget. Secondary cells cover
 missing, overflow, zero-budget overflow, nonregular and deep-parent inputs.
-Every cell includes validation, lookup, allocation/growth, reads, closes, status
+The initial buffer warmup/allocation is outside timers; any subsequent logical
+growth/zeroing remains inside. Every cell includes validation, lookup, reads, closes, status
 checks and checksum work; fixture setup, independent preflight and printing are
 outside timers. All languages use identical fixtures and filesystem byte paths.
 
@@ -78,3 +88,51 @@ Sources: [openat2](https://man7.org/linux/man-pages/man2/openat2.2.html),
 [Linux close](https://man7.org/linux/man-pages/man2/close.2.html),
 [Rust OwnedFd](https://doc.rust-lang.org/std/os/fd/struct.OwnedFd.html),
 [Go syscall](https://pkg.go.dev/syscall).
+
+## Native APIs and scope
+
+The pinned Goose `os::read_file` appends the whole file, returns a boolean and
+has no read budget or no-follow option. Rust `std::fs::read` and Go `os.ReadFile`
+also do not supply this complete contract on their own. Their native-API results
+remain in the separate [comparison](../compare/README.md); they cannot qualify
+as references here by silently dropping safety checks. This profile measures
+FS against the explicit independent Linux adapters above, including their added
+validation, traversal and checked cleanup costs. It does not establish general
+Rust/Go feature parity, portability, throughput for streaming handles, cold-cache
+I/O, durability, memory leadership or broad state-of-the-art performance.
+
+## Reproduction
+
+Requires the repository's pinned Goose compiler, Linux x86-64, GCC (or Clang),
+GNU objcopy, Python without optimization, Rust 1.99.1 and Go 1.27.3. No dependency
+is downloaded by these scripts; build both language toolchains separately.
+
+```sh
+python3 tests/read_contract.py
+taskset -c 6 python3 bench/read-contract/build.py --goose /absolute/path/to/goose
+python3 tests/read_contract.py --build-dir .build/read-contract
+# Run only after the recorder and source have been independently reviewed/frozen.
+taskset -c 6 python3 bench/read-contract/measure.py --attempt 1
+taskset -c 6 python3 bench/read-contract/measure.py --attempt 2
+python3 bench/read-contract/analyze.py .build/read-contract/attempt-1.json .build/read-contract/attempt-2.json
+```
+
+The builder resets one private source/cache/output path before each replica and
+requires whole-ELF and text/rodata equality within each language. Fault builds use
+the same adapter/public FS entry point with separately compiled instrumentation;
+they are never timed. The recorder checks full byte contents, errno, bounded
+consumption, descriptors and fault counters before and after recording. Each
+completed process is flushed to an exclusively created JSONL attempt file before
+parsing, so failures and interruptions leave evidence. A smoke run uses a separate
+namespace and count-one schedule, is always ineligible, and cannot receive a
+performance label. No output/caches/generated binaries belong in a source commit.
+The build directory is exclusive-lock protected during recording. Its parent is
+caller-controlled and must not be concurrently modified by another writer.
+
+Rust/Go use zero-initialized 4096-byte stack path scratch; FS copies only its
+validated path plus terminator into native scratch. This implementation cost is
+included, and these adapters are not claimed to be the fastest possible Rust/Go
+implementations. Dirty retained-capacity tests observe zero growth at the actual
+read boundary, including previous logical lengths on either side of the file size.
+The same frozen set of six independently built executables is used in both
+recording attempts; controls are evaluated independently in each attempt.
