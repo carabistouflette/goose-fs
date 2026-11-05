@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: Apache-2.0
-"""Independently build identical trusted sources twice at the same paths."""
+"""Independently build trusted revisions and verify same-source replicas at matched paths."""
 import argparse
 import datetime
 import fcntl

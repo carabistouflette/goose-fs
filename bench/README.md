@@ -2,6 +2,8 @@
 
 For identical-code controls with independent matched-path builds, see
 [the A/A recorder](listing-control.md) and [retained observations](results/2026-11-05-listing-control/README.md).
+The [four-replica matched comparison](results/2026-11-05-matched-listing/README.md)
+retains every baseline/candidate ratio alongside both same-revision controls.
 
 `make bench BENCH_ITERATIONS=100` builds the public Goose interface with `-O2`
 and records seven samples for each of fifteen workloads in `.build/bench.json`:

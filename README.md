@@ -169,6 +169,9 @@ measurements include long shared-prefix names, unchanged controls and regression
 the separate Rust/Go/Goose table retains smaller workloads where goose-fs is slower.
 The later [matched-path A/A controls](bench/results/2026-11-05-listing-control/README.md)
 retain identical-code timing variation without correcting or normalizing earlier data.
+The [matched-path follow-up](bench/results/2026-11-05-matched-listing/README.md)
+compares two independent replicas per revision and keeps all four cross-revision
+ratios alongside the same-revision controls.
 
 The current version excludes recursive operations, temp-directory lifecycle,
 path normalization, byte publication/installation helpers, streaming directory
