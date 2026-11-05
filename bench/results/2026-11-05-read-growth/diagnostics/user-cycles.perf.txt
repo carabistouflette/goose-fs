@@ -1,0 +1,29 @@
+# To display the perf.data header info, please use --header/--header-only options.
+#
+#
+# Total Lost Samples: 0
+#
+# Samples: 756  of event 'cpu_atom/cycles/u'
+# Event count (approx.): 1153501441
+#
+# Overhead  Shared Object     Symbol                     IPC   [IPC Coverage]
+# ........  ................  .........................  ....................
+#
+    96.98%  libc.so.6         [.] 0x0000000000176e53     -      -            
+     0.94%  fs1               [.] fs_read_g2_15          -      -            
+     0.54%  [unknown]         [k] <kernel-address-redacted>     -      -            
+     0.39%  libc.so.6         [.] __errno_location       -      -            
+     0.26%  fs1               [.] gf_parent_checked      -      -            
+     0.14%  fs1               [.] copy_path              -      -            
+     0.14%  libc.so.6         [.] openat64               -      -            
+     0.14%  fs1               [.] gf_read_regular        -      -            
+     0.13%  libc.so.6         [.] __close                -      -            
+     0.13%  libc.so.6         [.] 0x0000000000175b85     -      -            
+     0.13%  libc.so.6         [.] 0x0000000000176380     -      -            
+     0.04%  libc.so.6         [.] pthread_attr_getstack  -      -            
+     0.04%  [unknown]         [k] <kernel-address-redacted>     -      -            
+
+
+#
+# (Tip: Create an archive with symtabs to analyse on other machine: perf archive)
+#

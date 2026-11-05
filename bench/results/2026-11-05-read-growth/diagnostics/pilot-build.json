@@ -1,0 +1,373 @@
+{
+  "schema": 1,
+  "profile": "bounded-read-contract",
+  "timestamp": "2026-11-05T09:06:30.322988+00:00",
+  "source_revision": "ce3bdcf92c07c03761e73333526933d2db8b33b1",
+  "source_dirty": true,
+  "sources_sha256": {
+    "fs.goose": "2d9236733d3c66afca668a54b65e4d5c9fbc4ad4c7b9d1a6ba901c1d5d619ba1",
+    "fs.build": "8e8e670bdb457bacebe7e698272269b84ac148a73c2e2f74f70e4faa5b409216",
+    "GOOSE_REVISION": "64e14b181dfe96743211738fb0f1b1f7798ea940da2ca50ff122e6f028c24e15",
+    "native/fs.c": "5eeab207567e3567ebefba71d6d569f1ce60373bcc77c4613ad39c5492c69ca6",
+    "native/fs.h": "b17d076c731494d64e7540a5244733850449aabeb1ed9a9554fd5ecbbc138bb3",
+    "native/fs_internal.h": "2ec6a80be65bb14fad6d147232b40b25228fe42aae8f305788d32164e4c8b377",
+    "native/handles.c": "dda56bbb38a4441728b38ecaae00c926b548709381c81ec86204af28a098f5d6",
+    "bench/read-contract/README.md": "ef4b2c6353d11bcb07289b70fd06a66583c5e55cef6c2599c7af59220c55a773",
+    "bench/read-contract/adapter.go": "a7830274ad6425bbbb02a86391d2ded170335206b7d8cb288fe4f3485f0a73b3",
+    "bench/read-contract/adapter.rs": "856755c8bf8041552f7299c0073ee64132c7e6889760d04862d2928fe946dbbc",
+    "bench/read-contract/analyze.py": "afad8ac92b8f327e90e27e5282e8dc55c5c66e993d746687bdf3a9e4b11fefc4",
+    "bench/read-contract/backend-fault.go": "0a905c239654d2d63ec12f7edc04b3a4c36f721953881c927bf59abbbc312e9f",
+    "bench/read-contract/backend-release.go": "2f53d284265a1c319cbd61294d178125bf0e8de24b46a3885e6af6c532843ca5",
+    "bench/read-contract/backend.go": "c3a247b8b97e931e8ed52f68089cfa927105ce86e13bae2e107301a3dc697b9a",
+    "bench/read-contract/build.py": "3e4b45baf7f8e67fb611e3578005c51cf67a01aa001928409bdca2ffe3d18961",
+    "bench/read-contract/conformance.py": "0bd6058937434e6e22cf658f2cd43d674f3bbe98f049c496417069fe3be52bad",
+    "bench/read-contract/fault-cc.sh": "c3bf4e1d9371eeb9492455c153d5fb9286df36733491a60b26912bad6a58c42f",
+    "bench/read-contract/go.mod": "9c037957dabb0d05a036a6385b676d518c1fcd9e5249f10d7d4ea8ff41db84e0",
+    "bench/read-contract/main.go": "942a97eb17dbcabb0e124b092778b27d0a6872f370cab7e4ac2731441bf3ffa9",
+    "bench/read-contract/main.goose": "10b40dcb910e1f1a4e07c50a0933a62c780dcfaacccb8cb654a54372e4954824",
+    "bench/read-contract/main.rs": "a540712dda7a7528b433fb49f60edf2fdffd8d307d5cb07c12794f6160470e66",
+    "bench/read-contract/measure.py": "b504d209ec346fe477a64188b73d3d71e6e8e14a6808f0b08a4e5cdb59148c48",
+    "bench/read-contract/native/faults.c": "2aa96e90896b4909b44e80ba61d4597ed459611544a598ce50d08873ce23ce90",
+    "bench/read-contract/native/stat-abi.c": "ccee2431ecadb95f942eb1be5b8af5c8ac6d428f623857d3960ffb44160713f9",
+    "bench/compare/provenance.py": "1bace93ec86538ff8175ca63eb005ed9cae554766431f43d62f14316c251f2dd",
+    "tests/read_contract.py": "3ea26a916d388f3df6bda50be549c094bb5e15b475e6da07e1eb25791c5e1871"
+  },
+  "toolchains": {
+    "goose_path": "/home/arobin/Work/Projects/goose-libs/libraries/goose-log/.toolchain/goose/build/goose",
+    "goose_sha256": "3db881b3955dc510f3efb513cd818fd092857b11ccc2164a808ed68b76caa443",
+    "goose": "goose eadca40 (runtime 3025e5810379)",
+    "stdlib": {
+      "directory": "/home/arobin/Work/Projects/goose-libs/libraries/goose-log/.toolchain/goose/stdlib",
+      "sources_sha256": {
+        "base64.goose": "fa1111ce46e9534311f825880dbd2988953430aeb3f1f52d8f0eaecbbc298a61",
+        "binary.goose": "24f3f09192738f42dfc0cb08b7447bbdc38009f7fec2567cae932b3022455631",
+        "csv.goose": "a49b0647f4a2f8ca36170e5a184ab6c6e505492434d0a10a5e05127e96da61ba",
+        "dictionary.goose": "fb39f896731faf3799e81727f7261849a62bdfbdc92d5fdbc36405a85830f322",
+        "exception.goose": "093863eda5433176750182b597aa6760a93808d86b0c9b713681443d2fb29160",
+        "ffi.goose": "e092b245fbe13ee2fdc71599b7b8eb44198e5261cad9600b7681e13ad75a6c2e",
+        "json.goose": "81595baa298b9b0deb271297c971166fd084c13b128bba2a7f7486191ea0de4e",
+        "math.goose": "b20bd3f78cd1ca291fdbc65df85d9aeaa77054cdf601b5adecfdd4f9db9f0d6e",
+        "os.goose": "2193f394d44469daffd993ed204a91b068084fd8db13e261e11156b40c66e934",
+        "regex.goose": "1ea3fc0a38402f29193777478b793b4a74a3074da0e3baf96f0b54eea1a84a95",
+        "slice_pool.goose": "e15aa757be8edea4b367ac0b2cb8cce48df9f4f249f5002a9393475cc89404f0",
+        "slice_pool_internal.goose": "488048c4e67754c878aa24ae25a941833a4a1a36ba679a2444b13806e7d42e15",
+        "slot_pool.goose": "e83b975bfff2806df0401afc3e37e147618c5673a9c98690007e6beb3bd51745",
+        "std.goose": "2bff7f6748300396e4c048bbf072f798566fadfe6b05d4256052d32c93e6d5d2",
+        "vec.goose": "2cac168c72047834433bfb419734c38455c9429ea045b1273898031c53faa82e"
+      }
+    },
+    "cc_path": "/usr/bin/gcc",
+    "cc_sha256": "8aac907d6fbf40394b424b5fa4a2ad1aa291dac7d3a0315c5b415c1f5ace1287",
+    "cc": "gcc (GCC) 16.2.1 20260810\nCopyright (C) 2026 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.",
+    "rust_toolchain": "1.99.1",
+    "rustc_path": "/home/arobin/.rustup/toolchains/1.99.1-x86_64-unknown-linux-gnu/bin/rustc",
+    "rustc_sha256": "b53b780f77f952062f8ca8a3b70aef2390b1e45ad91939be94afdc9543026853",
+    "rust": "rustc 1.99.1 (58cf8f9c3 2026-10-13)\nbinary: rustc\ncommit-hash: 58cf8f9c35b355199727627d07ae34a4e2846d67\ncommit-date: 2026-10-13\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.1\nLLVM version: 23.1.1",
+    "go_path": "/usr/lib/go/bin/go",
+    "go_sha256": "21401c8d2dae2e6db0d756f7b9ae5a885ac6c14882cbbe521c6f49b184da8402",
+    "go": "go version go1.27.3-X:nodwarf5 linux/amd64",
+    "go_environment": "{\n\t\"CGO_ENABLED\": \"0\",\n\t\"GOAMD64\": \"v1\",\n\t\"GOARCH\": \"amd64\",\n\t\"GOARM64\": \"\",\n\t\"GOEXPERIMENT\": \"nodwarf5\",\n\t\"GOFLAGS\": \"\",\n\t\"GOOS\": \"linux\",\n\t\"GOROOT\": \"/usr/lib/go\",\n\t\"GOTOOLCHAIN\": \"local\",\n\t\"GOTOOLDIR\": \"/usr/lib/go/pkg/tool/linux_amd64\",\n\t\"GOVERSION\": \"go1.27.3-X:nodwarf5\",\n\t\"GOWORK\": \"off\"\n}"
+  },
+  "binaries_sha256": {
+    "fs1": "7c5955ea17d5bd12836ce5d133d1a8a2361ff7e3d041b859c4573caf5d196132",
+    "rust1": "ef916712fce5b78bf7428070a59e569122192e87c70bbc6bc230c4913ca7df67",
+    "go1": "afc0a88a58c41da1b090f9fa13f277022a1748425cba13d1cc05110734f74ca6",
+    "fs2": "7c5955ea17d5bd12836ce5d133d1a8a2361ff7e3d041b859c4573caf5d196132",
+    "rust2": "ef916712fce5b78bf7428070a59e569122192e87c70bbc6bc230c4913ca7df67",
+    "go2": "afc0a88a58c41da1b090f9fa13f277022a1748425cba13d1cc05110734f74ca6"
+  },
+  "fault_binaries_sha256": {
+    "fs-fault": "5f2c9ad8557b957fca7fe4e572b52ca976ca05dfc190a97156bbd48e5b5f5d58",
+    "rust-fault": "263adab0ec1aa5635f335cd83b9ba512f1d502be52144bb7617f93aed16e9532",
+    "go-fault": "7227888f8862acfee5cf5512bfc725b4ed04422545ac9872ac90ad061a1becbf"
+  },
+  "sections_sha256": {
+    "fs1": {
+      "text": "d215c7375cb5f87a31f7051d9d346963f0fef5781845eb7ca8163d5205df2ec1",
+      "rodata": "d48e1488955a7d5c96b61a8f7f98937ffddab88384215db77df1348915deb05d"
+    },
+    "rust1": {
+      "text": "78ed38875d5fb827c1c3b8b35bc0688830c39b5c70bda32b5a79091208a03fa9",
+      "rodata": "9931e1e5fd86c522c5a3e27164b3faa618e239bccdd84002819ee8cf889609c7"
+    },
+    "go1": {
+      "text": "c2c492f38fd2721dca9dc5d9e214fbc55d02535ee16f46686dd46a4940fc7d90",
+      "rodata": "ecfc3a6af7fe215f70a194d311c43153bcf99435fe4d388be14b6dade2f17dda"
+    },
+    "fs2": {
+      "text": "d215c7375cb5f87a31f7051d9d346963f0fef5781845eb7ca8163d5205df2ec1",
+      "rodata": "d48e1488955a7d5c96b61a8f7f98937ffddab88384215db77df1348915deb05d"
+    },
+    "rust2": {
+      "text": "78ed38875d5fb827c1c3b8b35bc0688830c39b5c70bda32b5a79091208a03fa9",
+      "rodata": "9931e1e5fd86c522c5a3e27164b3faa618e239bccdd84002819ee8cf889609c7"
+    },
+    "go2": {
+      "text": "c2c492f38fd2721dca9dc5d9e214fbc55d02535ee16f46686dd46a4940fc7d90",
+      "rodata": "ecfc3a6af7fe215f70a194d311c43153bcf99435fe4d388be14b6dade2f17dda"
+    }
+  },
+  "replica_pairs": [
+    [
+      "fs1",
+      "fs2"
+    ],
+    [
+      "rust1",
+      "rust2"
+    ],
+    [
+      "go1",
+      "go2"
+    ]
+  ],
+  "build_logs_sha256": {
+    "fs1": "4f35a09132cb1375d08778a0cf77f730711416e64b9afd663e6f82560c856597",
+    "rust1": "b13afee73132bfaff9548ebcd4d39a5cbcd87b8ee064fe8dc0582bbe3f3bff7a",
+    "go1": "1b83c3b0b4d0b83d81c51927338e1fb4c6ef47b69134db6c7787577ea1499747",
+    "fs2": "4f35a09132cb1375d08778a0cf77f730711416e64b9afd663e6f82560c856597",
+    "rust2": "b13afee73132bfaff9548ebcd4d39a5cbcd87b8ee064fe8dc0582bbe3f3bff7a",
+    "go2": "1b83c3b0b4d0b83d81c51927338e1fb4c6ef47b69134db6c7787577ea1499747",
+    "fs-fault": "4011ceba2c31e8862dda57d77b037dfa6e62fb059d0233c38dc47cb3f3bde72f",
+    "rust-fault": "c1ad5ef4ac1eee12934e6d63cea98456632af0e29b9d6cd325aefb4b2b7a8150",
+    "go-fault": "f0d6f8a0bf61a2ea0b707ed3843bad474682baa739e81c43cf30d008c8016e4c"
+  },
+  "commands": {
+    "fs1": [
+      {
+        "command": [
+          "/home/arobin/Work/Projects/goose-libs/libraries/goose-log/.toolchain/goose/build/goose",
+          "build",
+          "/home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-contract-build-k9_q8qxr/build/bench/read-contract/main.goose",
+          "--cc",
+          "/usr/bin/gcc",
+          "-O2",
+          "-v",
+          "-o",
+          "/home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-contract-build-k9_q8qxr/build/runner"
+        ],
+        "cwd": "/home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-contract-build-k9_q8qxr/build"
+      }
+    ],
+    "rust1": [
+      {
+        "command": [
+          "/usr/bin/gcc",
+          "-std=c11",
+          "-Wall",
+          "-Wextra",
+          "-Werror",
+          "-O2",
+          "-c",
+          "/home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-contract-build-k9_q8qxr/build/bench/read-contract/native/stat-abi.c",
+          "-o",
+          "/home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-contract-build-k9_q8qxr/build/stat-abi.o"
+        ],
+        "cwd": "/home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-contract-build-k9_q8qxr/build"
+      },
+      {
+        "command": [
+          "/home/arobin/.rustup/toolchains/1.99.1-x86_64-unknown-linux-gnu/bin/rustc",
+          "--edition=2024",
+          "-Copt-level=2",
+          "-Ccodegen-units=1",
+          "/home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-contract-build-k9_q8qxr/build/bench/read-contract/main.rs",
+          "-Clink-arg=/home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-contract-build-k9_q8qxr/build/stat-abi.o",
+          "-o",
+          "/home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-contract-build-k9_q8qxr/build/runner"
+        ],
+        "cwd": "/home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-contract-build-k9_q8qxr/build"
+      }
+    ],
+    "go1": [
+      {
+        "command": [
+          "/usr/lib/go/bin/go",
+          "build",
+          "-trimpath",
+          "-buildvcs=false",
+          "-o",
+          "/home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-contract-build-k9_q8qxr/build/runner",
+          "."
+        ],
+        "cwd": "/home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-contract-build-k9_q8qxr/build/bench/read-contract"
+      }
+    ],
+    "fs2": [
+      {
+        "command": [
+          "/home/arobin/Work/Projects/goose-libs/libraries/goose-log/.toolchain/goose/build/goose",
+          "build",
+          "/home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-contract-build-k9_q8qxr/build/bench/read-contract/main.goose",
+          "--cc",
+          "/usr/bin/gcc",
+          "-O2",
+          "-v",
+          "-o",
+          "/home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-contract-build-k9_q8qxr/build/runner"
+        ],
+        "cwd": "/home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-contract-build-k9_q8qxr/build"
+      }
+    ],
+    "rust2": [
+      {
+        "command": [
+          "/usr/bin/gcc",
+          "-std=c11",
+          "-Wall",
+          "-Wextra",
+          "-Werror",
+          "-O2",
+          "-c",
+          "/home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-contract-build-k9_q8qxr/build/bench/read-contract/native/stat-abi.c",
+          "-o",
+          "/home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-contract-build-k9_q8qxr/build/stat-abi.o"
+        ],
+        "cwd": "/home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-contract-build-k9_q8qxr/build"
+      },
+      {
+        "command": [
+          "/home/arobin/.rustup/toolchains/1.99.1-x86_64-unknown-linux-gnu/bin/rustc",
+          "--edition=2024",
+          "-Copt-level=2",
+          "-Ccodegen-units=1",
+          "/home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-contract-build-k9_q8qxr/build/bench/read-contract/main.rs",
+          "-Clink-arg=/home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-contract-build-k9_q8qxr/build/stat-abi.o",
+          "-o",
+          "/home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-contract-build-k9_q8qxr/build/runner"
+        ],
+        "cwd": "/home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-contract-build-k9_q8qxr/build"
+      }
+    ],
+    "go2": [
+      {
+        "command": [
+          "/usr/lib/go/bin/go",
+          "build",
+          "-trimpath",
+          "-buildvcs=false",
+          "-o",
+          "/home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-contract-build-k9_q8qxr/build/runner",
+          "."
+        ],
+        "cwd": "/home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-contract-build-k9_q8qxr/build/bench/read-contract"
+      }
+    ],
+    "fs-fault": [
+      {
+        "command": [
+          "/home/arobin/Work/Projects/goose-libs/libraries/goose-log/.toolchain/goose/build/goose",
+          "build",
+          "/home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-contract-build-k9_q8qxr/build/bench/read-contract/fault.goose",
+          "--cc",
+          "/home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-contract-build-k9_q8qxr/build/bench/read-contract/fault-cc.sh",
+          "-O2",
+          "-v",
+          "-o",
+          "/home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-contract-build-k9_q8qxr/build/runner"
+        ],
+        "cwd": "/home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-contract-build-k9_q8qxr/build"
+      }
+    ],
+    "rust-fault": [
+      {
+        "command": [
+          "/usr/bin/gcc",
+          "-std=c11",
+          "-Wall",
+          "-Wextra",
+          "-Werror",
+          "-O2",
+          "-c",
+          "/home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-contract-build-k9_q8qxr/build/bench/read-contract/native/stat-abi.c",
+          "-o",
+          "/home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-contract-build-k9_q8qxr/build/stat-abi.o"
+        ],
+        "cwd": "/home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-contract-build-k9_q8qxr/build"
+      },
+      {
+        "command": [
+          "/usr/bin/gcc",
+          "-std=c11",
+          "-Wall",
+          "-Wextra",
+          "-Werror",
+          "-O2",
+          "-c",
+          "/home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-contract-build-k9_q8qxr/build/bench/read-contract/native/faults.c",
+          "-o",
+          "/home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-contract-build-k9_q8qxr/build/faults.o"
+        ],
+        "cwd": "/home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-contract-build-k9_q8qxr/build"
+      },
+      {
+        "command": [
+          "/home/arobin/.rustup/toolchains/1.99.1-x86_64-unknown-linux-gnu/bin/rustc",
+          "--edition=2024",
+          "-Copt-level=2",
+          "-Ccodegen-units=1",
+          "/home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-contract-build-k9_q8qxr/build/bench/read-contract/main.rs",
+          "-Clink-arg=/home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-contract-build-k9_q8qxr/build/stat-abi.o",
+          "--cfg",
+          "adaptertest",
+          "-Clink-arg=/home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-contract-build-k9_q8qxr/build/faults.o",
+          "-Clink-arg=-Wl,--wrap=syscall,--wrap=openat,--wrap=open,--wrap=fstat,--wrap=read,--wrap=__read_chk,--wrap=close",
+          "-o",
+          "/home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-contract-build-k9_q8qxr/build/runner"
+        ],
+        "cwd": "/home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-contract-build-k9_q8qxr/build"
+      }
+    ],
+    "go-fault": [
+      {
+        "command": [
+          "/usr/lib/go/bin/go",
+          "build",
+          "-trimpath",
+          "-buildvcs=false",
+          "-tags",
+          "adaptertest",
+          "-o",
+          "/home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-contract-build-k9_q8qxr/build/runner",
+          "."
+        ],
+        "cwd": "/home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-contract-build-k9_q8qxr/build/bench/read-contract"
+      }
+    ]
+  },
+  "build_path": "/home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-contract-build-k9_q8qxr/build",
+  "conformance": {
+    "release": 210,
+    "faults": 111
+  },
+  "effective_go_overrides": {
+    "CGO_ENABLED": "0",
+    "GOTOOLCHAIN": "local",
+    "GOFLAGS": "",
+    "GOWORK": "off",
+    "GOPROXY": "off",
+    "GOSUMDB": "off",
+    "GOCACHE": "/home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-contract-build-k9_q8qxr/build/go-cache",
+    "GOMODCACHE": "/home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-contract-build-k9_q8qxr/build/go-mod-cache"
+  },
+  "runtime_settings": {
+    "GOGC": null,
+    "GOMEMLIMIT": null,
+    "GODEBUG": null,
+    "GOMAXPROCS": null,
+    "MALLOC_CONF": null,
+    "GLIBC_TUNABLES": null,
+    "LD_PRELOAD": null
+  },
+  "build_environment": {
+    "CFLAGS": null,
+    "CPPFLAGS": null,
+    "LDFLAGS": null,
+    "RUSTFLAGS": null,
+    "SOURCE_DATE_EPOCH": null,
+    "LD_PRELOAD": null,
+    "GLIBC_TUNABLES": null
+  },
+  "identical_executables": true,
+  "identical_sections": true
+}

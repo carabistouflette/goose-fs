@@ -1,0 +1,27 @@
+--------------------------------------------------------------------------------
+Profile data file '.build/read-growth/large-budget.callgrind' (creator: callgrind-3.25.1)
+--------------------------------------------------------------------------------
+I1 cache: 
+D1 cache: 
+LL cache: 
+Timerange: Basic block 0 - 117639921
+Trigger: Program termination
+Profiled target:  .build/read-contract/fs1 measure /home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-growth/file 1048576 0 16 (PID 1846905, part 1)
+Events recorded:  Ir
+Events shown:     Ir
+Event sort order: Ir
+Thresholds:       99
+Include dirs:     
+User annotated:   
+Auto-annotation:  off
+
+--------------------------------------------------------------------------------
+Ir                   
+--------------------------------------------------------------------------------
+118,162,689 (100.0%)  PROGRAM TOTALS
+
+--------------------------------------------------------------------------------
+Ir                    file:function
+--------------------------------------------------------------------------------
+117,492,952 (99.43%)  /usr/src/debug/glibc/glibc/string/../sysdeps/x86_64/multiarch/memset-vec-unaligned-erms.S:__memset_avx2_unaligned_erms [/usr/lib/libc.so.6]
+

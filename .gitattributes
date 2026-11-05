@@ -1,0 +1,2 @@
+# Preserve raw profiler output, including intentional trailing whitespace.
+bench/results/2026-11-05-read-growth/diagnostics/** -text -whitespace

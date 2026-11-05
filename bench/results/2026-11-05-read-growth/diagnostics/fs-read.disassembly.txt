@@ -1,0 +1,239 @@
+
+.build/read-contract/fs1:     file format elf64-x86-64
+
+
+Disassembly of section .init:
+
+Disassembly of section .plt:
+
+Disassembly of section .plt.got:
+
+Disassembly of section .text:
+
+0000000000004ab0 <fs_read_g2_15>:
+    4ab0:	48 83 ec 68          	sub    $0x68,%rsp
+    4ab4:	48 8d 42 ff          	lea    -0x1(%rdx),%rax
+    4ab8:	49 89 fa             	mov    %rdi,%r10
+    4abb:	4d 89 c3             	mov    %r8,%r11
+    4abe:	48 89 5c 24 40       	mov    %rbx,0x40(%rsp)
+    4ac3:	48 89 6c 24 48       	mov    %rbp,0x48(%rsp)
+    4ac8:	4c 89 64 24 50       	mov    %r12,0x50(%rsp)
+    4acd:	64 4c 8b 24 25 28 00 	mov    %fs:0x28,%r12
+    4ad4:	00 00 
+    4ad6:	4c 89 64 24 38       	mov    %r12,0x38(%rsp)
+    4adb:	4d 89 cc             	mov    %r9,%r12
+    4ade:	48 3d fe 0f 00 00    	cmp    $0xffe,%rax
+    4ae4:	76 4a                	jbe    4b30 <fs_read_g2_15+0x80>
+    4ae6:	49 8b 2b             	mov    (%r11),%rbp
+    4ae9:	31 db                	xor    %ebx,%ebx
+    4aeb:	ba 01 00 00 00       	mov    $0x1,%edx
+    4af0:	31 c0                	xor    %eax,%eax
+    4af2:	49 89 2c 24          	mov    %rbp,(%r12)
+    4af6:	41 88 12             	mov    %dl,(%r10)
+    4af9:	49 89 5b 08          	mov    %rbx,0x8(%r11)
+    4afd:	49 89 42 01          	mov    %rax,0x1(%r10)
+    4b01:	48 8b 44 24 38       	mov    0x38(%rsp),%rax
+    4b06:	64 48 2b 04 25 28 00 	sub    %fs:0x28,%rax
+    4b0d:	00 00 
+    4b0f:	0f 85 74 02 00 00    	jne    4d89 <fs_read_g2_15+0x2d9>
+    4b15:	48 8b 5c 24 40       	mov    0x40(%rsp),%rbx
+    4b1a:	48 8b 6c 24 48       	mov    0x48(%rsp),%rbp
+    4b1f:	4c 89 d0             	mov    %r10,%rax
+    4b22:	4c 8b 64 24 50       	mov    0x50(%rsp),%r12
+    4b27:	48 83 c4 68          	add    $0x68,%rsp
+    4b2b:	c3                   	ret
+    4b2c:	0f 1f 40 00          	nopl   0x0(%rax)
+    4b30:	4c 89 74 24 60       	mov    %r14,0x60(%rsp)
+    4b35:	49 89 f6             	mov    %rsi,%r14
+    4b38:	80 3e 2f             	cmpb   $0x2f,(%rsi)
+    4b3b:	74 0b                	je     4b48 <fs_read_g2_15+0x98>
+    4b3d:	4c 8b 74 24 60       	mov    0x60(%rsp),%r14
+    4b42:	eb a2                	jmp    4ae6 <fs_read_g2_15+0x36>
+    4b44:	0f 1f 40 00          	nopl   0x0(%rax)
+    4b48:	4c 89 6c 24 58       	mov    %r13,0x58(%rsp)
+    4b4d:	49 89 d5             	mov    %rdx,%r13
+    4b50:	48 83 fa 01          	cmp    $0x1,%rdx
+    4b54:	0f 84 bb 00 00 00    	je     4c15 <fs_read_g2_15+0x165>
+    4b5a:	31 c0                	xor    %eax,%eax
+    4b5c:	bf 01 00 00 00       	mov    $0x1,%edi
+    4b61:	eb 37                	jmp    4b9a <fs_read_g2_15+0xea>
+    4b63:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
+    4b68:	80 fa 2f             	cmp    $0x2f,%dl
+    4b6b:	75 3b                	jne    4ba8 <fs_read_g2_15+0xf8>
+    4b6d:	48 89 c2             	mov    %rax,%rdx
+    4b70:	48 29 fa             	sub    %rdi,%rdx
+    4b73:	74 6b                	je     4be0 <fs_read_g2_15+0x130>
+    4b75:	48 83 fa 01          	cmp    $0x1,%rdx
+    4b79:	75 35                	jne    4bb0 <fs_read_g2_15+0x100>
+    4b7b:	4c 39 ef             	cmp    %r13,%rdi
+    4b7e:	0f 83 14 02 00 00    	jae    4d98 <fs_read_g2_15+0x2e8>
+    4b84:	41 80 3c 3e 2e       	cmpb   $0x2e,(%r14,%rdi,1)
+    4b89:	74 55                	je     4be0 <fs_read_g2_15+0x130>
+    4b8b:	48 8d 50 01          	lea    0x1(%rax),%rdx
+    4b8f:	48 89 d7             	mov    %rdx,%rdi
+    4b92:	48 89 d0             	mov    %rdx,%rax
+    4b95:	49 39 d5             	cmp    %rdx,%r13
+    4b98:	74 56                	je     4bf0 <fs_read_g2_15+0x140>
+    4b9a:	41 0f b6 14 06       	movzbl (%r14,%rax,1),%edx
+    4b9f:	84 d2                	test   %dl,%dl
+    4ba1:	74 3d                	je     4be0 <fs_read_g2_15+0x130>
+    4ba3:	48 85 c0             	test   %rax,%rax
+    4ba6:	75 c0                	jne    4b68 <fs_read_g2_15+0xb8>
+    4ba8:	48 8d 50 01          	lea    0x1(%rax),%rdx
+    4bac:	eb e4                	jmp    4b92 <fs_read_g2_15+0xe2>
+    4bae:	66 90                	xchg   %ax,%ax
+    4bb0:	48 83 fa 02          	cmp    $0x2,%rdx
+    4bb4:	75 d5                	jne    4b8b <fs_read_g2_15+0xdb>
+    4bb6:	4c 39 ef             	cmp    %r13,%rdi
+    4bb9:	0f 83 ed 01 00 00    	jae    4dac <fs_read_g2_15+0x2fc>
+    4bbf:	41 80 3c 3e 2e       	cmpb   $0x2e,(%r14,%rdi,1)
+    4bc4:	75 c5                	jne    4b8b <fs_read_g2_15+0xdb>
+    4bc6:	4c 8d 47 01          	lea    0x1(%rdi),%r8
+    4bca:	4d 39 e8             	cmp    %r13,%r8
+    4bcd:	0f 83 19 02 00 00    	jae    4dec <fs_read_g2_15+0x33c>
+    4bd3:	41 80 7c 3e 01 2e    	cmpb   $0x2e,0x1(%r14,%rdi,1)
+    4bd9:	75 b0                	jne    4b8b <fs_read_g2_15+0xdb>
+    4bdb:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
+    4be0:	4c 8b 6c 24 58       	mov    0x58(%rsp),%r13
+    4be5:	e9 53 ff ff ff       	jmp    4b3d <fs_read_g2_15+0x8d>
+    4bea:	66 0f 1f 44 00 00    	nopw   0x0(%rax,%rax,1)
+    4bf0:	4c 89 e8             	mov    %r13,%rax
+    4bf3:	48 29 f8             	sub    %rdi,%rax
+    4bf6:	48 85 c0             	test   %rax,%rax
+    4bf9:	7e e5                	jle    4be0 <fs_read_g2_15+0x130>
+    4bfb:	48 83 f8 01          	cmp    $0x1,%rax
+    4bff:	0f 85 c2 00 00 00    	jne    4cc7 <fs_read_g2_15+0x217>
+    4c05:	4c 39 ef             	cmp    %r13,%rdi
+    4c08:	0f 83 f5 01 00 00    	jae    4e03 <fs_read_g2_15+0x353>
+    4c0e:	41 80 3c 3e 2e       	cmpb   $0x2e,(%r14,%rdi,1)
+    4c13:	74 cb                	je     4be0 <fs_read_g2_15+0x130>
+    4c15:	48 81 f9 00 00 10 00 	cmp    $0x100000,%rcx
+    4c1c:	77 c2                	ja     4be0 <fs_read_g2_15+0x130>
+    4c1e:	49 8b 5b 08          	mov    0x8(%r11),%rbx
+    4c22:	48 39 cb             	cmp    %rcx,%rbx
+    4c25:	0f 8e d8 00 00 00    	jle    4d03 <fs_read_g2_15+0x253>
+    4c2b:	49 8b 33             	mov    (%r11),%rsi
+    4c2e:	48 89 cb             	mov    %rcx,%rbx
+    4c31:	48 8d 2c 0e          	lea    (%rsi,%rcx,1),%rbp
+    4c35:	48 8d 44 24 20       	lea    0x20(%rsp),%rax
+    4c3a:	66 0f ef c0          	pxor   %xmm0,%xmm0
+    4c3e:	ba 03 00 00 00       	mov    $0x3,%edx
+    4c43:	31 ff                	xor    %edi,%edi
+    4c45:	4c 89 5c 24 08       	mov    %r11,0x8(%rsp)
+    4c4a:	45 31 c9             	xor    %r9d,%r9d
+    4c4d:	48 8d 0d 0d fb 00 00 	lea    0xfb0d(%rip),%rcx        # 14761 <gs_str7>
+    4c54:	45 31 c0             	xor    %r8d,%r8d
+    4c57:	4c 89 14 24          	mov    %r10,(%rsp)
+    4c5b:	48 c7 44 24 30 00 00 	movq   $0x0,0x30(%rsp)
+    4c62:	00 00 
+    4c64:	0f 29 44 24 20       	movaps %xmm0,0x20(%rsp)
+    4c69:	52                   	push   %rdx
+    4c6a:	4c 89 ea             	mov    %r13,%rdx
+    4c6d:	50                   	push   %rax
+    4c6e:	53                   	push   %rbx
+    4c6f:	56                   	push   %rsi
+    4c70:	4c 89 f6             	mov    %r14,%rsi
+    4c73:	e8 b8 a6 00 00       	call   f330 <gf_call>
+    4c78:	48 83 c4 20          	add    $0x20,%rsp
+    4c7c:	4c 8b 14 24          	mov    (%rsp),%r10
+    4c80:	4c 8b 5c 24 08       	mov    0x8(%rsp),%r11
+    4c85:	48 85 c0             	test   %rax,%rax
+    4c88:	48 89 c1             	mov    %rax,%rcx
+    4c8b:	0f 85 80 00 00 00    	jne    4d11 <fs_read_g2_15+0x261>
+    4c91:	48 8b 44 24 28       	mov    0x28(%rsp),%rax
+    4c96:	48 85 c0             	test   %rax,%rax
+    4c99:	0f 88 21 01 00 00    	js     4dc0 <fs_read_g2_15+0x310>
+    4c9f:	48 39 c3             	cmp    %rax,%rbx
+    4ca2:	0f 8f 90 00 00 00    	jg     4d38 <fs_read_g2_15+0x288>
+    4ca8:	0f 8c 28 01 00 00    	jl     4dd6 <fs_read_g2_15+0x326>
+    4cae:	48 8b 74 24 20       	mov    0x20(%rsp),%rsi
+    4cb3:	4c 8b 6c 24 58       	mov    0x58(%rsp),%r13
+    4cb8:	4c 8b 74 24 60       	mov    0x60(%rsp),%r14
+    4cbd:	89 ca                	mov    %ecx,%edx
+    4cbf:	48 89 f0             	mov    %rsi,%rax
+    4cc2:	e9 2b fe ff ff       	jmp    4af2 <fs_read_g2_15+0x42>
+    4cc7:	48 83 f8 02          	cmp    $0x2,%rax
+    4ccb:	0f 85 44 ff ff ff    	jne    4c15 <fs_read_g2_15+0x165>
+    4cd1:	4c 39 ef             	cmp    %r13,%rdi
+    4cd4:	0f 83 54 01 00 00    	jae    4e2e <fs_read_g2_15+0x37e>
+    4cda:	41 80 3c 3e 2e       	cmpb   $0x2e,(%r14,%rdi,1)
+    4cdf:	0f 85 30 ff ff ff    	jne    4c15 <fs_read_g2_15+0x165>
+    4ce5:	48 8d 47 01          	lea    0x1(%rdi),%rax
+    4ce9:	4c 39 e8             	cmp    %r13,%rax
+    4cec:	0f 83 25 01 00 00    	jae    4e17 <fs_read_g2_15+0x367>
+    4cf2:	41 80 7c 3e 01 2e    	cmpb   $0x2e,0x1(%r14,%rdi,1)
+    4cf8:	0f 85 17 ff ff ff    	jne    4c15 <fs_read_g2_15+0x165>
+    4cfe:	e9 dd fe ff ff       	jmp    4be0 <fs_read_g2_15+0x130>
+    4d03:	49 8b 2c 24          	mov    (%r12),%rbp
+    4d07:	7c 42                	jl     4d4b <fs_read_g2_15+0x29b>
+    4d09:	49 8b 33             	mov    (%r11),%rsi
+    4d0c:	e9 24 ff ff ff       	jmp    4c35 <fs_read_g2_15+0x185>
+    4d11:	48 8b 74 24 20       	mov    0x20(%rsp),%rsi
+    4d16:	49 8b 2b             	mov    (%r11),%rbp
+    4d19:	31 db                	xor    %ebx,%ebx
+    4d1b:	ba 04 00 00 00       	mov    $0x4,%edx
+    4d20:	48 89 f0             	mov    %rsi,%rax
+    4d23:	48 83 f9 03          	cmp    $0x3,%rcx
+    4d27:	76 8a                	jbe    4cb3 <fs_read_g2_15+0x203>
+    4d29:	4c 8b 6c 24 58       	mov    0x58(%rsp),%r13
+    4d2e:	4c 8b 74 24 60       	mov    0x60(%rsp),%r14
+    4d33:	e9 ba fd ff ff       	jmp    4af2 <fs_read_g2_15+0x42>
+    4d38:	49 8b 2b             	mov    (%r11),%rbp
+    4d3b:	48 8b 74 24 20       	mov    0x20(%rsp),%rsi
+    4d40:	48 89 c3             	mov    %rax,%rbx
+    4d43:	48 01 c5             	add    %rax,%rbp
+    4d46:	e9 68 ff ff ff       	jmp    4cb3 <fs_read_g2_15+0x203>
+    4d4b:	48 89 ca             	mov    %rcx,%rdx
+    4d4e:	31 f6                	xor    %esi,%esi
+    4d50:	48 89 ef             	mov    %rbp,%rdi
+    4d53:	4c 89 5c 24 18       	mov    %r11,0x18(%rsp)
+    4d58:	48 29 da             	sub    %rbx,%rdx
+    4d5b:	4c 89 54 24 10       	mov    %r10,0x10(%rsp)
+    4d60:	48 89 4c 24 08       	mov    %rcx,0x8(%rsp)
+    4d65:	48 89 14 24          	mov    %rdx,(%rsp)
+    4d69:	e8 42 e5 ff ff       	call   32b0 <memset@plt>
+    4d6e:	4c 8b 5c 24 18       	mov    0x18(%rsp),%r11
+    4d73:	48 8b 5c 24 08       	mov    0x8(%rsp),%rbx
+    4d78:	4c 8b 54 24 10       	mov    0x10(%rsp),%r10
+    4d7d:	48 03 2c 24          	add    (%rsp),%rbp
+    4d81:	49 8b 33             	mov    (%r11),%rsi
+    4d84:	e9 ac fe ff ff       	jmp    4c35 <fs_read_g2_15+0x185>
+    4d89:	4c 89 6c 24 58       	mov    %r13,0x58(%rsp)
+    4d8e:	4c 89 74 24 60       	mov    %r14,0x60(%rsp)
+    4d93:	e8 78 e4 ff ff       	call   3210 <__stack_chk_fail@plt>
+    4d98:	b9 19 00 00 00       	mov    $0x19,%ecx
+    4d9d:	48 8d 15 7c f8 00 00 	lea    0xf87c(%rip),%rdx        # 14620 <gs_file1>
+    4da4:	4c 89 ee             	mov    %r13,%rsi
+    4da7:	e8 94 46 00 00       	call   9440 <gs_idxfail>
+    4dac:	b9 1a 00 00 00       	mov    $0x1a,%ecx
+    4db1:	48 8d 15 68 f8 00 00 	lea    0xf868(%rip),%rdx        # 14620 <gs_file1>
+    4db8:	4c 89 ee             	mov    %r13,%rsi
+    4dbb:	e8 80 46 00 00       	call   9440 <gs_idxfail>
+    4dc0:	ba 3a 00 00 00       	mov    $0x3a,%edx
+    4dc5:	48 8d 35 54 f8 00 00 	lea    0xf854(%rip),%rsi        # 14620 <gs_file1>
+    4dcc:	bf 06 00 00 00       	mov    $0x6,%edi
+    4dd1:	e8 9a 35 00 00       	call   8370 <gs_abort>
+    4dd6:	ba 3a 00 00 00       	mov    $0x3a,%edx
+    4ddb:	48 8d 35 3e f8 00 00 	lea    0xf83e(%rip),%rsi        # 14620 <gs_file1>
+    4de2:	bf 05 00 00 00       	mov    $0x5,%edi
+    4de7:	e8 84 35 00 00       	call   8370 <gs_abort>
+    4dec:	b9 1a 00 00 00       	mov    $0x1a,%ecx
+    4df1:	48 8d 15 28 f8 00 00 	lea    0xf828(%rip),%rdx        # 14620 <gs_file1>
+    4df8:	4c 89 ee             	mov    %r13,%rsi
+    4dfb:	4c 89 c7             	mov    %r8,%rdi
+    4dfe:	e8 3d 46 00 00       	call   9440 <gs_idxfail>
+    4e03:	b9 1f 00 00 00       	mov    $0x1f,%ecx
+    4e08:	48 8d 15 11 f8 00 00 	lea    0xf811(%rip),%rdx        # 14620 <gs_file1>
+    4e0f:	4c 89 ee             	mov    %r13,%rsi
+    4e12:	e8 29 46 00 00       	call   9440 <gs_idxfail>
+    4e17:	b9 20 00 00 00       	mov    $0x20,%ecx
+    4e1c:	48 8d 15 fd f7 00 00 	lea    0xf7fd(%rip),%rdx        # 14620 <gs_file1>
+    4e23:	4c 89 ee             	mov    %r13,%rsi
+    4e26:	48 89 c7             	mov    %rax,%rdi
+    4e29:	e8 12 46 00 00       	call   9440 <gs_idxfail>
+    4e2e:	b9 20 00 00 00       	mov    $0x20,%ecx
+    4e33:	48 8d 15 e6 f7 00 00 	lea    0xf7e6(%rip),%rdx        # 14620 <gs_file1>
+    4e3a:	4c 89 ee             	mov    %r13,%rsi
+    4e3d:	e8 fe 45 00 00       	call   9440 <gs_idxfail>
+
+Disassembly of section .fini:

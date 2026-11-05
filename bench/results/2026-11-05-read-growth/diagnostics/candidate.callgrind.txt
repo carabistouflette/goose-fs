@@ -1,0 +1,46 @@
+--------------------------------------------------------------------------------
+Profile data file '.build/read-growth/candidate.callgrind' (creator: callgrind-3.25.1)
+--------------------------------------------------------------------------------
+I1 cache: 
+D1 cache: 
+LL cache: 
+Timerange: Basic block 0 - 2164150
+Trigger: Program termination
+Profiled target:  .build/read-growth-candidate/fs1 measure /home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-growth/file 1048576 0 16 (PID 1866573, part 1)
+Events recorded:  Ir
+Events shown:     Ir
+Event sort order: Ir
+Thresholds:       99
+Include dirs:     
+User annotated:   
+Auto-annotation:  off
+
+--------------------------------------------------------------------------------
+Ir                  
+--------------------------------------------------------------------------------
+11,312,344 (100.0%)  PROGRAM TOTALS
+
+--------------------------------------------------------------------------------
+Ir                  file:function
+--------------------------------------------------------------------------------
+8,215,672 (72.63%)  /usr/src/debug/glibc/glibc/string/../sysdeps/x86_64/multiarch/memset-vec-unaligned-erms.S:__memset_avx2_unaligned_erms [/usr/lib/libc.so.6]
+2,599,230 (22.98%)  ???:fs_read_g2_15 [/home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-growth-candidate/fs1]
+  106,902 ( 0.95%)  ???:copy_path [/home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-growth-candidate/fs1]
+   46,462 ( 0.41%)  /usr/src/debug/glibc/glibc/stdio-common/vfscanf-internal.c:__vfscanf_internal [/usr/lib/libc.so.6]
+   45,368 ( 0.40%)  /usr/src/debug/glibc/glibc/elf/dl-lookup.c:do_lookup_x [/usr/lib/ld-linux-x86-64.so.2]
+   23,302 ( 0.21%)  /usr/src/debug/glibc/glibc/stdlib/../stdlib/strtol_l.c:____strtoul_l_internal [/usr/lib/libc.so.6]
+   17,631 ( 0.16%)  /usr/src/debug/glibc/glibc/elf/dl-reloc.c:_dl_relocate_object_no_relro [/usr/lib/ld-linux-x86-64.so.2]
+   17,482 ( 0.15%)  /usr/src/debug/glibc/glibc/elf/dl-tunables.c:__GI___tunables_init [/usr/lib/ld-linux-x86-64.so.2]
+   16,834 ( 0.15%)  /usr/src/debug/glibc/glibc/elf/do-rel.h:_dl_relocate_object_no_relro
+   15,481 ( 0.14%)  ???:gf_call [/home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-growth-candidate/fs1]
+   13,976 ( 0.12%)  /usr/src/debug/glibc/glibc/elf/dl-lookup.c:_dl_lookup_symbol_x [/usr/lib/ld-linux-x86-64.so.2]
+   13,496 ( 0.12%)  /usr/src/debug/glibc/glibc/elf/../sysdeps/generic/dl-new-hash.h:_dl_lookup_symbol_x
+   13,435 ( 0.12%)  /usr/src/debug/glibc/glibc/string/../sysdeps/x86_64/multiarch/../multiarch/strcmp-sse2.S:strcmp [/usr/lib/ld-linux-x86-64.so.2]
+    9,561 ( 0.08%)  /usr/src/debug/glibc/glibc/elf/dl-lookup.c:check_match [/usr/lib/ld-linux-x86-64.so.2]
+    9,169 ( 0.08%)  ???:gf_read_regular [/home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-growth-candidate/fs1]
+    8,564 ( 0.08%)  /usr/src/debug/glibc/glibc/elf/dl-version.c:_dl_check_map_versions [/usr/lib/ld-linux-x86-64.so.2]
+    7,976 ( 0.07%)  /usr/src/debug/glibc/glibc/elf/../sysdeps/x86_64/dl-machine.h:_dl_relocate_object_no_relro
+    7,035 ( 0.06%)  /usr/src/debug/glibc/glibc/string/../sysdeps/x86_64/multiarch/strrchr-avx2.S:__strrchr_avx2 [/usr/lib/libc.so.6]
+    6,554 ( 0.06%)  /usr/src/debug/glibc/glibc/string/../sysdeps/x86_64/multiarch/memchr-avx2.S:__memchr_avx2 [/usr/lib/libc.so.6]
+    6,340 ( 0.06%)  ???:gf_parent_checked [/home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-growth-candidate/fs1]
+

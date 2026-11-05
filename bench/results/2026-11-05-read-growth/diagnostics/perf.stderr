@@ -1,0 +1,14 @@
+
+ Performance counter stats for '.build/read-contract/fs1 measure /home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-growth/file 1048576 0 16':
+
+           8934647      cpu_atom/cycles/u                                                     
+     <not counted>      cpu_core/cycles/u                                                       (0.00%)
+            641492      cpu_atom/instructions/u                                               
+     <not counted>      cpu_core/instructions/u                                                 (0.00%)
+
+       0.008417761 seconds time elapsed
+
+       0.006508000 seconds user
+       0.001864000 seconds sys
+
+

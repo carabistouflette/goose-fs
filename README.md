@@ -178,6 +178,11 @@ compares independent Rust/Go Linux adapters under matching safety and error poli
 All 4620 observations are retained; every cell is inconclusive under the preregistered
 replica controls and lead thresholds. It establishes no overall performance leadership.
 
+The [bounded-read growth experiment](bench/results/2026-11-05-read-growth/README.md)
+profiles zero-fill costs and retains all 6720 means from its sole candidate.
+The candidate failed the preregistered controls/target/regression gates, so the
+released runtime remains unchanged. Instrumented profiles are separate from throughput.
+
 The current version excludes recursive operations, temp-directory lifecycle,
 path normalization, byte publication/installation helpers, streaming directory
 cursors and Windows support.

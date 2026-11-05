@@ -1,0 +1,607 @@
+--------------------------------------------------------------------------------
+Profile data file '.build/read-growth/exact.callgrind' (creator: callgrind-3.25.1)
+--------------------------------------------------------------------------------
+I1 cache: 
+D1 cache: 
+LL cache: 
+Timerange: Basic block 0 - 197440
+Trigger: Program termination
+Profiled target:  .build/read-contract/fs1 measure /home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-growth/file 64 0 16 (PID 1850481, part 1)
+Events recorded:  Ir
+Events shown:     Ir
+Event sort order: Ir
+Thresholds:       100
+Include dirs:     
+User annotated:   
+Auto-annotation:  off
+
+--------------------------------------------------------------------------------
+Ir               
+--------------------------------------------------------------------------------
+667,436 (100.0%)  PROGRAM TOTALS
+
+--------------------------------------------------------------------------------
+Ir                file:function
+--------------------------------------------------------------------------------
+169,857 (25.45%)  ???:fs_read_g2_15 [/home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-contract/fs1]
+106,902 (16.02%)  ???:copy_path [/home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-contract/fs1]
+ 46,462 ( 6.96%)  /usr/src/debug/glibc/glibc/stdio-common/vfscanf-internal.c:__vfscanf_internal [/usr/lib/libc.so.6]
+ 45,368 ( 6.80%)  /usr/src/debug/glibc/glibc/elf/dl-lookup.c:do_lookup_x [/usr/lib/ld-linux-x86-64.so.2]
+ 23,302 ( 3.49%)  /usr/src/debug/glibc/glibc/stdlib/../stdlib/strtol_l.c:____strtoul_l_internal [/usr/lib/libc.so.6]
+ 17,631 ( 2.64%)  /usr/src/debug/glibc/glibc/elf/dl-reloc.c:_dl_relocate_object_no_relro [/usr/lib/ld-linux-x86-64.so.2]
+ 17,482 ( 2.62%)  /usr/src/debug/glibc/glibc/elf/dl-tunables.c:__GI___tunables_init [/usr/lib/ld-linux-x86-64.so.2]
+ 16,834 ( 2.52%)  /usr/src/debug/glibc/glibc/elf/do-rel.h:_dl_relocate_object_no_relro
+ 15,481 ( 2.32%)  ???:gf_call [/home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-contract/fs1]
+ 13,976 ( 2.09%)  /usr/src/debug/glibc/glibc/elf/dl-lookup.c:_dl_lookup_symbol_x [/usr/lib/ld-linux-x86-64.so.2]
+ 13,496 ( 2.02%)  /usr/src/debug/glibc/glibc/elf/../sysdeps/generic/dl-new-hash.h:_dl_lookup_symbol_x
+ 13,435 ( 2.01%)  /usr/src/debug/glibc/glibc/string/../sysdeps/x86_64/multiarch/../multiarch/strcmp-sse2.S:strcmp [/usr/lib/ld-linux-x86-64.so.2]
+  9,561 ( 1.43%)  /usr/src/debug/glibc/glibc/elf/dl-lookup.c:check_match [/usr/lib/ld-linux-x86-64.so.2]
+  8,943 ( 1.34%)  ???:gf_read_regular [/home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-contract/fs1]
+  8,564 ( 1.28%)  /usr/src/debug/glibc/glibc/elf/dl-version.c:_dl_check_map_versions [/usr/lib/ld-linux-x86-64.so.2]
+  7,976 ( 1.20%)  /usr/src/debug/glibc/glibc/elf/../sysdeps/x86_64/dl-machine.h:_dl_relocate_object_no_relro
+  7,106 ( 1.06%)  /usr/src/debug/glibc/glibc/string/../sysdeps/x86_64/multiarch/memchr-avx2.S:__memchr_avx2 [/usr/lib/libc.so.6]
+  7,028 ( 1.05%)  /usr/src/debug/glibc/glibc/string/../sysdeps/x86_64/multiarch/strrchr-avx2.S:__strrchr_avx2 [/usr/lib/libc.so.6]
+  6,340 ( 0.95%)  ???:gf_parent_checked [/home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-contract/fs1]
+  4,770 ( 0.71%)  /usr/src/debug/glibc/glibc/elf/dl-tunables.h:__GI___tunables_init
+  4,746 ( 0.71%)  ???:gf_overlap [/home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-contract/fs1]
+  4,232 ( 0.63%)  /usr/src/debug/glibc/glibc/libio/genops.c:_IO_sputbackc [/usr/lib/libc.so.6]
+  4,081 ( 0.61%)  /usr/src/debug/glibc/glibc/elf/../sysdeps/x86/dl-cacheinfo.h:intel_check_word.constprop.0 [/usr/lib/ld-linux-x86-64.so.2]
+  3,647 ( 0.55%)  ???:main [/home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-contract/fs1]
+  3,557 ( 0.53%)  /usr/src/debug/glibc/glibc/string/../sysdeps/x86_64/multiarch/memmove-vec-unaligned-erms.S:__memcpy_avx_unaligned_erms [/usr/lib/libc.so.6]
+  3,523 ( 0.53%)  /usr/src/debug/glibc/glibc/libio/iogetdelim.c:getdelim [/usr/lib/libc.so.6]
+  3,390 ( 0.51%)  /usr/src/debug/glibc/glibc/io/../sysdeps/unix/sysv/linux/sysdep-cancel.h:close
+  2,712 ( 0.41%)  /usr/src/debug/glibc/glibc/io/../sysdeps/unix/sysv/linux/sysdep-cancel.h:read
+  2,672 ( 0.40%)  /usr/src/debug/glibc/glibc/elf/dl-runtime.c:_dl_fixup [/usr/lib/ld-linux-x86-64.so.2]
+  2,599 ( 0.39%)  /usr/src/debug/glibc/glibc/io/../sysdeps/unix/sysv/linux/openat64.c:openat [/usr/lib/libc.so.6]
+  2,235 ( 0.33%)  /usr/src/debug/glibc/glibc/elf/dl-load.c:_dl_map_new_object [/usr/lib/ld-linux-x86-64.so.2]
+  1,860 ( 0.28%)  /usr/src/debug/glibc/glibc/elf/../bits/stdlib-bsearch.h:intel_check_word.constprop.0
+  1,808 ( 0.27%)  /usr/src/debug/glibc/glibc/io/../sysdeps/unix/sysv/linux/read.c:read [/usr/lib/libc.so.6]
+  1,748 ( 0.26%)  /usr/src/debug/glibc/glibc/libio/strops.c:_IO_str_init_static_internal [/usr/lib/libc.so.6]
+  1,741 ( 0.26%)  /usr/src/debug/glibc/glibc/elf/dl-cache.c:_dl_cache_libcmp [/usr/lib/ld-linux-x86-64.so.2]
+  1,656 ( 0.25%)  /usr/src/debug/glibc/glibc/stdio-common/isoc23_sscanf.c:__isoc23_sscanf [/usr/lib/libc.so.6]
+  1,460 ( 0.22%)  /usr/src/debug/glibc/glibc/elf/dl-deps.c:_dl_map_object_deps [/usr/lib/ld-linux-x86-64.so.2]
+  1,425 ( 0.21%)  /usr/src/debug/glibc/glibc/string/../sysdeps/x86_64/multiarch/strlen-avx2.S:__strlen_avx2 [/usr/lib/libc.so.6]
+  1,356 ( 0.20%)  /usr/src/debug/glibc/glibc/misc/../sysdeps/unix/sysv/linux/x86_64/syscall.S:syscall [/usr/lib/libc.so.6]
+  1,282 ( 0.19%)  /usr/src/debug/glibc/glibc/string/../sysdeps/x86_64/multiarch/../multiarch/memset-vec-unaligned-erms.S:memset [/usr/lib/ld-linux-x86-64.so.2]
+  1,260 ( 0.19%)  /usr/src/debug/glibc/glibc/elf/../sysdeps/generic/dl-protected.h:do_lookup_x
+  1,257 ( 0.19%)  /usr/src/debug/glibc/glibc/elf/rtld.c:dl_main [/usr/lib/ld-linux-x86-64.so.2]
+  1,256 ( 0.19%)  /usr/src/debug/glibc/glibc/nptl/pthread_getattr_np.c:pthread_getattr_np@@GLIBC_2.32 [/usr/lib/libc.so.6]
+  1,243 ( 0.19%)  /usr/src/debug/glibc/glibc/io/../sysdeps/unix/sysv/linux/sysdep-cancel.h:openat
+  1,226 ( 0.18%)  /usr/src/debug/glibc/glibc/malloc/malloc.c:_int_malloc [/usr/lib/libc.so.6]
+  1,182 ( 0.18%)  /usr/src/debug/glibc/glibc/libio/genops.c:_IO_no_init [/usr/lib/libc.so.6]
+  1,130 ( 0.17%)  /usr/src/debug/glibc/glibc/libio/genops.c:_IO_old_init [/usr/lib/libc.so.6]
+  1,090 ( 0.16%)  /usr/src/debug/glibc/glibc/elf/get-dynamic-info.h:_dl_map_new_object
+  1,073 ( 0.16%)  /usr/src/debug/glibc/glibc/elf/dl-minimal.c:strsep [/usr/lib/ld-linux-x86-64.so.2]
+  1,066 ( 0.16%)  /usr/src/debug/glibc/glibc/elf/../sysdeps/x86_64/dl-trampoline.h:_dl_runtime_resolve_xsave [/usr/lib/ld-linux-x86-64.so.2]
+  1,015 ( 0.15%)  /usr/src/debug/glibc/glibc/elf/dl-misc.c:_dl_name_match_p [/usr/lib/ld-linux-x86-64.so.2]
+    925 ( 0.14%)  /usr/src/debug/glibc/glibc/libio/genops.c:_IO_setb [/usr/lib/libc.so.6]
+    904 ( 0.14%)  /usr/src/debug/glibc/glibc/csu/errno-loc.c:__errno_location [/usr/lib/libc.so.6]
+    896 ( 0.13%)  ???:gs_fmt_u64 [/home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-contract/fs1]
+    844 ( 0.13%)  /usr/src/debug/glibc/glibc/elf/./dl-load.h:_dl_map_new_object
+    769 ( 0.12%)  /usr/src/debug/glibc/glibc/elf/dl-object.c:_dl_new_object [/usr/lib/ld-linux-x86-64.so.2]
+    750 ( 0.11%)  /usr/src/debug/glibc/glibc/elf/../sysdeps/generic/ldsodefs.h:do_lookup_x
+    708 ( 0.11%)  /usr/src/debug/glibc/glibc/io/../sysdeps/unix/sysv/linux/fstat64.c:fstat [/usr/lib/ld-linux-x86-64.so.2]
+    690 ( 0.10%)  /usr/src/debug/glibc/glibc/stdio-common/../include/scratch_buffer.h:__vfscanf_internal
+    652 ( 0.10%)  /usr/src/debug/glibc/glibc/string/../sysdeps/x86_64/multiarch/../multiarch/strlen-sse2.S:strlen [/usr/lib/ld-linux-x86-64.so.2]
+    650 ( 0.10%)  /usr/src/debug/glibc/glibc/malloc/malloc.c:__ptmalloc_init
+    650 ( 0.10%)  /usr/src/debug/glibc/glibc/nptl/libc-cleanup.c:__libc_cleanup_push_defer [/usr/lib/libc.so.6]
+    644 ( 0.10%)  /usr/src/debug/glibc/glibc/stdio-common/../libio/strfile.h:__isoc23_sscanf
+    632 ( 0.09%)  /usr/src/debug/glibc/glibc/elf/dl-minimal-malloc.c:__minimal_malloc [/usr/lib/ld-linux-x86-64.so.2]
+    602 ( 0.09%)  /usr/src/debug/glibc/glibc/elf/./dl-find_object.h:_dl_find_object_from_map [/usr/lib/ld-linux-x86-64.so.2]
+    600 ( 0.09%)  /usr/src/debug/glibc/glibc/string/../sysdeps/x86_64/multiarch/../multiarch/strchr-sse2.S:index [/usr/lib/ld-linux-x86-64.so.2]
+    580 ( 0.09%)  /usr/src/debug/glibc/glibc/elf/dl-load.c:open_path [/usr/lib/ld-linux-x86-64.so.2]
+    571 ( 0.09%)  /usr/src/debug/glibc/glibc/elf/dl-tunables.c:__tunable_get_val [/usr/lib/ld-linux-x86-64.so.2]
+    564 ( 0.08%)  /usr/src/debug/glibc/glibc/elf/dl-cache.c:search_cache [/usr/lib/ld-linux-x86-64.so.2]
+    562 ( 0.08%)  /usr/src/debug/glibc/glibc/elf/dl-load.c:_dl_init_paths [/usr/lib/ld-linux-x86-64.so.2]
+    502 ( 0.08%)  /usr/src/debug/glibc/glibc/misc/../sysdeps/unix/sysv/linux/mmap64.c:mmap [/usr/lib/ld-linux-x86-64.so.2]
+    500 ( 0.07%)  /usr/src/debug/glibc/glibc/elf/dl-environ.c:_dl_next_ld_env_entry [/usr/lib/ld-linux-x86-64.so.2]
+    500 ( 0.07%)  /usr/src/debug/glibc/glibc/nptl/libc-cleanup.c:__libc_cleanup_pop_restore [/usr/lib/libc.so.6]
+    486 ( 0.07%)  /usr/src/debug/glibc/glibc/elf/rtld.c:_dl_start [/usr/lib/ld-linux-x86-64.so.2]
+    475 ( 0.07%)  /usr/src/debug/glibc/glibc/string/../sysdeps/x86_64/multiarch/memmove-vec-unaligned-erms.S:mempcpy [/usr/lib/ld-linux-x86-64.so.2]
+    465 ( 0.07%)  /usr/src/debug/glibc/glibc/elf/dl-load.c:_dl_lookup_map [/usr/lib/ld-linux-x86-64.so.2]
+    463 ( 0.07%)  /usr/src/debug/glibc/glibc/elf/../sysdeps/x86/dl-cacheinfo.h:handle_intel.constprop.0 [/usr/lib/ld-linux-x86-64.so.2]
+    462 ( 0.07%)  /usr/src/debug/glibc/glibc/elf/../sysdeps/generic/ldsodefs.h:_dl_relocate_object_no_relro
+    462 ( 0.07%)  /usr/src/debug/glibc/glibc/elf/dl-load.c:open_verify.constprop.0 [/usr/lib/ld-linux-x86-64.so.2]
+    460 ( 0.07%)  /usr/src/debug/glibc/glibc/stdio-common/printf-parse.h:__vfscanf_internal
+    460 ( 0.07%)  /usr/src/debug/glibc/glibc/stdlib/../stdlib/strtol.c:__strtoul_internal [/usr/lib/libc.so.6]
+    452 ( 0.07%)  /usr/src/debug/glibc/glibc/io/../sysdeps/unix/sysv/linux/close.c:close [/usr/lib/libc.so.6]
+    405 ( 0.06%)  /usr/src/debug/glibc/glibc/libio/iofwrite.c:fwrite [/usr/lib/libc.so.6]
+    385 ( 0.06%)  /usr/src/debug/glibc/glibc/libio/fileops.c:_IO_file_xsputn@@GLIBC_2.2.5 [/usr/lib/libc.so.6]
+    360 ( 0.05%)  /usr/src/debug/glibc/glibc/elf/dl-hwcaps_split.c:_dl_hwcaps_split [/usr/lib/ld-linux-x86-64.so.2]
+    358 ( 0.05%)  /usr/src/debug/glibc/glibc/string/../sysdeps/x86_64/multiarch/memmove-vec-unaligned-erms.S:memcpy [/usr/lib/ld-linux-x86-64.so.2]
+    341 ( 0.05%)  /usr/src/debug/glibc/glibc/elf/./dl-map-segments.h:_dl_map_new_object
+    341 ( 0.05%)  /usr/src/debug/glibc/glibc/elf/./get-dynamic-info.h:dl_main
+    318 ( 0.05%)  /usr/src/debug/glibc/glibc/elf/dl-sort-maps.c:_dl_sort_maps [/usr/lib/ld-linux-x86-64.so.2]
+    315 ( 0.05%)  /usr/src/debug/glibc/glibc/elf/dl-sort-maps.c:dfs_traversal.part.0 [/usr/lib/ld-linux-x86-64.so.2]
+    303 ( 0.05%)  /usr/src/debug/glibc/glibc/io/../sysdeps/unix/sysv/linux/open64_nocancel.c:__open_nocancel [/usr/lib/ld-linux-x86-64.so.2]
+    301 ( 0.05%)  /usr/src/debug/glibc/glibc/libio/fileops.c:new_do_write [/usr/lib/libc.so.6]
+    297 ( 0.04%)  ???:gs_reserve_region [/home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-contract/fs1]
+    296 ( 0.04%)  /usr/src/debug/glibc/glibc/elf/dl-init.c:call_init [/usr/lib/ld-linux-x86-64.so.2]
+    284 ( 0.04%)  /usr/src/debug/glibc/glibc/elf/../sysdeps/x86/dl-cacheinfo.h:init_cpu_features.constprop.0
+    277 ( 0.04%)  /usr/src/debug/glibc/glibc/elf/../sysdeps/unix/sysv/linux/dl-sysdep.c:_dl_sysdep_parse_arguments [/usr/lib/ld-linux-x86-64.so.2]
+    273 ( 0.04%)  /usr/src/debug/glibc/glibc/libio/fileops.c:_IO_file_write@@GLIBC_2.2.5 [/usr/lib/libc.so.6]
+    264 ( 0.04%)  /usr/src/debug/glibc/glibc/elf/./get-dynamic-info.h:_dl_start
+    264 ( 0.04%)  /usr/src/debug/glibc/glibc/elf/dl-catch.c:_dl_catch_exception [/usr/lib/ld-linux-x86-64.so.2]
+    248 ( 0.04%)  /usr/src/debug/glibc/glibc/elf/dl-fini.c:_dl_fini [/usr/lib/ld-linux-x86-64.so.2]
+    245 ( 0.04%)  /usr/src/debug/glibc/glibc/elf/dl-hwcaps_split.c:_dl_hwcaps_split_masked [/usr/lib/ld-linux-x86-64.so.2]
+    244 ( 0.04%)  /usr/src/debug/glibc/glibc/elf/dl-find_object.c:_dlfo_process_initial [/usr/lib/ld-linux-x86-64.so.2]
+    242 ( 0.04%)  /usr/src/debug/glibc/glibc/libio/fileops.c:_IO_file_underflow@@GLIBC_2.2.5 [/usr/lib/libc.so.6]
+    240 ( 0.04%)  /usr/src/debug/glibc/glibc/string/../string/strcspn.c:strcspn [/usr/lib/ld-linux-x86-64.so.2]
+    239 ( 0.04%)  /usr/src/debug/glibc/glibc/elf/../sysdeps/x86/dl-cacheinfo.h:get_common_cache_info.constprop.0 [/usr/lib/ld-linux-x86-64.so.2]
+    228 ( 0.03%)  /usr/src/debug/glibc/glibc/elf/dl-load.c:fillin_rpath [/usr/lib/ld-linux-x86-64.so.2]
+    226 ( 0.03%)  ???:gf_parent [/home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-contract/fs1]
+    226 ( 0.03%)  ???:gf_path_copy [/home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-contract/fs1]
+    214 ( 0.03%)  /usr/src/debug/glibc/glibc/elf/../sysdeps/unix/sysv/linux/dl-parse_auxv.h:_dl_sysdep_parse_arguments
+    208 ( 0.03%)  ???:parse_int_g.constprop.0 [/home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-contract/fs1]
+    204 ( 0.03%)  /usr/src/debug/glibc/glibc/elf/../include/stackinfo.h:_dl_map_new_object
+    200 ( 0.03%)  ???:gs_os_arg [/home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-contract/fs1]
+    200 ( 0.03%)  ???:gs_qclock_ns [/home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-contract/fs1]
+    199 ( 0.03%)  /usr/src/debug/glibc/glibc/elf/dl-load.c:_dl_process_pt_gnu_property [/usr/lib/ld-linux-x86-64.so.2]
+    198 ( 0.03%)  /usr/src/debug/glibc/glibc/elf/dl-tunables.c:do_tunable_update_val.part.0 [/usr/lib/ld-linux-x86-64.so.2]
+    193 ( 0.03%)  /usr/src/debug/glibc/glibc/malloc/malloc.c:free [/usr/lib/libc.so.6]
+    186 ( 0.03%)  /usr/src/debug/glibc/glibc/elf/dl-hwcaps.c:_dl_important_hwcaps [/usr/lib/ld-linux-x86-64.so.2]
+    184 ( 0.03%)  /usr/src/debug/glibc/glibc/libio/libioP.h:getdelim
+    184 ( 0.03%)  /usr/src/debug/glibc/glibc/stdio-common/getline.c:getline [/usr/lib/libc.so.6]
+    183 ( 0.03%)  /usr/src/debug/glibc/glibc/elf/dl-load.c:_dl_map_object [/usr/lib/ld-linux-x86-64.so.2]
+    182 ( 0.03%)  /usr/src/debug/glibc/glibc/elf/../sysdeps/x86/cpu-features.c:init_cpu_features.constprop.0 [/usr/lib/ld-linux-x86-64.so.2]
+    181 ( 0.03%)  /usr/src/debug/glibc/glibc/elf/dl-lookup-direct.c:_dl_lookup_direct [/usr/lib/ld-linux-x86-64.so.2]
+    181 ( 0.03%)  /usr/src/debug/glibc/glibc/libio/fileops.c:_IO_file_overflow@@GLIBC_2.2.5 [/usr/lib/libc.so.6]
+    179 ( 0.03%)  /usr/src/debug/glibc/glibc/libio/genops.c:_IO_flush_all [/usr/lib/libc.so.6]
+    174 ( 0.03%)  /usr/src/debug/glibc/glibc/stdlib/cxa_finalize.c:__cxa_finalize [/usr/lib/libc.so.6]
+    169 ( 0.03%)  /usr/src/debug/glibc/glibc/setjmp/../sysdeps/x86_64/setjmp.S:__sigsetjmp [/usr/lib/ld-linux-x86-64.so.2]
+    166 ( 0.02%)  /usr/src/debug/glibc/glibc/elf/../sysdeps/x86/cpu-features.c:update_active.constprop.0 [/usr/lib/ld-linux-x86-64.so.2]
+    164 ( 0.02%)  /usr/src/debug/glibc/glibc/libio/genops.c:_IO_cleanup [/usr/lib/libc.so.6]
+    161 ( 0.02%)  /usr/src/debug/glibc/glibc/elf/../elf/dl-tls.c:_dl_allocate_tls_init [/usr/lib/ld-linux-x86-64.so.2]
+    159 ( 0.02%)  /usr/src/debug/glibc/glibc/elf/dl-lookup-direct.c:check_match [/usr/lib/ld-linux-x86-64.so.2]
+    154 ( 0.02%)  /usr/src/debug/glibc/glibc/time/../sysdeps/unix/sysv/linux/clock_gettime.c:clock_gettime@@GLIBC_2.17 [/usr/lib/libc.so.6]
+    152 ( 0.02%)  /usr/src/debug/glibc/glibc/elf/dl-find_object.c:_dlfo_sort_mappings [/usr/lib/ld-linux-x86-64.so.2]
+    151 ( 0.02%)  /usr/src/debug/glibc/glibc/elf/dl-call_fini.c:_dl_call_fini [/usr/lib/ld-linux-x86-64.so.2]
+    150 ( 0.02%)  /usr/src/debug/glibc/glibc/elf/dl-object.c:_dl_add_to_namespace_list [/usr/lib/ld-linux-x86-64.so.2]
+    150 ( 0.02%)  /usr/src/debug/glibc/glibc/libio/../string/bits/string_fortified.h:getdelim
+    147 ( 0.02%)  /usr/src/debug/glibc/glibc/libio/libioP.h:fwrite
+    145 ( 0.02%)  /usr/src/debug/glibc/glibc/elf/dl-reloc.c:_dl_protect_relro [/usr/lib/ld-linux-x86-64.so.2]
+    141 ( 0.02%)  /usr/src/debug/glibc/glibc/malloc/malloc.c:sysmalloc [/usr/lib/libc.so.6]
+    139 ( 0.02%)  /usr/src/debug/glibc/glibc/libio/genops.c:__underflow [/usr/lib/libc.so.6]
+    136 ( 0.02%)  /usr/src/debug/glibc/glibc/elf/dl-minimal.c:lookup_malloc_symbol [/usr/lib/ld-linux-x86-64.so.2]
+    135 ( 0.02%)  /usr/src/debug/glibc/glibc/elf/dl-setup_hash.c:_dl_setup_hash [/usr/lib/ld-linux-x86-64.so.2]
+    132 ( 0.02%)  /usr/src/debug/glibc/glibc/elf/../elf/dl-tls.c:_dl_determine_tlsoffset [/usr/lib/ld-linux-x86-64.so.2]
+    132 ( 0.02%)  /usr/src/debug/glibc/glibc/elf/../sysdeps/generic/dl-cache.h:cache_extension_load [/usr/lib/ld-linux-x86-64.so.2]
+    132 ( 0.02%)  /usr/src/debug/glibc/glibc/string/../sysdeps/x86_64/multiarch/memset-vec-unaligned-erms.S:__memset_avx2_unaligned_erms [/usr/lib/libc.so.6]
+    129 ( 0.02%)  ???:gs_rt_start_3025e5810379 [/home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-contract/fs1]
+    126 ( 0.02%)  /usr/src/debug/glibc/glibc/malloc/malloc.c:__libc_malloc2 [/usr/lib/libc.so.6]
+    122 ( 0.02%)  /usr/src/debug/glibc/glibc/elf/dl-cache.c:_dl_check_ldsocache_needs_loading [/usr/lib/ld-linux-x86-64.so.2]
+    121 ( 0.02%)  /usr/src/debug/glibc/glibc/malloc/malloc.c:malloc [/usr/lib/libc.so.6]
+    112 ( 0.02%)  /usr/src/debug/glibc/glibc/elf/dl-load.c:_dl_dst_count [/usr/lib/ld-linux-x86-64.so.2]
+    111 ( 0.02%)  /usr/src/debug/glibc/glibc/elf/../sysdeps/x86/dl-prop.h:_dl_process_pt_gnu_property
+    110 ( 0.02%)  /usr/src/debug/glibc/glibc/elf/dl-deps.c:openaux [/usr/lib/ld-linux-x86-64.so.2]
+    110 ( 0.02%)  /usr/src/debug/glibc/glibc/libio/genops.c:_IO_switch_to_get_mode [/usr/lib/libc.so.6]
+    107 ( 0.02%)  /usr/src/debug/glibc/glibc/libio/fileops.c:_IO_file_fopen@@GLIBC_2.2.5 [/usr/lib/libc.so.6]
+    100 ( 0.01%)  ???:0x0000000004a52210 [???]
+     95 ( 0.01%)  /usr/src/debug/glibc/glibc/elf/dl-deps.c:expand_dst.constprop.0 [/usr/lib/ld-linux-x86-64.so.2]
+     94 ( 0.01%)  /usr/src/debug/glibc/glibc/elf/../elf/dl-tls.c:_dl_init_static_tls [/usr/lib/ld-linux-x86-64.so.2]
+     92 ( 0.01%)  /usr/src/debug/glibc/glibc/malloc/malloc.c:__libc_calloc2 [/usr/lib/libc.so.6]
+     92 ( 0.01%)  ???:0x0000000004a52250 [???]
+     91 ( 0.01%)  /usr/src/debug/glibc/glibc/malloc/malloc.c:calloc [/usr/lib/libc.so.6]
+     90 ( 0.01%)  /usr/src/debug/glibc/glibc/elf/dl-load.c:_dl_notify_new_object [/usr/lib/ld-linux-x86-64.so.2]
+     89 ( 0.01%)  /usr/src/debug/glibc/glibc/libio/genops.c:_IO_link_in [/usr/lib/libc.so.6]
+     88 ( 0.01%)  /usr/src/debug/glibc/glibc/elf/dl-cache.c:_dl_load_cache_lookup [/usr/lib/ld-linux-x86-64.so.2]
+     88 ( 0.01%)  ???:gs_native_stack_init [/home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-contract/fs1]
+     87 ( 0.01%)  /usr/src/debug/glibc/glibc/elf/../sysdeps/generic/ldsodefs.h:_dl_lookup_map
+     86 ( 0.01%)  /usr/src/debug/glibc/glibc/signal/../sysdeps/unix/sysv/linux/libc_sigaction.c:__libc_sigaction [/usr/lib/libc.so.6]
+     86 ( 0.01%)  /usr/src/debug/glibc/glibc/stdlib/exit.c:__run_exit_handlers [/usr/lib/libc.so.6]
+     85 ( 0.01%)  /usr/src/debug/glibc/glibc/string/strdup.c:strdup [/usr/lib/ld-linux-x86-64.so.2]
+     84 ( 0.01%)  /usr/src/debug/glibc/glibc/elf/dl-init.c:_dl_init [/usr/lib/ld-linux-x86-64.so.2]
+     84 ( 0.01%)  /usr/src/debug/glibc/glibc/io/../sysdeps/unix/sysv/linux/sysdep-cancel.h:write
+     84 ( 0.01%)  /usr/src/debug/glibc/glibc/libio/fileops.c:_IO_file_close_maybe_unlink [/usr/lib/libc.so.6]
+     80 ( 0.01%)  /usr/src/debug/glibc/glibc/elf/dl-minimal-malloc.c:__minimal_calloc [/usr/lib/ld-linux-x86-64.so.2]
+     80 ( 0.01%)  /usr/src/debug/glibc/glibc/io/../sysdeps/unix/sysv/linux/fstatat64.c:fstatat [/usr/lib/ld-linux-x86-64.so.2]
+     78 ( 0.01%)  /usr/src/debug/glibc/glibc/elf/dl-hwcaps.c:copy_hwcaps [/usr/lib/ld-linux-x86-64.so.2]
+     74 ( 0.01%)  /usr/src/debug/glibc/glibc/elf/../sysdeps/x86/dl-prop.h:dl_main
+     74 ( 0.01%)  /usr/src/debug/glibc/glibc/libio/genops.c:__GI__IO_un_link.part.0 [/usr/lib/libc.so.6]
+     72 ( 0.01%)  /usr/src/debug/glibc/glibc/csu/../csu/libc-start.c:__libc_start_main@@GLIBC_2.34 [/usr/lib/libc.so.6]
+     72 ( 0.01%)  /usr/src/debug/glibc/glibc/elf/../sysdeps/unix/sysv/linux/dl-map-segment-align.c:_dl_map_segment_align [/usr/lib/ld-linux-x86-64.so.2]
+     72 ( 0.01%)  /usr/src/debug/glibc/glibc/elf/dl-version.c:_dl_check_all_versions [/usr/lib/ld-linux-x86-64.so.2]
+     71 ( 0.01%)  /usr/src/debug/glibc/glibc/malloc/malloc.c:realloc [/usr/lib/libc.so.6]
+     67 ( 0.01%)  /usr/src/debug/glibc/glibc/elf/../sysdeps/generic/dl-hash.h:__rtld_malloc_init_real
+     66 ( 0.01%)  /usr/src/debug/glibc/glibc/malloc/scratch_buffer_set_array_size.c:__libc_scratch_buffer_set_array_size [/usr/lib/ld-linux-x86-64.so.2]
+     66 ( 0.01%)  /usr/src/debug/glibc/glibc/string/../sysdeps/x86_64/multiarch/ifunc-avx2.h:strlen
+     64 ( 0.01%)  /usr/src/debug/glibc/glibc/signal/../string/bits/string_fortified.h:__libc_sigaction
+     63 ( 0.01%)  /usr/src/debug/glibc/glibc/string/../sysdeps/x86_64/multiarch/ifunc-memmove.h:memcpy@@GLIBC_2.14
+     63 ( 0.01%)  /usr/src/debug/glibc/glibc/string/../sysdeps/x86_64/multiarch/ifunc-memset.h:memset
+     63 ( 0.01%)  ???:gs_fmt_i64 [/home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-contract/fs1]
+     62 ( 0.01%)  /usr/src/debug/glibc/glibc/malloc/malloc.c:_int_realloc [/usr/lib/libc.so.6]
+     61 ( 0.01%)  /usr/src/debug/glibc/glibc/elf/dl-cache.c:_dl_maybe_load_ldsocache [/usr/lib/ld-linux-x86-64.so.2]
+     61 ( 0.01%)  /usr/src/debug/glibc/glibc/malloc/arena.c:__ptmalloc_init [/usr/lib/libc.so.6]
+     60 ( 0.01%)  /usr/src/debug/glibc/glibc/elf/../sysdeps/x86/cpu-features.c:get_common_indices.constprop.0 [/usr/lib/ld-linux-x86-64.so.2]
+     60 ( 0.01%)  /usr/src/debug/glibc/glibc/misc/../sysdeps/unix/syscall-template.S:mprotect [/usr/lib/ld-linux-x86-64.so.2]
+     56 ( 0.01%)  /usr/src/debug/glibc/glibc/elf/../elf/dl-tls.c:_dl_add_to_slotinfo [/usr/lib/ld-linux-x86-64.so.2]
+     56 ( 0.01%)  /usr/src/debug/glibc/glibc/io/../sysdeps/unix/sysv/linux/write.c:write [/usr/lib/libc.so.6]
+     55 ( 0.01%)  /usr/src/debug/glibc/glibc/elf/rtld.c:handle_preload_list [/usr/lib/ld-linux-x86-64.so.2]
+     55 ( 0.01%)  /usr/src/debug/glibc/glibc/string/../sysdeps/x86_64/multiarch/../multiarch/strcmp-sse2.S:strncmp [/usr/lib/ld-linux-x86-64.so.2]
+     52 ( 0.01%)  /usr/src/debug/glibc/glibc/elf/dl-reloc.c:_dl_relocate_object [/usr/lib/ld-linux-x86-64.so.2]
+     51 ( 0.01%)  /usr/src/debug/glibc/glibc/elf/../sysdeps/posix/dl-fileid.h:_dl_map_new_object
+     51 ( 0.01%)  /usr/src/debug/glibc/glibc/elf/dl-load.c:expand_dynamic_string_token [/usr/lib/ld-linux-x86-64.so.2]
+     51 ( 0.01%)  /usr/src/debug/glibc/glibc/misc/sbrk.c:sbrk [/usr/lib/libc.so.6]
+     51 ( 0.01%)  /usr/src/debug/glibc/glibc/posix/register-atfork.c:__unregister_atfork [/usr/lib/libc.so.6]
+     48 ( 0.01%)  /usr/src/debug/glibc/glibc/elf/../sysdeps/generic/ldsodefs.h:_dl_new_object
+     48 ( 0.01%)  /usr/src/debug/glibc/glibc/elf/dl-load.c:cache_rpath [/usr/lib/ld-linux-x86-64.so.2]
+     48 ( 0.01%)  /usr/src/debug/glibc/glibc/elf/dl-tunables.c:__GI___tunable_set_val [/usr/lib/ld-linux-x86-64.so.2]
+     48 ( 0.01%)  /usr/src/debug/glibc/glibc/io/../sysdeps/unix/sysv/linux/read_nocancel.c:__read_nocancel [/usr/lib/ld-linux-x86-64.so.2]
+     47 ( 0.01%)  /usr/src/debug/glibc/glibc/libio/fileops.c:_IO_file_seekoff@@GLIBC_2.2.5 [/usr/lib/libc.so.6]
+     47 ( 0.01%)  /usr/src/debug/glibc/glibc/libio/iofopen.c:__fopen_internal [/usr/lib/libc.so.6]
+     46 ( 0.01%)  /usr/src/debug/glibc/glibc/elf/./dl-scratch-buffer.h:open_path
+     46 ( 0.01%)  /usr/src/debug/glibc/glibc/stdio-common/../string/bits/string_fortified.h:__vfscanf_internal
+     46 ( 0.01%)  /usr/src/debug/glibc/glibc/wcsmbs/../sysdeps/x86_64/multiarch/ifunc-avx2.h:wcschr
+     45 ( 0.01%)  /usr/src/debug/glibc/glibc/elf/do-rel.h:_dl_start
+     45 ( 0.01%)  /usr/src/debug/glibc/glibc/libio/filedoalloc.c:_IO_file_doallocate [/usr/lib/libc.so.6]
+     45 ( 0.01%)  /usr/src/debug/glibc/glibc/malloc/malloc.c:_int_free_merge_chunk [/usr/lib/libc.so.6]
+     44 ( 0.01%)  /usr/src/debug/glibc/glibc/elf/../sysdeps/nptl/dl-mutex.c:__rtld_mutex_init [/usr/lib/ld-linux-x86-64.so.2]
+     44 ( 0.01%)  /usr/src/debug/glibc/glibc/elf/dl-misc.c:_dl_sysdep_read_whole_file [/usr/lib/ld-linux-x86-64.so.2]
+     44 ( 0.01%)  /usr/src/debug/glibc/glibc/libio/iosetvbuf.c:setvbuf [/usr/lib/libc.so.6]
+     44 ( 0.01%)  /usr/src/debug/glibc/glibc/string/../sysdeps/x86_64/multiarch/ifunc-avx2.h:rindex
+     44 ( 0.01%)  /usr/src/debug/glibc/glibc/string/../sysdeps/x86_64/multiarch/ifunc-avx2.h:strnlen
+     43 ( 0.01%)  /usr/src/debug/glibc/glibc/elf/../sysdeps/unix/sysv/linux/dl-exec-post.h:dl_main
+     43 ( 0.01%)  /usr/src/debug/glibc/glibc/elf/dl-minimal.c:__rtld_malloc_init_real [/usr/lib/ld-linux-x86-64.so.2]
+     42 ( 0.01%)  /usr/src/debug/glibc/glibc/libio/iofclose.c:fclose@@GLIBC_2.2.5 [/usr/lib/libc.so.6]
+     42 ( 0.01%)  /usr/src/debug/glibc/glibc/libio/libioP.h:_IO_file_xsputn@@GLIBC_2.2.5
+     42 ( 0.01%)  /usr/src/debug/glibc/glibc/string/../sysdeps/x86_64/multiarch/../multiarch/memcmp-sse2.S:bcmp [/usr/lib/ld-linux-x86-64.so.2]
+     42 ( 0.01%)  /usr/src/debug/glibc/glibc/string/../sysdeps/x86_64/multiarch/ifunc-memmove.h:memmove
+     41 ( 0.01%)  /usr/src/debug/glibc/glibc/elf/../sysdeps/unix/sysv/linux/dl-sysdep.c:_dl_sysdep_start [/usr/lib/ld-linux-x86-64.so.2]
+     41 ( 0.01%)  /usr/src/debug/glibc/glibc/libio/fileops.c:_IO_file_open [/usr/lib/libc.so.6]
+     41 ( 0.01%)  /usr/src/debug/glibc/glibc/libio/genops.c:_IO_default_setbuf [/usr/lib/libc.so.6]
+     41 ( 0.01%)  /usr/src/debug/glibc/glibc/malloc/malloc.c:tcache_init.part.0 [/usr/lib/libc.so.6]
+     40 ( 0.01%)  /usr/src/debug/glibc/glibc/elf/./dl-scratch-buffer.h:_dl_map_object_deps
+     40 ( 0.01%)  /usr/src/debug/glibc/glibc/stdlib/cxa_atexit.c:__internal_atexit [/usr/lib/libc.so.6]
+     40 ( 0.01%)  /usr/src/debug/glibc/glibc/string/../sysdeps/x86_64/multiarch/ifunc-evex.h:memchr
+     40 ( 0.01%)  /usr/src/debug/glibc/glibc/wcsmbs/../sysdeps/x86_64/multiarch/ifunc-evex.h:wmemchr
+     39 ( 0.01%)  /usr/src/debug/glibc/glibc/elf/dl-find_object.c:_dl_find_object_init [/usr/lib/ld-linux-x86-64.so.2]
+     39 ( 0.01%)  /usr/src/debug/glibc/glibc/nptl/pthread_attr_setaffinity.c:pthread_attr_setaffinity_np@@GLIBC_2.32 [/usr/lib/libc.so.6]
+     39 ( 0.01%)  ???:gs_out_bytes [/home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-contract/fs1]
+     38 ( 0.01%)  /usr/src/debug/glibc/glibc/malloc/malloc.c:unlink_chunk.isra.0 [/usr/lib/libc.so.6]
+     38 ( 0.01%)  /usr/src/debug/glibc/glibc/misc/../sysdeps/unix/sysv/linux/setvmaname.c:__set_vma_name [/usr/lib/ld-linux-x86-64.so.2]
+     38 ( 0.01%)  /usr/src/debug/glibc/glibc/nptl/pthread_mutex_lock.c:pthread_mutex_lock@@GLIBC_2.2.5 [/usr/lib/libc.so.6]
+     37 ( 0.01%)  /usr/src/debug/glibc/glibc/elf/../elf/dl-tls.c:_dl_tls_static_surplus_init [/usr/lib/ld-linux-x86-64.so.2]
+     36 ( 0.01%)  /usr/src/debug/glibc/glibc/io/../sysdeps/unix/sysv/linux/stat64.c:stat [/usr/lib/ld-linux-x86-64.so.2]
+     36 ( 0.01%)  /usr/src/debug/glibc/glibc/malloc/malloc.c:_int_free_create_chunk [/usr/lib/libc.so.6]
+     36 ( 0.01%)  /usr/src/debug/glibc/glibc/signal/sigaction.c:sigaction [/usr/lib/libc.so.6]
+     35 ( 0.01%)  /usr/src/debug/glibc/glibc/elf/../elf/dl-tls.c:_dl_tls_initial_modid_limit_setup [/usr/lib/ld-linux-x86-64.so.2]
+     35 ( 0.01%)  /usr/src/debug/glibc/glibc/libio/fileops.c:_IO_do_write@@GLIBC_2.2.5 [/usr/lib/libc.so.6]
+     35 ( 0.01%)  /usr/src/debug/glibc/glibc/libio/libioP.h:new_do_write
+     34 ( 0.01%)  /usr/src/debug/glibc/glibc/posix/../sysdeps/posix/sysconf.c:sysconf
+     34 ( 0.01%)  /usr/src/debug/glibc/glibc/posix/../sysdeps/unix/sysv/linux/x86/sysconf.c:sysconf [/usr/lib/libc.so.6]
+     33 ( 0.00%)  /usr/src/debug/glibc/glibc/malloc/malloc.c:free'2 [/usr/lib/libc.so.6]
+     32 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/../sysdeps/nptl/dl-tls_init_tp.c:__tls_init_tp [/usr/lib/ld-linux-x86-64.so.2]
+     32 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/../sysdeps/x86/get-isa-level.h:update_active.constprop.0
+     32 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/dl-debug.c:_dl_debug_post_relocate [/usr/lib/ld-linux-x86-64.so.2]
+     32 ( 0.00%)  /usr/src/debug/glibc/glibc/misc/../sysdeps/unix/sysv/linux/setvmaname.c:__is_decorate_maps_enabled [/usr/lib/ld-linux-x86-64.so.2]
+     32 ( 0.00%)  /usr/src/debug/glibc/glibc/wcsmbs/../sysdeps/x86_64/multiarch/ifunc-wmemset.h:wmemset
+     32 ( 0.00%)  ???:btree_destroy [/usr/lib/libm.so.6]
+     31 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/dl-cache.c:_dl_load_cache_tunables [/usr/lib/ld-linux-x86-64.so.2]
+     31 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/rtld.c:do_preload [/usr/lib/ld-linux-x86-64.so.2]
+     31 ( 0.00%)  /usr/src/debug/glibc/glibc/nptl/pthread_mutex_unlock.c:__pthread_mutex_unlock_usercnt [/usr/lib/libc.so.6]
+     30 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/../sysdeps/nptl/dl-tls_init_tp.c:rtld_mutex_dummy [/usr/lib/ld-linux-x86-64.so.2]
+     30 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/dl-hwcaps_split.c:_dl_hwcaps_contains [/usr/lib/ld-linux-x86-64.so.2]
+     30 ( 0.00%)  /usr/src/debug/glibc/glibc/misc/../sysdeps/unix/syscall-template.S:madvise [/usr/lib/libc.so.6]
+     30 ( 0.00%)  /usr/src/debug/glibc/glibc/stdlib/cxa_atexit.c:__new_exitfn [/usr/lib/libc.so.6]
+     29 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/rtld.c:init_tls [/usr/lib/ld-linux-x86-64.so.2]
+     29 ( 0.00%)  /usr/src/debug/glibc/glibc/libio/libioP.h:fclose@@GLIBC_2.2.5
+     29 ( 0.00%)  /usr/src/debug/glibc/glibc/string/../string/strstr.c:__GI_strstr [/usr/lib/libc.so.6]
+     28 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/dl-catch.c:_dl_catch_error [/usr/lib/ld-linux-x86-64.so.2]
+     28 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/dl-debug.c:_dl_debug_update [/usr/lib/ld-linux-x86-64.so.2]
+     27 ( 0.00%)  /usr/src/debug/glibc/glibc/string/../sysdeps/x86/cacheinfo.h:__x86_cacheinfo
+     26 ( 0.00%)  /usr/src/debug/glibc/glibc/csu/../sysdeps/nptl/libc_start_call_main.h:(below main) [/usr/lib/libc.so.6]
+     26 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/../sysdeps/unix/sysv/linux/dl-extra_tls.h:_dl_determine_tlsoffset
+     26 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/../sysdeps/unix/sysv/linux/rseq-internal.h:__tls_init_tp
+     26 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/../sysdeps/x86_64/dl-machine.h:_dl_fixup
+     26 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/../sysdeps/x86_64/dl-runtime.h:_dl_fixup
+     26 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/dl-call-libc-early-init.c:_dl_call_libc_early_init [/usr/lib/ld-linux-x86-64.so.2]
+     26 ( 0.00%)  /usr/src/debug/glibc/glibc/misc/init-misc.c:__init_misc [/usr/lib/libc.so.6]
+     25 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/../sysdeps/generic/ldsodefs.h:_dl_map_new_object
+     25 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/../sysdeps/x86/get-isa-level.h:_dl_hwcaps_subdirs_active
+     25 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/dl-audit.c:_dl_audit_objclose [/usr/lib/ld-linux-x86-64.so.2]
+     25 ( 0.00%)  /usr/src/debug/glibc/glibc/libio/fileops.c:_IO_file_read [/usr/lib/libc.so.6]
+     25 ( 0.00%)  /usr/src/debug/glibc/glibc/libio/libioP.h:_IO_file_underflow@@GLIBC_2.2.5
+     25 ( 0.00%)  /usr/src/debug/glibc/glibc/libio/libioP.h:__underflow
+     24 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/../sysdeps/nptl/pthread_early_init.h:__libc_early_init
+     24 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/../sysdeps/unix/sysv/linux/dl-load-post.h:_dl_map_new_object
+     24 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/./dl-hwcaps.h:_dl_important_hwcaps
+     24 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/./dl-scratch-buffer.h:_dl_load_cache_lookup
+     24 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/dl-audit.c:_dl_audit_activity_nsid [/usr/lib/ld-linux-x86-64.so.2]
+     24 ( 0.00%)  /usr/src/debug/glibc/glibc/io/../sysdeps/unix/sysv/linux/close_nocancel.c:__GI___close_nocancel [/usr/lib/ld-linux-x86-64.so.2]
+     23 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/../elf/dl-tls.c:_dl_allocate_tls_storage [/usr/lib/ld-linux-x86-64.so.2]
+     23 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/../sysdeps/x86_64/dl-cet.c:dl_cet_check [/usr/lib/ld-linux-x86-64.so.2]
+     23 ( 0.00%)  /usr/src/debug/glibc/glibc/nptl/pthread_mutex_conf.c:__pthread_tunables_init [/usr/lib/libc.so.6]
+     23 ( 0.00%)  /usr/src/debug/glibc/glibc/string/../sysdeps/x86_64/multiarch/ifunc-avx2.h:memrchr
+     23 ( 0.00%)  /usr/src/debug/glibc/glibc/string/../sysdeps/x86_64/multiarch/ifunc-memcmp.h:bcmp
+     23 ( 0.00%)  /usr/src/debug/glibc/glibc/wcsmbs/../sysdeps/x86_64/multiarch/ifunc-avx2.h:wcscmp
+     23 ( 0.00%)  /usr/src/debug/glibc/glibc/wcsmbs/../sysdeps/x86_64/multiarch/ifunc-memcmp.h:wmemcmp
+     23 ( 0.00%)  ???:0x00000000000217e0 [/usr/lib/ld-linux-x86-64.so.2]
+     22 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/libc_early_init.c:__libc_early_init [/usr/lib/libc.so.6]
+     22 ( 0.00%)  /usr/src/debug/glibc/glibc/libio/stdfiles.c:_IO_stdfiles_init [/usr/lib/libc.so.6]
+     22 ( 0.00%)  /usr/src/debug/glibc/glibc/malloc/morecore.c:__glibc_morecore [/usr/lib/libc.so.6]
+     22 ( 0.00%)  /usr/src/debug/glibc/glibc/string/../sysdeps/x86_64/multiarch/ifunc-avx2.h:strchrnul
+     22 ( 0.00%)  /usr/src/debug/glibc/glibc/string/../sysdeps/x86_64/multiarch/strncmp.c:strncmp [/usr/lib/libc.so.6]
+     21 ( 0.00%)  /usr/src/debug/glibc/glibc/debug/../sysdeps/x86_64/multiarch/ifunc-memmove.h:__memcpy_chk
+     21 ( 0.00%)  /usr/src/debug/glibc/glibc/debug/../sysdeps/x86_64/multiarch/ifunc-memmove.h:__memmove_chk
+     21 ( 0.00%)  /usr/src/debug/glibc/glibc/debug/../sysdeps/x86_64/multiarch/ifunc-memmove.h:__mempcpy_chk
+     21 ( 0.00%)  /usr/src/debug/glibc/glibc/debug/../sysdeps/x86_64/multiarch/ifunc-memset.h:__memset_chk
+     21 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/../include/rtld-malloc.h:_dl_new_object
+     21 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/dl-catch.c:_dl_receive_error [/usr/lib/ld-linux-x86-64.so.2]
+     21 ( 0.00%)  /usr/src/debug/glibc/glibc/libio/fileops.c:_IO_file_sync@@GLIBC_2.2.5 [/usr/lib/libc.so.6]
+     21 ( 0.00%)  /usr/src/debug/glibc/glibc/string/../sysdeps/x86_64/multiarch/ifunc-memmove.h:mempcpy
+     21 ( 0.00%)  /usr/src/debug/glibc/glibc/string/../sysdeps/x86_64/multiarch/strchr-avx2.S:__strchr_avx2 [/usr/lib/libc.so.6]
+     21 ( 0.00%)  /usr/src/debug/glibc/glibc/string/../sysdeps/x86_64/multiarch/strchr.c:index [/usr/lib/libc.so.6]
+     21 ( 0.00%)  ???:__popcountdi2 [/usr/lib/libc.so.6]
+     20 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/../include/rtld-malloc.h:__minimal_calloc
+     20 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/../sysdeps/x86_64/dl-machine.h:_dl_start
+     20 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/./dl-sym-post.h:lookup_malloc_symbol
+     20 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/dl-debug.c:_dl_debug_initialize [/usr/lib/ld-linux-x86-64.so.2]
+     20 ( 0.00%)  /usr/src/debug/glibc/glibc/libio/genops.c:_IO_default_finish [/usr/lib/libc.so.6]
+     20 ( 0.00%)  /usr/src/debug/glibc/glibc/posix/../sysdeps/unix/sysv/linux/x86/../sysconf.c:sysconf
+     20 ( 0.00%)  /usr/src/debug/glibc/glibc/resource/../sysdeps/unix/sysv/linux/getrlimit64.c:getrlimit [/usr/lib/libc.so.6]
+     20 ( 0.00%)  /usr/src/debug/glibc/glibc/string/../sysdeps/x86_64/multiarch/strcmp.c:strcmp [/usr/lib/libc.so.6]
+     19 ( 0.00%)  /usr/src/debug/glibc/glibc/csu/init-first.c:_init_first [/usr/lib/libc.so.6]
+     19 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/rtld.c:map_doit [/usr/lib/ld-linux-x86-64.so.2]
+     19 ( 0.00%)  /usr/src/debug/glibc/glibc/string/../sysdeps/x86_64/multiarch/ifunc-strcasecmp.h:strcasecmp
+     19 ( 0.00%)  /usr/src/debug/glibc/glibc/string/../sysdeps/x86_64/multiarch/ifunc-strcasecmp.h:strcasecmp_l
+     19 ( 0.00%)  /usr/src/debug/glibc/glibc/string/../sysdeps/x86_64/multiarch/ifunc-strcasecmp.h:strncasecmp
+     19 ( 0.00%)  /usr/src/debug/glibc/glibc/string/../sysdeps/x86_64/multiarch/ifunc-strcasecmp.h:strncasecmp_l
+     19 ( 0.00%)  /usr/src/debug/glibc/glibc/string/../sysdeps/x86_64/multiarch/ifunc-strncpy.h:stpncpy
+     19 ( 0.00%)  /usr/src/debug/glibc/glibc/string/../sysdeps/x86_64/multiarch/ifunc-strncpy.h:strncpy
+     18 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/../elf/dl-tls.c:allocate_dtv [/usr/lib/ld-linux-x86-64.so.2]
+     18 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/dl-debug.c:_dl_debug_change_state [/usr/lib/ld-linux-x86-64.so.2]
+     18 ( 0.00%)  /usr/src/debug/glibc/glibc/libio/fileops.c:_IO_file_setbuf@@GLIBC_2.2.5 [/usr/lib/libc.so.6]
+     18 ( 0.00%)  /usr/src/debug/glibc/glibc/libio/genops.c:_IO_doallocbuf [/usr/lib/libc.so.6]
+     18 ( 0.00%)  /usr/src/debug/glibc/glibc/misc/../sysdeps/unix/sysv/linux/getpagesize.c:getpagesize [/usr/lib/libc.so.6]
+     18 ( 0.00%)  /usr/src/debug/glibc/glibc/nptl/pthread_getaffinity.c:pthread_getaffinity_np@@GLIBC_2.32 [/usr/lib/libc.so.6]
+     18 ( 0.00%)  /usr/src/debug/glibc/glibc/stdlib/../sysdeps/unix/sysv/linux/getrandom.c:__getrandom_early_init [/usr/lib/libc.so.6]
+     18 ( 0.00%)  /usr/src/debug/glibc/glibc/wcsmbs/../sysdeps/x86_64/multiarch/ifunc-wcslen.h:wcslen
+     18 ( 0.00%)  /usr/src/debug/glibc/glibc/wcsmbs/../sysdeps/x86_64/multiarch/ifunc-wcslen.h:wcsnlen
+     17 ( 0.00%)  /usr/src/debug/glibc/glibc/ctype/ctype-info.c:__ctype_init [/usr/lib/libc.so.6]
+     17 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/../sysdeps/nptl/dl-tls_init_tp.c:__tls_pre_init_tp [/usr/lib/ld-linux-x86-64.so.2]
+     17 ( 0.00%)  /usr/src/debug/glibc/glibc/libio/libioP.h:setvbuf
+     17 ( 0.00%)  /usr/src/debug/glibc/glibc/nptl/pthread_attr_extension.c:__pthread_attr_extension [/usr/lib/libc.so.6]
+     17 ( 0.00%)  /usr/src/debug/glibc/glibc/string/../sysdeps/x86_64/multiarch/ifunc-strcpy.h:stpcpy
+     17 ( 0.00%)  /usr/src/debug/glibc/glibc/string/../sysdeps/x86_64/multiarch/ifunc-strcpy.h:strcat
+     17 ( 0.00%)  /usr/src/debug/glibc/glibc/string/../sysdeps/x86_64/multiarch/ifunc-strcpy.h:strcpy
+     17 ( 0.00%)  /usr/src/debug/glibc/glibc/wcsmbs/../sysdeps/x86_64/multiarch/ifunc-wcs.h:wcpncpy
+     17 ( 0.00%)  /usr/src/debug/glibc/glibc/wcsmbs/../sysdeps/x86_64/multiarch/ifunc-wcs.h:wcscat
+     17 ( 0.00%)  /usr/src/debug/glibc/glibc/wcsmbs/../sysdeps/x86_64/multiarch/ifunc-wcs.h:wcsncpy
+     17 ( 0.00%)  /usr/src/debug/glibc/glibc/wcsmbs/../sysdeps/x86_64/multiarch/wcscpy.c:wcscpy [/usr/lib/libc.so.6]
+     16 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/../include/scratch_buffer.h:_dl_map_object_deps
+     16 ( 0.00%)  /usr/src/debug/glibc/glibc/malloc/malloc.c:tcache_free_init [/usr/lib/libc.so.6]
+     16 ( 0.00%)  /usr/src/debug/glibc/glibc/nptl/pthread_attr_destroy.c:pthread_attr_destroy [/usr/lib/libc.so.6]
+     15 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/dl-audit.c:_dl_audit_objopen [/usr/lib/ld-linux-x86-64.so.2]
+     15 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/dl-cache.c:_dl_maybe_unload_ldsocache [/usr/lib/ld-linux-x86-64.so.2]
+     15 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/dl-execstack-tunable.c:_dl_handle_execstack_tunable [/usr/lib/ld-linux-x86-64.so.2]
+     15 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/rtld.c:version_check_doit [/usr/lib/ld-linux-x86-64.so.2]
+     14 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/../elf/dl-tls.c:_dl_assign_tls_modid [/usr/lib/ld-linux-x86-64.so.2]
+     14 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/./dl-hwcaps.h:copy_hwcaps
+     14 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/./dl-tls_block_align.h:_dl_allocate_tls_storage
+     14 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/dl-sort-maps.c:_dl_sort_maps_init [/usr/lib/ld-linux-x86-64.so.2]
+     14 ( 0.00%)  /usr/src/debug/glibc/glibc/libio/libioP.h:_IO_file_close_maybe_unlink
+     14 ( 0.00%)  /usr/src/debug/glibc/glibc/malloc/arena.c:__libc_malloc2
+     14 ( 0.00%)  /usr/src/debug/glibc/glibc/misc/../sysdeps/unix/sysv/linux/brk.c:brk [/usr/lib/libc.so.6]
+     14 ( 0.00%)  /usr/src/debug/glibc/glibc/stdlib/cxa_thread_atexit_impl.c:__call_tls_dtors [/usr/lib/libc.so.6]
+     13 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/../misc/sbrk.c:sbrk [/usr/lib/ld-linux-x86-64.so.2]
+     13 ( 0.00%)  /usr/src/debug/glibc/glibc/nptl/pthread_attr_init.c:pthread_attr_init@@GLIBC_2.2.5 [/usr/lib/libc.so.6]
+     13 ( 0.00%)  ???:0x0000000000001090 [/usr/lib/valgrind/vgpreload_core-amd64-linux.so]
+     13 ( 0.00%)  ???:0x00000000000046a0 [/home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-contract/fs1]
+     13 ( 0.00%)  ???:0x00000000000110d0 [/usr/lib/libm.so.6]
+     12 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/../include/rtld-malloc.h:_dl_check_map_versions
+     12 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/../nptl/nptl-stack.h:__libc_early_init
+     12 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/./dl-scratch-buffer.h:_dl_init_paths
+     12 ( 0.00%)  /usr/src/debug/glibc/glibc/io/../sysdeps/unix/sysv/linux/lseek64.c:lseek [/usr/lib/libc.so.6]
+     12 ( 0.00%)  /usr/src/debug/glibc/glibc/libio/vtables.c:check_stdfiles_vtables [/usr/lib/libc.so.6]
+     12 ( 0.00%)  /usr/src/debug/glibc/glibc/math/../sysdeps/x86_64/fpu/multiarch/e_expf.c:expf@@GLIBC_2.27 [/usr/lib/libm.so.6]
+     12 ( 0.00%)  /usr/src/debug/glibc/glibc/signal/../sysdeps/unix/syscall-template.S:sigaltstack [/usr/lib/libc.so.6]
+     12 ( 0.00%)  ???:(below main) [/home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-contract/fs1]
+     12 ( 0.00%)  ???:0x00000000000010e0 [/usr/lib/valgrind/vgpreload_core-amd64-linux.so]
+     12 ( 0.00%)  ???:0x00000000000046f0 [/home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-contract/fs1]
+     12 ( 0.00%)  ???:0x0000000000011120 [/usr/lib/libm.so.6]
+     11 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/../sysdeps/generic/ldsodefs.h:dl_main
+     11 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/../sysdeps/unix/sysv/linux/x86/dl-minsigstacksize.h:get_common_indices.constprop.0
+     10 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/../include/rtld-malloc.h:fillin_rpath
+     10 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/dl-minimal-malloc.c:__minimal_free [/usr/lib/ld-linux-x86-64.so.2]
+     10 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/dl-minimal.c:__rtld_malloc_init_stubs [/usr/lib/ld-linux-x86-64.so.2]
+     10 ( 0.00%)  /usr/src/debug/glibc/glibc/string/../include/rtld-malloc.h:strdup
+     10 ( 0.00%)  ???:release_registered_frames [/usr/lib/libm.so.6]
+      9 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/../sysdeps/generic/dl-call_tls_init_tp.h:init_tls
+      9 ( 0.00%)  /usr/src/debug/glibc/glibc/io/../sysdeps/unix/sysv/linux/access.c:access [/usr/lib/ld-linux-x86-64.so.2]
+      9 ( 0.00%)  /usr/src/debug/glibc/glibc/malloc/../sysdeps/generic/calloc-clear-memory.h:calloc
+      9 ( 0.00%)  /usr/src/debug/glibc/glibc/nptl/pthread_attr_getstack.c:pthread_attr_getstack@@GLIBC_2.34 [/usr/lib/libc.so.6]
+      8 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/../include/rtld-malloc.h:_dl_map_object_deps
+      8 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/../include/stackinfo.h:dl_main
+      8 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/../sysdeps/unix/sysv/linux/dl-vdso-setup.h:dl_main
+      8 ( 0.00%)  /usr/src/debug/glibc/glibc/malloc/../sysdeps/generic/calloc-clear-memory.h:__libc_calloc2
+      8 ( 0.00%)  /usr/src/debug/glibc/glibc/math/../sysdeps/x86_64/fpu/multiarch/ifunc-fma.h:cosh@@GLIBC_2.44
+      8 ( 0.00%)  /usr/src/debug/glibc/glibc/math/../sysdeps/x86_64/fpu/multiarch/ifunc-fma.h:sinh@@GLIBC_2.44
+      7 ( 0.00%)  /usr/src/debug/glibc/glibc/malloc/../sysdeps/unix/sysv/linux/not-cancel.h:__ptmalloc_init
+      7 ( 0.00%)  /usr/src/debug/glibc/glibc/malloc/arena.c:realloc
+      7 ( 0.00%)  /usr/src/debug/glibc/glibc/math/../sysdeps/x86_64/fpu/multiarch/ifunc-avx-fma4.h:__atan2_finite@GLIBC_2.15
+      7 ( 0.00%)  /usr/src/debug/glibc/glibc/math/../sysdeps/x86_64/fpu/multiarch/ifunc-avx-fma4.h:__exp_finite@GLIBC_2.15
+      7 ( 0.00%)  /usr/src/debug/glibc/glibc/math/../sysdeps/x86_64/fpu/multiarch/ifunc-avx-fma4.h:__log_finite@GLIBC_2.15
+      7 ( 0.00%)  /usr/src/debug/glibc/glibc/math/../sysdeps/x86_64/fpu/multiarch/ifunc-avx-fma4.h:atan
+      7 ( 0.00%)  /usr/src/debug/glibc/glibc/math/../sysdeps/x86_64/fpu/multiarch/ifunc-avx-fma4.h:cos
+      7 ( 0.00%)  /usr/src/debug/glibc/glibc/math/../sysdeps/x86_64/fpu/multiarch/ifunc-avx-fma4.h:sin
+      7 ( 0.00%)  /usr/src/debug/glibc/glibc/math/../sysdeps/x86_64/fpu/multiarch/ifunc-avx-fma4.h:tan
+      7 ( 0.00%)  /usr/src/debug/glibc/glibc/math/../sysdeps/x86_64/fpu/multiarch/ifunc-fma.h:__atanh_finite@GLIBC_2.15
+      7 ( 0.00%)  /usr/src/debug/glibc/glibc/math/../sysdeps/x86_64/fpu/multiarch/ifunc-fma.h:__log1p
+      7 ( 0.00%)  /usr/src/debug/glibc/glibc/math/../sysdeps/x86_64/fpu/multiarch/ifunc-fma.h:cosf
+      7 ( 0.00%)  /usr/src/debug/glibc/glibc/math/../sysdeps/x86_64/fpu/multiarch/ifunc-fma.h:expm1
+      7 ( 0.00%)  /usr/src/debug/glibc/glibc/math/../sysdeps/x86_64/fpu/multiarch/ifunc-fma.h:powf@@GLIBC_2.27
+      7 ( 0.00%)  /usr/src/debug/glibc/glibc/math/../sysdeps/x86_64/fpu/multiarch/ifunc-fma.h:sincosf
+      7 ( 0.00%)  /usr/src/debug/glibc/glibc/math/../sysdeps/x86_64/fpu/multiarch/ifunc-fma.h:sinf
+      7 ( 0.00%)  /usr/src/debug/glibc/glibc/stdlib/exit.c:exit [/usr/lib/libc.so.6]
+      7 ( 0.00%)  ???:0x0000000004003000 [???]
+      7 ( 0.00%)  ???:0x00000000048f3000 [???]
+      7 ( 0.00%)  ???:0x0000000004907000 [???]
+      6 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/../elf/dl-tls.c:_dl_count_modids [/usr/lib/ld-linux-x86-64.so.2]
+      6 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/../include/list.h:__tls_init_tp
+      6 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/../sysdeps/generic/dl-cache.h:_dl_maybe_load_ldsocache
+      6 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/../sysdeps/unix/sysv/linux/brk.c:brk [/usr/lib/ld-linux-x86-64.so.2]
+      6 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/../sysdeps/unix/sysv/linux/dl-vdso.h:dl_main
+      6 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/../sysdeps/x86/dl-get-cpu-features.c:__x86_cpu_features [/usr/lib/ld-linux-x86-64.so.2]
+      6 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/../sysdeps/x86_64/dl-hwcaps-subdirs.c:_dl_hwcaps_subdirs_active [/usr/lib/ld-linux-x86-64.so.2]
+      6 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/dl-tunables.c:__tunable_is_initialized [/usr/lib/ld-linux-x86-64.so.2]
+      6 ( 0.00%)  /usr/src/debug/glibc/glibc/io/../sysdeps/unix/sysv/linux/close_nocancel.c:__close_nocancel [/usr/lib/libc.so.6]
+      6 ( 0.00%)  /usr/src/debug/glibc/glibc/libio/fileops.c:_IO_file_seek [/usr/lib/libc.so.6]
+      6 ( 0.00%)  /usr/src/debug/glibc/glibc/libio/genops.c:_IO_unsave_markers [/usr/lib/libc.so.6]
+      6 ( 0.00%)  /usr/src/debug/glibc/glibc/malloc/../string/bits/string_fortified.h:__libc_calloc2
+      6 ( 0.00%)  /usr/src/debug/glibc/glibc/math/../sysdeps/x86_64/fpu/multiarch/e_exp2f.c:exp2f@@GLIBC_2.27 [/usr/lib/libm.so.6]
+      6 ( 0.00%)  /usr/src/debug/glibc/glibc/math/../sysdeps/x86_64/fpu/multiarch/e_log2.c:log2@@GLIBC_2.29 [/usr/lib/libm.so.6]
+      6 ( 0.00%)  /usr/src/debug/glibc/glibc/math/../sysdeps/x86_64/fpu/multiarch/e_log2f.c:log2f@@GLIBC_2.27 [/usr/lib/libm.so.6]
+      6 ( 0.00%)  /usr/src/debug/glibc/glibc/math/../sysdeps/x86_64/fpu/multiarch/e_logf.c:logf@@GLIBC_2.27 [/usr/lib/libm.so.6]
+      6 ( 0.00%)  /usr/src/debug/glibc/glibc/math/../sysdeps/x86_64/fpu/multiarch/ifunc-fma.h:expf@@GLIBC_2.27
+      6 ( 0.00%)  /usr/src/debug/glibc/glibc/math/../sysdeps/x86_64/fpu/multiarch/ifunc-fma4.h:__acos_finite@GLIBC_2.15
+      6 ( 0.00%)  /usr/src/debug/glibc/glibc/math/../sysdeps/x86_64/fpu/multiarch/ifunc-fma4.h:__asin_finite@GLIBC_2.15
+      6 ( 0.00%)  /usr/src/debug/glibc/glibc/math/../sysdeps/x86_64/fpu/multiarch/ifunc-fma4.h:__pow_finite@GLIBC_2.15
+      6 ( 0.00%)  /usr/src/debug/glibc/glibc/math/../sysdeps/x86_64/fpu/multiarch/ifunc-fma4.h:sincos
+      6 ( 0.00%)  /usr/src/debug/glibc/glibc/math/../sysdeps/x86_64/fpu/multiarch/s_fma.c:fma [/usr/lib/libm.so.6]
+      6 ( 0.00%)  /usr/src/debug/glibc/glibc/math/../sysdeps/x86_64/fpu/multiarch/s_fmaf.c:fmaf [/usr/lib/libm.so.6]
+      6 ( 0.00%)  /usr/src/debug/glibc/glibc/setjmp/sigjmp.c:__sigjmp_save [/usr/lib/libc.so.6]
+      6 ( 0.00%)  /usr/src/debug/glibc/glibc/string/../sysdeps/x86_64/multiarch/memset.c:memset [/usr/lib/libc.so.6]
+      6 ( 0.00%)  /usr/src/debug/glibc/glibc/string/../sysdeps/x86_64/multiarch/strlen.c:strlen [/usr/lib/libc.so.6]
+      5 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/../sysdeps/generic/ldsodefs.h:_dl_start
+      5 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/../sysdeps/x86/dl-get-cpu-features.c:_dl_x86_init_cpu_features [/usr/lib/ld-linux-x86-64.so.2]
+      5 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/../sysdeps/x86_64/dl-irel.h:_dl_fixup
+      5 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/./dl-main.h:dl_main
+      5 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/dl-audit.c:_dl_audit_activity_map [/usr/lib/ld-linux-x86-64.so.2]
+      5 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/dl-audit.c:_dl_audit_preinit [/usr/lib/ld-linux-x86-64.so.2]
+      5 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/rtld.c:security_init [/usr/lib/ld-linux-x86-64.so.2]
+      5 ( 0.00%)  /usr/src/debug/glibc/glibc/libio/fileops.c:_IO_file_finish@@GLIBC_2.2.5 [/usr/lib/libc.so.6]
+      5 ( 0.00%)  /usr/src/debug/glibc/glibc/libio/fileops.c:_IO_new_file_init_internal [/usr/lib/libc.so.6]
+      5 ( 0.00%)  /usr/src/debug/glibc/glibc/libio/libioP.h:_IO_default_setbuf
+      5 ( 0.00%)  /usr/src/debug/glibc/glibc/libio/libioP.h:_IO_doallocbuf
+      5 ( 0.00%)  /usr/src/debug/glibc/glibc/libio/libioP.h:_IO_file_doallocate
+      5 ( 0.00%)  /usr/src/debug/glibc/glibc/libio/libioP.h:_IO_file_seekoff@@GLIBC_2.2.5
+      5 ( 0.00%)  /usr/src/debug/glibc/glibc/malloc/../string/bits/string_fortified.h:tcache_init.part.0
+      5 ( 0.00%)  /usr/src/debug/glibc/glibc/math/../sysdeps/x86_64/fpu/multiarch/ifunc-sse4_1.h:ceil
+      5 ( 0.00%)  /usr/src/debug/glibc/glibc/math/../sysdeps/x86_64/fpu/multiarch/ifunc-sse4_1.h:ceilf
+      5 ( 0.00%)  /usr/src/debug/glibc/glibc/math/../sysdeps/x86_64/fpu/multiarch/ifunc-sse4_1.h:floor
+      5 ( 0.00%)  /usr/src/debug/glibc/glibc/math/../sysdeps/x86_64/fpu/multiarch/ifunc-sse4_1.h:floorf
+      5 ( 0.00%)  /usr/src/debug/glibc/glibc/math/../sysdeps/x86_64/fpu/multiarch/ifunc-sse4_1.h:roundeven
+      5 ( 0.00%)  /usr/src/debug/glibc/glibc/math/../sysdeps/x86_64/fpu/multiarch/ifunc-sse4_1.h:roundevenf
+      5 ( 0.00%)  /usr/src/debug/glibc/glibc/math/../sysdeps/x86_64/fpu/multiarch/ifunc-sse4_1.h:trunc
+      5 ( 0.00%)  /usr/src/debug/glibc/glibc/math/../sysdeps/x86_64/fpu/multiarch/ifunc-sse4_1.h:truncf
+      5 ( 0.00%)  /usr/src/debug/glibc/glibc/nptl/../string/bits/string_fortified.h:pthread_attr_init@@GLIBC_2.2.5
+      5 ( 0.00%)  /usr/src/debug/glibc/glibc/string/../sysdeps/x86_64/multiarch/ifunc-sse4_2.h:strcspn
+      5 ( 0.00%)  /usr/src/debug/glibc/glibc/string/../sysdeps/x86_64/multiarch/ifunc-sse4_2.h:strpbrk
+      5 ( 0.00%)  /usr/src/debug/glibc/glibc/string/../sysdeps/x86_64/multiarch/ifunc-sse4_2.h:strspn
+      5 ( 0.00%)  ???:0x0000000000001020 [/usr/lib/valgrind/vgpreload_core-amd64-linux.so]
+      5 ( 0.00%)  ???:0x0000000000004630 [/home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-contract/fs1]
+      5 ( 0.00%)  ???:0x0000000000011060 [/usr/lib/libm.so.6]
+      4 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/../include/rtld-malloc.h:_dl_important_hwcaps
+      4 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/../include/rtld-malloc.h:_dl_init_paths
+      4 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/../include/rtld-malloc.h:init_tls
+      4 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/../sysdeps/generic/dl-debug.h:dl_main
+      4 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/../sysdeps/generic/dl-osinfo.h:security_init
+      4 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/../sysdeps/unix/sysv/linux/not-cancel.h:security_init
+      4 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/../sysdeps/x86_64/dl-cet.c:_dl_cet_setup_features [/usr/lib/ld-linux-x86-64.so.2]
+      4 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/dl-debug_state.c:_dl_debug_state [/usr/lib/ld-linux-x86-64.so.2]
+      4 ( 0.00%)  /usr/src/debug/glibc/glibc/libio/genops.c:_IO_un_link [/usr/lib/libc.so.6]
+      4 ( 0.00%)  /usr/src/debug/glibc/glibc/malloc/arena.c:__libc_calloc2
+      4 ( 0.00%)  /usr/src/debug/glibc/glibc/misc/../sysdeps/unix/sysv/linux/brk_call.h:brk
+      4 ( 0.00%)  /usr/src/debug/glibc/glibc/nptl/../string/bits/string_fortified.h:pthread_attr_setaffinity_np@@GLIBC_2.32
+      4 ( 0.00%)  /usr/src/debug/glibc/glibc/string/../sysdeps/x86_64/multiarch/memchr.c:memchr [/usr/lib/libc.so.6]
+      4 ( 0.00%)  /usr/src/debug/glibc/glibc/string/../sysdeps/x86_64/multiarch/strnlen.c:strnlen [/usr/lib/libc.so.6]
+      4 ( 0.00%)  /usr/src/debug/glibc/glibc/string/../sysdeps/x86_64/multiarch/strrchr.c:rindex [/usr/lib/libc.so.6]
+      4 ( 0.00%)  /usr/src/debug/glibc/glibc/wcsmbs/../sysdeps/x86_64/multiarch/wmemchr.c:wmemchr [/usr/lib/libc.so.6]
+      4 ( 0.00%)  /usr/src/debug/glibc/glibc/wcsmbs/../sysdeps/x86_64/multiarch/wmemset.c:wmemset [/usr/lib/libc.so.6]
+      4 ( 0.00%)  ???:0x0000000004013768 [???]
+      4 ( 0.00%)  ???:0x00000000048f3274 [???]
+      4 ( 0.00%)  ???:0x00000000049a2bd0 [???]
+      3 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/../sysdeps/generic/ldsodefs.h:check_match
+      3 ( 0.00%)  /usr/src/debug/glibc/glibc/libio/fileops.c:_IO_file_close [/usr/lib/libc.so.6]
+      3 ( 0.00%)  /usr/src/debug/glibc/glibc/libio/fileops.c:_IO_file_stat [/usr/lib/libc.so.6]
+      3 ( 0.00%)  /usr/src/debug/glibc/glibc/libio/iofopen.c:fopen@@GLIBC_2.2.5 [/usr/lib/libc.so.6]
+      3 ( 0.00%)  /usr/src/debug/glibc/glibc/malloc/../string/bits/string_fortified.h:_int_realloc
+      3 ( 0.00%)  /usr/src/debug/glibc/glibc/math/../sysdeps/x86_64/fpu/multiarch/ifunc-fma.h:exp2f@@GLIBC_2.27
+      3 ( 0.00%)  /usr/src/debug/glibc/glibc/math/../sysdeps/x86_64/fpu/multiarch/ifunc-fma.h:log2@@GLIBC_2.29
+      3 ( 0.00%)  /usr/src/debug/glibc/glibc/math/../sysdeps/x86_64/fpu/multiarch/ifunc-fma.h:log2f@@GLIBC_2.27
+      3 ( 0.00%)  /usr/src/debug/glibc/glibc/math/../sysdeps/x86_64/fpu/multiarch/ifunc-fma.h:logf@@GLIBC_2.27
+      3 ( 0.00%)  /usr/src/debug/glibc/glibc/nptl/../string/bits/string_fortified.h:pthread_getaffinity_np@@GLIBC_2.32
+      3 ( 0.00%)  /usr/src/debug/glibc/glibc/nptl/pthread_mutex_unlock.c:pthread_mutex_unlock@@GLIBC_2.2.5 [/usr/lib/libc.so.6]
+      3 ( 0.00%)  /usr/src/debug/glibc/glibc/nptl/pthread_self.c:pthread_self [/usr/lib/libc.so.6]
+      3 ( 0.00%)  /usr/src/debug/glibc/glibc/posix/../malloc/dynarray-skeleton.c:__unregister_atfork
+      3 ( 0.00%)  /usr/src/debug/glibc/glibc/posix/../sysdeps/unix/sysv/linux/_exit.c:_Exit [/usr/lib/libc.so.6]
+      3 ( 0.00%)  /usr/src/debug/glibc/glibc/setjmp/../sysdeps/x86_64/bsd-_setjmp.S:_setjmp [/usr/lib/libc.so.6]
+      3 ( 0.00%)  /usr/src/debug/glibc/glibc/stdlib/cxa_atexit.c:__cxa_atexit [/usr/lib/libc.so.6]
+      3 ( 0.00%)  /usr/src/debug/glibc/glibc/string/../sysdeps/x86/cacheinfo.c:__x86_cacheinfo [/usr/lib/libc.so.6]
+      3 ( 0.00%)  /usr/src/debug/glibc/glibc/string/../sysdeps/x86_64/multiarch/memcpy.c:memcpy@@GLIBC_2.14 [/usr/lib/libc.so.6]
+      3 ( 0.00%)  /usr/src/debug/glibc/glibc/string/../sysdeps/x86_64/multiarch/strcasecmp.c:strcasecmp [/usr/lib/libc.so.6]
+      3 ( 0.00%)  /usr/src/debug/glibc/glibc/string/../sysdeps/x86_64/multiarch/strcasecmp_l.c:strcasecmp_l [/usr/lib/libc.so.6]
+      3 ( 0.00%)  /usr/src/debug/glibc/glibc/string/../sysdeps/x86_64/multiarch/strncase.c:strncasecmp [/usr/lib/libc.so.6]
+      3 ( 0.00%)  /usr/src/debug/glibc/glibc/string/../sysdeps/x86_64/multiarch/strncase_l.c:strncasecmp_l [/usr/lib/libc.so.6]
+      2 ( 0.00%)  /usr/src/debug/glibc/glibc/debug/../sysdeps/x86_64/multiarch/memset_chk.c:__memset_chk [/usr/lib/libc.so.6]
+      2 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/../include/rtld-malloc.h:allocate_dtv
+      2 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/../sysdeps/generic/dl-cache.h:search_cache
+      2 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/../sysdeps/unix/sysv/linux/brk_call.h:brk
+      2 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/../sysdeps/unix/sysv/linux/dl-sysdep.c:_dl_sysdep_start_cleanup [/usr/lib/ld-linux-x86-64.so.2]
+      2 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/../sysdeps/unix/sysv/linux/x86/dl-hwcap2.h:update_active.constprop.0
+      2 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/../sysdeps/x86_64/dl-cet.c:_dl_cet_check [/usr/lib/ld-linux-x86-64.so.2]
+      2 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/./setup-vdso.h:dl_main
+      2 ( 0.00%)  /usr/src/debug/glibc/glibc/libio/libioP.h:_IO_cleanup
+      2 ( 0.00%)  /usr/src/debug/glibc/glibc/libio/libioP.h:_IO_flush_all
+      2 ( 0.00%)  /usr/src/debug/glibc/glibc/math/../sysdeps/x86_64/fpu/multiarch/e_asin.c:__acos_finite@GLIBC_2.15 [/usr/lib/libm.so.6]
+      2 ( 0.00%)  /usr/src/debug/glibc/glibc/math/../sysdeps/x86_64/fpu/multiarch/e_asin.c:__asin_finite@GLIBC_2.15 [/usr/lib/libm.so.6]
+      2 ( 0.00%)  /usr/src/debug/glibc/glibc/math/../sysdeps/x86_64/fpu/multiarch/e_atan2.c:__atan2_finite@GLIBC_2.15 [/usr/lib/libm.so.6]
+      2 ( 0.00%)  /usr/src/debug/glibc/glibc/math/../sysdeps/x86_64/fpu/multiarch/e_atanh.c:__atanh_finite@GLIBC_2.15 [/usr/lib/libm.so.6]
+      2 ( 0.00%)  /usr/src/debug/glibc/glibc/math/../sysdeps/x86_64/fpu/multiarch/e_exp.c:__exp_finite@GLIBC_2.15 [/usr/lib/libm.so.6]
+      2 ( 0.00%)  /usr/src/debug/glibc/glibc/math/../sysdeps/x86_64/fpu/multiarch/e_log.c:__log_finite@GLIBC_2.15 [/usr/lib/libm.so.6]
+      2 ( 0.00%)  /usr/src/debug/glibc/glibc/math/../sysdeps/x86_64/fpu/multiarch/e_pow.c:__pow_finite@GLIBC_2.15 [/usr/lib/libm.so.6]
+      2 ( 0.00%)  /usr/src/debug/glibc/glibc/math/../sysdeps/x86_64/fpu/multiarch/e_powf.c:powf@@GLIBC_2.27 [/usr/lib/libm.so.6]
+      2 ( 0.00%)  /usr/src/debug/glibc/glibc/math/../sysdeps/x86_64/fpu/multiarch/s_atan.c:atan [/usr/lib/libm.so.6]
+      2 ( 0.00%)  /usr/src/debug/glibc/glibc/math/../sysdeps/x86_64/fpu/multiarch/s_ceil.c:ceil [/usr/lib/libm.so.6]
+      2 ( 0.00%)  /usr/src/debug/glibc/glibc/math/../sysdeps/x86_64/fpu/multiarch/s_ceilf.c:ceilf [/usr/lib/libm.so.6]
+      2 ( 0.00%)  /usr/src/debug/glibc/glibc/math/../sysdeps/x86_64/fpu/multiarch/s_cosf.c:cosf [/usr/lib/libm.so.6]
+      2 ( 0.00%)  /usr/src/debug/glibc/glibc/math/../sysdeps/x86_64/fpu/multiarch/s_expm1.c:expm1 [/usr/lib/libm.so.6]
+      2 ( 0.00%)  /usr/src/debug/glibc/glibc/math/../sysdeps/x86_64/fpu/multiarch/s_floor.c:floor [/usr/lib/libm.so.6]
+      2 ( 0.00%)  /usr/src/debug/glibc/glibc/math/../sysdeps/x86_64/fpu/multiarch/s_floorf.c:floorf [/usr/lib/libm.so.6]
+      2 ( 0.00%)  /usr/src/debug/glibc/glibc/math/../sysdeps/x86_64/fpu/multiarch/s_log1p.c:__log1p [/usr/lib/libm.so.6]
+      2 ( 0.00%)  /usr/src/debug/glibc/glibc/math/../sysdeps/x86_64/fpu/multiarch/s_roundeven.c:roundeven [/usr/lib/libm.so.6]
+      2 ( 0.00%)  /usr/src/debug/glibc/glibc/math/../sysdeps/x86_64/fpu/multiarch/s_roundevenf.c:roundevenf [/usr/lib/libm.so.6]
+      2 ( 0.00%)  /usr/src/debug/glibc/glibc/math/../sysdeps/x86_64/fpu/multiarch/s_sin.c:cos [/usr/lib/libm.so.6]
+      2 ( 0.00%)  /usr/src/debug/glibc/glibc/math/../sysdeps/x86_64/fpu/multiarch/s_sin.c:sin [/usr/lib/libm.so.6]
+      2 ( 0.00%)  /usr/src/debug/glibc/glibc/math/../sysdeps/x86_64/fpu/multiarch/s_sincos.c:sincos [/usr/lib/libm.so.6]
+      2 ( 0.00%)  /usr/src/debug/glibc/glibc/math/../sysdeps/x86_64/fpu/multiarch/s_sincosf.c:sincosf [/usr/lib/libm.so.6]
+      2 ( 0.00%)  /usr/src/debug/glibc/glibc/math/../sysdeps/x86_64/fpu/multiarch/s_sinf.c:sinf [/usr/lib/libm.so.6]
+      2 ( 0.00%)  /usr/src/debug/glibc/glibc/math/../sysdeps/x86_64/fpu/multiarch/s_tan.c:tan [/usr/lib/libm.so.6]
+      2 ( 0.00%)  /usr/src/debug/glibc/glibc/math/../sysdeps/x86_64/fpu/multiarch/s_trunc.c:trunc [/usr/lib/libm.so.6]
+      2 ( 0.00%)  /usr/src/debug/glibc/glibc/math/../sysdeps/x86_64/fpu/multiarch/s_truncf.c:truncf [/usr/lib/libm.so.6]
+      2 ( 0.00%)  /usr/src/debug/glibc/glibc/nptl/../string/bits/string_fortified.h:pthread_getattr_np@@GLIBC_2.32
+      2 ( 0.00%)  /usr/src/debug/glibc/glibc/signal/../sysdeps/unix/sysv/linux/internal-signals.h:sigaction
+      2 ( 0.00%)  /usr/src/debug/glibc/glibc/string/../sysdeps/x86_64/multiarch/memmove.c:memmove [/usr/lib/libc.so.6]
+      2 ( 0.00%)  /usr/src/debug/glibc/glibc/string/../sysdeps/x86_64/multiarch/stpcpy.c:stpcpy [/usr/lib/libc.so.6]
+      2 ( 0.00%)  /usr/src/debug/glibc/glibc/string/../sysdeps/x86_64/multiarch/strcat.c:strcat [/usr/lib/libc.so.6]
+      2 ( 0.00%)  /usr/src/debug/glibc/glibc/string/../sysdeps/x86_64/multiarch/strchrnul.c:strchrnul [/usr/lib/libc.so.6]
+      2 ( 0.00%)  /usr/src/debug/glibc/glibc/string/../sysdeps/x86_64/multiarch/strcpy.c:strcpy [/usr/lib/libc.so.6]
+      2 ( 0.00%)  /usr/src/debug/glibc/glibc/string/../sysdeps/x86_64/multiarch/strcspn.c:strcspn [/usr/lib/libc.so.6]
+      2 ( 0.00%)  /usr/src/debug/glibc/glibc/string/../sysdeps/x86_64/multiarch/strpbrk.c:strpbrk [/usr/lib/libc.so.6]
+      2 ( 0.00%)  /usr/src/debug/glibc/glibc/string/../sysdeps/x86_64/multiarch/strspn.c:strspn [/usr/lib/libc.so.6]
+      2 ( 0.00%)  /usr/src/debug/glibc/glibc/wcsmbs/../sysdeps/x86_64/multiarch/wcscat.c:wcschr [/usr/lib/libc.so.6]
+      2 ( 0.00%)  /usr/src/debug/glibc/glibc/wcsmbs/../sysdeps/x86_64/multiarch/wcslen.c:wcslen [/usr/lib/libc.so.6]
+      2 ( 0.00%)  /usr/src/debug/glibc/glibc/wcsmbs/../sysdeps/x86_64/multiarch/wcsnlen.c:wcsnlen [/usr/lib/libc.so.6]
+      2 ( 0.00%)  ???:0x0000000004a52330 [???]
+      2 ( 0.00%)  ???:0x0000000004a52340 [???]
+      2 ( 0.00%)  ???:gs_os_arg_count [/home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-contract/fs1]
+      1 ( 0.00%)  /usr/src/debug/glibc/glibc/debug/../sysdeps/x86_64/multiarch/memcpy_chk.c:__memcpy_chk [/usr/lib/libc.so.6]
+      1 ( 0.00%)  /usr/src/debug/glibc/glibc/debug/../sysdeps/x86_64/multiarch/memmove_chk.c:__memmove_chk [/usr/lib/libc.so.6]
+      1 ( 0.00%)  /usr/src/debug/glibc/glibc/debug/../sysdeps/x86_64/multiarch/mempcpy_chk.c:__mempcpy_chk [/usr/lib/libc.so.6]
+      1 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/../include/rtld-malloc.h:_dl_allocate_tls_storage
+      1 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/../include/rtld-malloc.h:_dl_find_object_init
+      1 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/../sysdeps/unix/sysv/linux/dl-reseed-random.h:security_init
+      1 ( 0.00%)  /usr/src/debug/glibc/glibc/elf/../sysdeps/x86_64/dl-machine.h:_dl_sysdep_start
+      1 ( 0.00%)  /usr/src/debug/glibc/glibc/math/../sysdeps/x86_64/fpu/multiarch/e_cosh.c:cosh@@GLIBC_2.44 [/usr/lib/libm.so.6]
+      1 ( 0.00%)  /usr/src/debug/glibc/glibc/math/../sysdeps/x86_64/fpu/multiarch/e_sinh.c:sinh@@GLIBC_2.44 [/usr/lib/libm.so.6]
+      1 ( 0.00%)  /usr/src/debug/glibc/glibc/string/../sysdeps/x86_64/multiarch/memcmp.c:bcmp [/usr/lib/libc.so.6]
+      1 ( 0.00%)  /usr/src/debug/glibc/glibc/string/../sysdeps/x86_64/multiarch/mempcpy.c:mempcpy [/usr/lib/libc.so.6]
+      1 ( 0.00%)  /usr/src/debug/glibc/glibc/string/../sysdeps/x86_64/multiarch/memrchr.c:memrchr [/usr/lib/libc.so.6]
+      1 ( 0.00%)  /usr/src/debug/glibc/glibc/string/../sysdeps/x86_64/multiarch/stpncpy.c:stpncpy [/usr/lib/libc.so.6]
+      1 ( 0.00%)  /usr/src/debug/glibc/glibc/string/../sysdeps/x86_64/multiarch/strncpy.c:strncpy [/usr/lib/libc.so.6]
+      1 ( 0.00%)  /usr/src/debug/glibc/glibc/wcsmbs/../sysdeps/x86_64/multiarch/wcpcpy.c:wcpncpy [/usr/lib/libc.so.6]
+      1 ( 0.00%)  /usr/src/debug/glibc/glibc/wcsmbs/../sysdeps/x86_64/multiarch/wcscat.c:wcscat [/usr/lib/libc.so.6]
+      1 ( 0.00%)  /usr/src/debug/glibc/glibc/wcsmbs/../sysdeps/x86_64/multiarch/wcscmp.c:wcscmp [/usr/lib/libc.so.6]
+      1 ( 0.00%)  /usr/src/debug/glibc/glibc/wcsmbs/../sysdeps/x86_64/multiarch/wcsncpy.c:wcsncpy [/usr/lib/libc.so.6]
+      1 ( 0.00%)  /usr/src/debug/glibc/glibc/wcsmbs/../sysdeps/x86_64/multiarch/wmemcmp.c:wmemcmp [/usr/lib/libc.so.6]
+

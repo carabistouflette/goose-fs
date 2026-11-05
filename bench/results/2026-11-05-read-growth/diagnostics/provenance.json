@@ -1,0 +1,23 @@
+{
+  "baseline_library_revision": "ce3bdcf92c07c03761e73333526933d2db8b33b1",
+  "baseline_runner_build_revision": "dee8b163244dfa62eea7016835e9d40a70920342",
+  "candidate_library_commit": "f24d5b49f4b7b68c1f4949032eaaeb7623cdc800",
+  "baseline_executable_sha256": "54a451163d82af69e8a857b5aadb653e288cac761e01c3736db7c9d7f4e6a9a0",
+  "candidate_executable_sha256": "7c5955ea17d5bd12836ce5d133d1a8a2361ff7e3d041b859c4573caf5d196132",
+  "fixture_sha256": "cc2b552cff644baeba4fd4e5fbfe22dc14b0e96463f16b3bbc9c50cb899f14f9",
+  "fixture_bytes": 64,
+  "cpu": 6,
+  "libc_path": "/usr/lib/libc.so.6",
+  "libc_sha256": "02c8c3d06180beee9c7d0392aa85736c7d19f274a81e7f8f0b3d9e28e0641524",
+  "profile_note": "Diagnostic baseline/pilot builds precede matched fresh-driver checkpoint; profiled outputs are not acceptance throughput. Raw perf.data and executable/cache files remain private build artifacts; text summaries and raw Callgrind are retained.",
+  "source_dirty_pilot": true,
+  "text_redactions": "Kernel-IP literals in perf text summaries redacted; original private profiles remain. All percentages, counts and measured values unchanged.",
+  "user-cycles_sampled_build_ids": [
+    "98594d2a32981a5ac743b0d663e92aa2c4286567 /home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-contract/fs1",
+    "d320029ad1a23be2f4bce117fd321cbd23a2014b /usr/lib/libc.so.6"
+  ],
+  "candidate_sampled_build_ids": [
+    "d3aa125ffde41b7d22d91d1d8d71c3f29b4166ad /home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-growth-candidate/fs1",
+    "d320029ad1a23be2f4bce117fd321cbd23a2014b /usr/lib/libc.so.6"
+  ]
+}

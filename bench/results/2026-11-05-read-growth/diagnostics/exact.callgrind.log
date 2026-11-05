@@ -1,0 +1,12 @@
+==1850481== Callgrind, a call-graph generating cache profiler
+==1850481== Copyright (C) 2002-2017, and GNU GPL'd, by Josef Weidendorfer et al.
+==1850481== Using Valgrind-3.25.1 and LibVEX; rerun with -h for copyright info
+==1850481== Command: .build/read-contract/fs1 measure /home/arobin/Work/Projects/goose-libs/libraries/goose-fs/.build/worktrees/read-contract/.build/read-growth/file 64 0 16
+==1850481== Parent PID: 1850474
+==1850481== 
+==1850481== For interactive control, run 'callgrind_control -h'.
+==1850481== 
+==1850481== Events    : Ir
+==1850481== Collected : 667436
+==1850481== 
+==1850481== I   refs:      667,436

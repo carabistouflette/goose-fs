@@ -1,0 +1,5 @@
+Observed libc instruction excerpt (objdump; x86-64 object-relative offset):
+0x176e53: f3 aa   rep stos %al,(%rdi)
+Symbol: __memset_avx2_unaligned_erms
+This is the instruction offset containing 96.98% of baseline user-cycle samples.
+Full libc disassembly and raw perf.data remain private diagnostic artifacts.

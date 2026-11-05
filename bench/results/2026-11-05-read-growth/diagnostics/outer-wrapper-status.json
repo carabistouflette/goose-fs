@@ -1,0 +1,6 @@
+{
+  "exit_code": 143,
+  "cause": "not established",
+  "recorder_attempts": "both report complete with 3360 rows and successful pre/post validation",
+  "offline_analysis": "run separately without changing source or repeating measurements"
+}
