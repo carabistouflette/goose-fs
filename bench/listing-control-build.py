@@ -28,6 +28,11 @@ if out==allowed or not out.is_relative_to(allowed):p.error('output directory mus
 out.mkdir(parents=True,exist_ok=True)
 def capture(args):return subprocess.check_output(args,cwd=ROOT,text=True,timeout=30).strip()
 def digest(path):return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+def publish(name,data,mode=0o600):
+    # Replace output entries without following preexisting file symlinks.
+    with tempfile.TemporaryDirectory(prefix='publish-',dir=out) as t:
+        staged=Path(t)/'artifact';staged.write_bytes(data);staged.chmod(mode)
+        staged.replace(out/name)
 compiler=str(Path(a.goose).resolve());cc_path=shutil.which(a.cc)
 if not cc_path:p.error('C compiler not found')
 cc_path=str(Path(cc_path).resolve())
@@ -64,19 +69,20 @@ with (out/'build.lock').open('a') as lock:
                 target=build/name;target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes(data)
             source=build/'bench/runner.goose';source.parent.mkdir();source.write_text(rendered)
             env=dict(os.environ,GOOSE_STDLIB=versions['stdlib']['directory'],GOOSE_HOME=str(build/'home'))
-            log=out/f'{label}-build.log'
+            log=build/'compile.log'
             with log.open('w') as stream:
-                subprocess.run([compiler,'build',str(source),'--cc',cc_path,'-O2','-o',str(build/'runner')],
-                               cwd=build,env=env,stdout=stream,stderr=subprocess.STDOUT,check=True,timeout=180)
-            logs[label]=digest(log)
-            shutil.copyfile(build/'runner',out/label);(out/label).chmod(0o700)
+                compiled=subprocess.run([compiler,'build',str(source),'--cc',cc_path,'-O2','-o',str(build/'runner')],
+                               cwd=build,env=env,stdout=stream,stderr=subprocess.STDOUT,check=False,timeout=180)
+            publish(f'{label}-build.log',log.read_bytes());logs[label]=digest(log)
+            compiled.check_returncode()
+            publish(label,(build/'runner').read_bytes(),0o700)
             binaries[label]=digest(out/label)
             subprocess.run(['objcopy','--dump-section',f'.text={build}/text',
                 '--dump-section',f'.rodata={build}/rodata',str(out/label),str(build/'probe')],check=True,timeout=30)
             sections[label]={name:digest(build/name) for name in ('text','rodata')}
             assert digest(out/label)==binaries[label]
         build_path=str(build);home_path=str(build/'home')
-    (out/'runner.goose').write_text(rendered)
+    publish('runner.goose',rendered.encode())
     assert sources()==initial and tools()==versions and capture(['git','rev-parse','HEAD'])==revision
     record=dict(profile='identical-control',source_revision=revision,
         timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),
@@ -89,7 +95,7 @@ with (out/'build.lock').open('a') as lock:
         flags=['-O2'],build_path=build_path,goose_home=home_path,
         build_environment={key:os.environ.get(key) for key in ('CFLAGS','CPPFLAGS','LDFLAGS','SOURCE_DATE_EPOCH','LD_PRELOAD','GLIBC_TUNABLES','MALLOC_CONF')},
         identical_executables=binaries['a']==binaries['b'],identical_sections=sections['a']==sections['b'])
-    manifest.write_text(json.dumps(record,indent=2)+'\n')
+    publish('build.json',(json.dumps(record,indent=2)+'\n').encode())
     if not record['identical_executables'] or not record['identical_sections']:
         raise SystemExit('A/A builds differ; evidence retained, timing is ineligible')
     print('Independent matched-path A/A executables and measured sections are byte-identical')
