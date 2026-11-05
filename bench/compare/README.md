@@ -128,3 +128,8 @@ these sequential task costs do not establish equal-security performance.
 API references: [Rust File](https://doc.rust-lang.org/std/fs/struct.File.html),
 [Rust fchown](https://doc.rust-lang.org/std/os/unix/fs/fn.fchown.html),
 [Go os](https://pkg.go.dev/os).
+
+Build/run provenance also hashes the selected complete Goose standard library's
+sources and forces that directory during builds. This binds these harnesses' std/os
+imports; it is not a general compiler import-resolution manifest. Source edits,
+including standard-library edits, require a rebuild before measurement.

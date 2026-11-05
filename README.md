@@ -163,6 +163,11 @@ include permissions, numeric ownership and exact timestamps, with the unsupporte
 APIs and faster Rust cells retained. Their [contract](docs/FILE-METADATA.md)
 explains kernel permissions, same-value side effects and explicit synchronization.
 
+The [sorted-listing optimization](bench/results/2026-11-05-sorted-listing/README.md)
+reuses the pinned standard sort and native byte comparisons. Matched full-policy
+measurements include long shared-prefix names, unchanged controls and regressions;
+the separate Rust/Go/Goose table retains smaller workloads where goose-fs is slower.
+
 The current version excludes recursive operations, temp-directory lifecycle,
 path normalization, byte publication/installation helpers, streaming directory
 cursors and Windows support.

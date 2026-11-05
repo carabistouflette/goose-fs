@@ -73,3 +73,7 @@ initialization, enumeration, retries, owned-name construction and checksum work.
 Each round shuffles variant/workload process order with a recorded fixed seed.
 Context/Root setup, warmup and formatting are outside timing. No per-operation
 allocation or memory claim is made. Keep every raw sample and regression.
+
+The paired fixture set also includes 4,080 names of 255 bytes with a 250-byte common
+prefix. Source provenance binds the selected complete Goose standard library's
+source hashes, and measurement verifies them before/after timing.
