@@ -45,6 +45,7 @@ control_lock=None
 if a.identical_control:
     control_lock=(a.build_manifest.resolve().parent/'build.lock').open('a')
     fcntl.flock(control_lock,fcntl.LOCK_SH)
+    assert binaries=={k:(a.build_manifest.resolve().parent/k).resolve() for k in ('a','b')}, 'control binaries must share their manifest directory'
 initial_sources=sources();initial_bins={k:digest(v) for k,v in binaries.items()}
 build=json.loads(a.build_manifest.read_text())
 assert (build.get('profile')=='identical-control')==a.identical_control

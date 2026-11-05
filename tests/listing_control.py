@@ -6,6 +6,7 @@ import copy
 import json
 from pathlib import Path
 import subprocess
+import shutil
 import tempfile
 ROOT=Path(__file__).resolve().parent.parent
 p=argparse.ArgumentParser(description=__doc__)
@@ -22,15 +23,23 @@ with tempfile.TemporaryDirectory(dir=ROOT/'.build') as t:
     subprocess.run([*command,'--build-manifest',str(manifest),'--output',str(output)],check=True)
     rows=json.loads(output.read_text())['samples'];assert len(rows)==1064
     assert {r['variant'] for r in rows}=={'a','b'}
+    # Give copied manifests otherwise valid inputs; missing files must not
+    # mask a missing gate in a negative test.
+    for name in ('a','b',*record['rendered_sources_sha256']):
+        shutil.copyfile(directory/name,temp/name)
+    negative=command.copy()
+    negative[negative.index('--baseline')+1]=str(temp/'a')
+    negative[negative.index('--full')+1]=str(temp/'b')
     for field,value in [('profile','listing'),('identical_executables',False),
                         ('identical_sections',False),('sources_sha256',{})]:
         bad=copy.deepcopy(record);bad[field]=value
         path=temp/'bad.json';path.write_text(json.dumps(bad));target=temp/'absent.json'
-        result=subprocess.run([*command,'--build-manifest',str(path),'--output',str(target)],capture_output=True)
+        result=subprocess.run([*negative,'--build-manifest',str(path),'--output',str(target)],capture_output=True)
         assert result.returncode!=0 and not target.exists(),field
-    altered=temp/'altered';altered.write_bytes((directory/'b').read_bytes()+b'changed');altered.chmod(0o700)
-    cmd=command.copy();cmd[cmd.index('--full')+1]=str(altered)
-    result=subprocess.run([*cmd,'--build-manifest',str(manifest),'--output',str(temp/'changed.json')],capture_output=True)
+    (temp/'b').write_bytes((directory/'b').read_bytes()+b'changed')
+    valid=temp/'build.json';valid.write_text(json.dumps(record))
+    cmd=negative
+    result=subprocess.run([*cmd,'--build-manifest',str(valid),'--output',str(temp/'changed.json')],capture_output=True)
     assert result.returncode!=0 and not (temp/'changed.json').exists()
     for script in ('bench/listing-control-build.py','bench/listing-measure.py'):
         result=subprocess.run(['python3','-O',str(ROOT/script),'--help'],capture_output=True)
