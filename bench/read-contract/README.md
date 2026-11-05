@@ -49,16 +49,30 @@ Every cell includes validation, lookup, allocation/growth, reads, closes, status
 checks and checksum work; fixture setup, independent preflight and printing are
 outside timers. All languages use identical fixtures and filesystem byte paths.
 
-Two complete independently built records are required for a per-cell performance
-lead label. Every same-language replica median ratio in that cell must stay within
-0.95..1.05 in both records, and every FS/reference cross-replica median ratio must
-be at least 1.10. A primary regression beyond 5% in any cross-replica comparison
-vetoes an overall primary-suite leadership label. A failed control or conflicting
-record makes that cell inconclusive. These are preregistered operational decision
-rules, not a confidence interval, noise bound or causal proof. No universal SOTA
-or general language/library security ranking follows. There is no runtime change
-being accepted/rejected in this profile. Raw per-replica results remain separate;
-no pooling, correction or favorable-replica selection.
+Only the first two measured attempts at a frozen checkpoint are used for labels.
+An incomplete attempt, failed eligibility or failed control is retained and makes
+that checkpoint inconclusive; there is no replacement run. Fixing a harness bug
+requires a new preregistered checkpoint while preserving all prior records.
+
+A per-cell FS lead requires, in BOTH records: for EACH of all three languages,
+max(replica median ns)/min(replica median ns)<=1.05; and EVERY reference-replica
+median / EVERY FS-replica median >=1.10, against both references. All three
+languages' controls are required even for a pairwise label. A primary descriptive
+regression flag means FS median/reference median>1.05 in any replica comparison;
+it is not a causal assertion. No overall suite-leadership label is assigned by
+this profile. A failed or conflicting condition yields inconclusive, never a
+correction factor. These are operational rules, not confidence intervals or noise
+bounds. No universal SOTA or general security ranking follows. There is no runtime
+change being accepted/rejected. No pooling or favorable-replica selection.
+
+Mandatory fault matrix, through the actual public read/adapter entry points:
+short reads; one EINTR then success; EIO after partial progress; fstat EIO and
+misleading small/large advertised sizes; ENOSYS/EPERM parent fallback; intermediate
+close failure with successful/failed next open; final-file close EIO/EINTR after
+successful consumption and with a prior read error or limit failure; ignored
+parent-only close error; and exact FD reuse after consumed close, proving no
+retry/destructor double-close. Test instrumentation must be separate from timed
+builds, and injection counters must prove each intended boundary was reached.
 
 Sources: [openat2](https://man7.org/linux/man-pages/man2/openat2.2.html),
 [Linux close](https://man7.org/linux/man-pages/man2/close.2.html),
