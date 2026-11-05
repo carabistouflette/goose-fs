@@ -26,16 +26,18 @@ with tempfile.TemporaryDirectory(dir=ROOT/'.build') as t:
     # Give copied manifests otherwise valid inputs; missing files must not
     # mask a missing gate in a negative test.
     for name in ('a','b',*record['rendered_sources_sha256']):
-        shutil.copyfile(directory/name,temp/name)
+        shutil.copy2(directory/name,temp/name)
     negative=command.copy()
     negative[negative.index('--baseline')+1]=str(temp/'a')
     negative[negative.index('--full')+1]=str(temp/'b')
+    copied=temp/'copied.json';copied.write_text(json.dumps(record))
+    subprocess.run([*negative,'--build-manifest',str(copied),'--output',str(temp/'copied-result.json')],check=True)
     for field,value in [('profile','listing'),('identical_executables',False),
                         ('identical_sections',False),('sources_sha256',{})]:
         bad=copy.deepcopy(record);bad[field]=value
         path=temp/'bad.json';path.write_text(json.dumps(bad));target=temp/'absent.json'
         result=subprocess.run([*negative,'--build-manifest',str(path),'--output',str(target)],capture_output=True)
-        assert result.returncode!=0 and not target.exists(),field
+        assert result.returncode!=0 and b'AssertionError' in result.stderr and not target.exists(),field
     (temp/'b').write_bytes((directory/'b').read_bytes()+b'changed')
     valid=temp/'build.json';valid.write_text(json.dumps(record))
     cmd=negative
