@@ -65,6 +65,11 @@ def fixtures(root):
              dict(name='device',path=b'/dev/null',limit=64,code=3,error=0,data=b''),
              dict(name='leaf-link',path=os.fsencode(root/'link'),limit=64,code=4,error=errno.ELOOP,data=b''),
              dict(name='parent-link',path=os.fsencode(root/'parent-link'/'absent'),limit=64,code=4,error=ancestor_symlink_errno(),data=b'')]
+    for n in (4,8,1023,1024,1025,2047,2048,2049):
+        path=root/f'boundary-{n}';path.write_bytes(pattern(n))
+        extra.append(dict(name=f'boundary-{n}',path=os.fsencode(path),limit=n,code=0,error=0,data=pattern(n)))
+        if 1023<=n<=1025:
+            extra.append(dict(name=f'boundary-loose-{n}',path=os.fsencode(path),limit=1048576,code=0,error=0,data=pattern(n)))
     invalid = [b'',b'local',b'//',b'/.',b'/..',b'/x/',b'/x//y',b'/x/./y',b'/x/../y',b'/x\0tail',b'/' + b'x'*4095]
     extra += [dict(name=f'invalid-{i}',path=p,limit=64,code=1,error=0,data=b'') for i,p in enumerate(invalid)]
     extra += [dict(name=f'limit-{n}',path=os.fsencode(root/'read-64'),limit=n,code=1,error=0,data=b'') for n in (-1,1048577)]
@@ -112,7 +117,7 @@ def check_faults(binaries,cases):
     tiny=next(c for c in cases if c['name']=='tiny')
     for binary in binaries:
         growth=dict(tiny,name='dirty-retained-growth',limit=1048576)
-        for old in (0,7,63,65,128,1048576):
+        for old in (0,7,63,65,128,1023,1024,1025,1047551,1047552,1047553,1048576):
             s=probe(binary,growth,fault=f'growth-{old}',growth_old=old)
             assert s.get('growth_checked')==1 and s.get('injected')==1 and s.get('reads')==2, (binary,old,s)
             count+=1
