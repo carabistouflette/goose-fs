@@ -167,6 +167,8 @@ The [sorted-listing optimization](bench/results/2026-11-05-sorted-listing/README
 reuses the pinned standard sort and native byte comparisons. Matched full-policy
 measurements include long shared-prefix names, unchanged controls and regressions;
 the separate Rust/Go/Goose table retains smaller workloads where goose-fs is slower.
+The later [matched-path A/A controls](bench/results/2026-11-05-listing-control/README.md)
+retain identical-code timing variation without correcting or normalizing earlier data.
 
 The current version excludes recursive operations, temp-directory lifecycle,
 path normalization, byte publication/installation helpers, streaming directory

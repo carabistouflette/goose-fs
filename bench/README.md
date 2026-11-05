@@ -1,5 +1,8 @@
 # Benchmarks
 
+For identical-code controls with independent matched-path builds, see
+[the A/A recorder](listing-control.md) and [retained observations](results/2026-11-05-listing-control/README.md).
+
 `make bench BENCH_ITERATIONS=100` builds the public Goose interface with `-O2`
 and records seven samples for each of fifteen workloads in `.build/bench.json`:
 empty/64-byte reads with both exact and maximum budgets; 64-KiB/1-MiB reads;
