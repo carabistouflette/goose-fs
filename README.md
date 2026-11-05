@@ -183,6 +183,11 @@ profiles zero-fill costs and retains all 6720 means from its sole candidate.
 The candidate failed the preregistered controls/target/regression gates, so the
 released runtime remains unchanged. Instrumented profiles are separate from throughput.
 
+The [finite read A/A scheduling diagnostic](bench/results/2026-11-05-read-aa/README.md)
+retains all 1512 means and whole-process resource observations. Only two of nine
+long-batch controls qualified in both attempts; broader repeatability remains
+inconclusive, with no runtime change or correction of earlier data.
+
 The current version excludes recursive operations, temp-directory lifecycle,
 path normalization, byte publication/installation helpers, streaming directory
 cursors and Windows support.
