@@ -8,6 +8,7 @@ import os
 from pathlib import Path
 import subprocess
 from compare.provenance import goose_stdlib
+from listing_provenance import sources
 ROOT=Path(__file__).resolve().parent.parent
 p=argparse.ArgumentParser(description=__doc__)
 p.add_argument('--goose',required=True)
@@ -18,10 +19,6 @@ a=p.parse_args()
 a.output_dir=a.output_dir.resolve()
 def capture(args):return subprocess.check_output(args,cwd=ROOT,text=True,timeout=30).strip()
 def digest(path):return hashlib.sha256(Path(path).read_bytes()).hexdigest()
-def sources():
-    paths=[ROOT/'fs.goose',ROOT/'fs.build',ROOT/'GOOSE_REVISION',*sorted((ROOT/'native').glob('*')),
-           ROOT/'bench/listing.goose.in',ROOT/'bench/listing-measure.py',ROOT/'tests/listing_fixture.py',ROOT/'bench/build-baseline.py',ROOT/'bench/compare/provenance.py',Path(__file__).resolve()]
-    return {str(path.relative_to(ROOT)):digest(path) for path in paths if path.is_file()}
 a.output_dir.mkdir(parents=True,exist_ok=True)
 manifest=a.output_dir/'build.json';manifest.unlink(missing_ok=True)
 compiler=str(Path(a.goose).resolve());initial_sources=sources();initial_compiler=digest(compiler)

@@ -3,6 +3,7 @@
 """Paired warm-cache listing costs, including long names and exact/oversized budgets."""
 import argparse
 import datetime
+import fcntl
 import hashlib
 import json
 import os
@@ -13,16 +14,19 @@ import subprocess
 import sys
 import tempfile
 from compare.provenance import goose_stdlib
+from listing_provenance import sources
 ROOT=Path(__file__).resolve().parent.parent
 sys.path.insert(0,str(ROOT/'tests'))
 from listing_fixture import names_for_bytes
+if not __debug__:raise SystemExit('benchmark validation requires Python assertions; disable optimization')
 p=argparse.ArgumentParser(description=__doc__)
 p.add_argument('--goose',required=True)
 p.add_argument('--cc',default='gcc')
 p.add_argument('--baseline',type=Path,required=True)
 p.add_argument('--baseline-revision',required=True)
 p.add_argument('--full',type=Path,required=True)
-p.add_argument('--adaptive',type=Path,required=True)
+p.add_argument('--adaptive',type=Path)
+p.add_argument('--identical-control',action='store_true')
 p.add_argument('--rounds',type=int,default=5)
 p.add_argument('--iterations',type=int,default=5)
 p.add_argument('--creation-order',choices=['natural','shuffled'],default='natural')
@@ -33,13 +37,21 @@ if not 1<=a.rounds<=100 or not 1<=a.iterations<=1000000:p.error('invalid rounds/
 a.output.parent.mkdir(parents=True,exist_ok=True)
 def capture(args):return subprocess.check_output(args,cwd=ROOT,text=True,timeout=30).strip()
 def digest(path):return hashlib.sha256(Path(path).read_bytes()).hexdigest()
-def sources():
-    paths=[ROOT/'fs.goose',ROOT/'fs.build',ROOT/'GOOSE_REVISION',*sorted((ROOT/'native').glob('*')),
-           ROOT/'bench/listing.goose.in',Path(__file__).resolve(),ROOT/'tests/listing_fixture.py',ROOT/'bench/build-baseline.py',ROOT/'bench/listing-build.py',ROOT/'bench/compare/provenance.py']
-    return {str(path.relative_to(ROOT)):digest(path) for path in paths if path.is_file()}
-binaries={'baseline':a.baseline.resolve(),'full':a.full.resolve(),'adaptive':a.adaptive.resolve()}
+if a.identical_control and a.adaptive is not None:p.error('--adaptive is not used in identical-control mode')
+if a.identical_control and a.adaptive is not None:p.error('--adaptive is not used in identical-control mode')
+if not a.identical_control and a.adaptive is None:p.error('--adaptive is required outside identical-control mode')
+binaries={'a':a.baseline.resolve(),'b':a.full.resolve()} if a.identical_control else {'baseline':a.baseline.resolve(),'full':a.full.resolve(),'adaptive':a.adaptive.resolve()}
+control_lock=None
+if a.identical_control:
+    control_lock=(a.build_manifest.resolve().parent/'build.lock').open('a')
+    fcntl.flock(control_lock,fcntl.LOCK_SH)
 initial_sources=sources();initial_bins={k:digest(v) for k,v in binaries.items()}
 build=json.loads(a.build_manifest.read_text())
+assert (build.get('profile')=='identical-control')==a.identical_control
+if a.identical_control:
+    assert build['identical_executables'] and build['identical_sections']
+    assert initial_bins['a']==initial_bins['b']
+    assert build['cc_sha256']==digest(build['cc_path'])
 assert build['sources_sha256']==initial_sources and build['binaries_sha256']==initial_bins
 assert build['baseline_revision']==a.baseline_revision
 assert build['cc']==capture([a.cc,'--version'])
@@ -92,12 +104,13 @@ assert sources()==initial_sources and {k:digest(v) for k,v in binaries.items()}=
 assert capture(['git','rev-parse','HEAD'])==initial_revision and digest(goose)==compiler_hash
 assert capture([a.cc,'--version'])==build['cc']
 assert build['goose_stdlib']==goose_stdlib(goose)
+if a.identical_control:assert build['cc_sha256']==digest(build['cc_path'])
 assert {name:digest(a.build_manifest.parent/name) for name in rendered}==rendered
-metadata=dict(started_utc=started,finished_utc=datetime.datetime.now(datetime.timezone.utc).isoformat(),
+metadata=dict(profile='identical-control' if a.identical_control else 'listing-comparison',started_utc=started,finished_utc=datetime.datetime.now(datetime.timezone.utc).isoformat(),
               platform=platform.platform(),cpu_info=Path('/proc/cpuinfo').read_text().split('\n\n')[0],filesystem=filesystem,
               cpu_affinity=sorted(os.sched_getaffinity(0)),loadavg_start=load_start,loadavg_end=os.getloadavg(),
               source_revision=initial_revision,source_dirty=initial_dirty,baseline_revision=a.baseline_revision,
-              sources_sha256=initial_sources,binaries_sha256=initial_bins,goose=capture([goose,'--version']),
+              sources_sha256=initial_sources,binaries_sha256=initial_bins,binaries_paths={k:str(v) for k,v in binaries.items()},goose=capture([goose,'--version']),
               goose_sha256=compiler_hash,build_manifest=build,goose_revision=(ROOT/'GOOSE_REVISION').read_text().strip(),
               cc=capture([a.cc,'--version']),flags=['-O2'],shuffle_seed=61937,rounds=a.rounds,iterations=a.iterations,
               creation_order=a.creation_order,creation_shuffle_seed=61938,
