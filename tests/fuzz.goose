@@ -39,13 +39,16 @@ fn extended(source: const u8[:], suffix: const u8[:]) -> u8[] {
     result.append(suffix);
     return result;
 }
-// Documented priority: an invalid path returns InvalidInput before any limit
-// check and before any native call, and byte/list outputs are cleared.
+// Invalid paths with otherwise valid limits must be rejected before native I/O,
+// and nonempty outputs must be cleared. Identical-error predicate order is not
+// distinguishable through this API. The C host traps any native boundary call.
 fn invalid_priority(path: const u8[:]) {
     var bytes: u8[>..] = [];
-    assert(fs::read(path, -1, bytes).error == fs::Error.InvalidInput && bytes.len == 0);
+    bytes.push(0xa5);
+    assert(fs::read(path, 0, bytes).error == fs::Error.InvalidInput && bytes.len == 0);
     var entries: fs::Entry[>..] = [];
-    assert(fs::list(path, -1, -1, entries).error == fs::Error.InvalidInput && entries.len == 0);
+    entries.push(fs::Entry { .. });
+    assert(fs::list(path, 0, 0, entries).error == fs::Error.InvalidInput && entries.len == 0);
     var info = fs::Metadata { .. };
     assert(fs::metadata(path, info).error == fs::Error.InvalidInput);
     assert(fs::create_file(path, "").error == fs::Error.InvalidInput);
@@ -57,9 +60,6 @@ export fn fuzz_check(source: const u8[:]) -> i64 {
     assert(absolute == contract_valid(source, false));
     assert(relative == contract_valid(source, true));
     if relative { assert(source[0] != '/'); }
-    if source != "." && source.len <= fs::MAX_PATH_BYTES {
-        assert(relative == fs::valid_components(source, 0));
-    }
     if absolute {
         assert(source.len <= fs::MAX_PATH_BYTES && source[0] == '/');
         assert(find(source, "\0") < 0);

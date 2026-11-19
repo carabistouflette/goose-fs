@@ -33,6 +33,7 @@ check:
 	$(GOOSE) check tests/api.goose
 	$(GOOSE) check tests/path_grammar.goose
 	$(GOOSE) check tests/fuzz.goose
+	python3 tests/fuzz_driver.py
 	$(GOOSE) check tests/roots.goose
 	$(GOOSE) check tests/roots_workers.goose
 	$(GOOSE) check tests/handles.goose

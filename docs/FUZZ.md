@@ -19,9 +19,11 @@ call checks:
   absolute path yields a valid relative path, appending one ordinary component
   preserves validity, and a trailing separator or a `.`/`..` component never
   does;
-- the documented error priority for invalid paths: `read`, `list`, `metadata`,
-  `create_file` and `remove_file` return `InvalidInput` before any limit check,
-  clear their outputs, and make no native call.
+- invalid-path rejection with valid zero limits and prepopulated outputs:
+  `read` and `list` must clear them; all tested calls must reject before native
+  I/O. The C host traps native entry, including when native validation would
+  return the same error. Ordering among predicates returning identical
+  `InvalidInput` results is not observable and is not claimed.
 
 No input reaches the filesystem. Valid paths are only classified, never opened,
 listed or mutated, so the campaign needs no fixture and no privileges.
@@ -47,6 +49,11 @@ There is no soak mode and no host tuning. Each invocation writes a fresh
 directory under `.build/fuzz/runs/<UTC stamp>-seed<seed>/` and refuses to reuse
 an existing one, so an earlier attempt is never overwritten.
 
+A dedicated CI job executes a bounded campaign plus its oracle and controls.
+Commands and exits are journaled immediately. On timeout/interruption the runner
+kills its owned process group and reaps the leader; this is not a hard memory
+or disk containment claim. Builds and runs have finite per-command deadlines.
+
 ## Oracle and controls
 
 - `tests/path_oracle.py` is an independent byte implementation of the rule in
@@ -60,6 +67,14 @@ an existing one, so an earlier attempt is never overwritten.
 - The coverage control runs the same instrumented binary on one empty input and
   requires strictly less target coverage than the campaign, so the counters are
   live rather than a static report.
+- Required generated functions must also reach explicit edge-count floors for
+  the pinned Goose/Clang instrumented profile. Floors are checked separately
+  from relative liveness. Compiler dead blocks prevent a blanket 100% claim.
+  A synthetic reduced-coverage control must fail each floor. Inlining still
+  prevents a separate `valid_relative` per-function claim.
+- Dedicated source mutants remove the read path guard, read output clear and
+  list output clear. Each must fail and save an artifact for the expected
+  native-boundary or assertion reason; no real filesystem call is permitted.
 - The mutation control copies the package, removes the `..` rejection from
   `valid_components`, and requires both the oracle replay and the in-process
   contract assertion to fail. A weakened guard that passes is a harness defect.
@@ -67,12 +82,20 @@ an existing one, so an earlier attempt is never overwritten.
 ## Evidence
 
 `summary.json` in the run directory records the source revision and dirty flag,
-SHA256 of every campaign input file, the compiler executable hash and reported
+SHA256 of every declared campaign input file (including native C/headers and Makefile), the compiler executable hash and reported
 version, the C compiler hash and version, the seed manifest, the completed run
 count, the campaign and baseline coverage counters, per-function coverage of the
 generated C, the replay and mutant-replay results, the saved artifacts and every
 command with its exit code. Raw logs (`run.log`, `self-test.log`, `baseline.log`,
 `replay.log`, `mutant-replay.log`, `mutant-run.log`) stay beside it.
+
+Clean-source qualification is the default. An explicit `--allow-dirty` run
+retains the declared source bytes and is marked a development snapshot; it does
+not qualify the named commit. Every run retains those source snapshots.
+
+The `hits` fields printed by libFuzzer describe its retained-corpus replay,
+not the number of campaign executions. Edge counts are a scoped regression gate,
+not proof of complete semantic coverage.
 
 The pinned compiler inlines `fs::valid_relative` into its callers, so the
 generated C has no symbol for it; `summary.json` records that observation
