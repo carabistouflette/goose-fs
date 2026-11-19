@@ -3,6 +3,10 @@ CC ?= gcc
 SANITIZER_CC ?= gcc
 BENCH_CC ?= gcc
 BENCH_ITERATIONS ?= 100
+FUZZ_CC ?= clang
+FUZZ_RUNS ?= 20000
+FUZZ_SECONDS ?= 30
+FUZZ_SEED ?= 20261119
 CFLAGS = -std=c11 -Wall -Wextra -Werror -pthread
 FILE_META_WRAP = -Wl,--wrap=fchmod -Wl,--wrap=fchown -Wl,--wrap=futimens
 RENAME_WRAP = -Wl,--wrap=syscall -Wl,--wrap=renameat -Wl,--wrap=openat -Wl,--wrap=close -Wl,--wrap=fsync
@@ -12,7 +16,7 @@ RESOURCE_WRAP = -Wl,--wrap=read -Wl,--wrap=__read_chk
 HANDLE_WRAP = -Wl,--wrap=read -Wl,--wrap=pread -Wl,--wrap=__read_chk -Wl,--wrap=__pread_chk -Wl,--wrap=write -Wl,--wrap=pwrite -Wl,--wrap=close -Wl,--wrap=fstat -Wl,--wrap=ftruncate -Wl,--wrap=fsync -Wl,--wrap=fdatasync -Wl,--wrap=lseek -Wl,--wrap=fcntl -Wl,--wrap=flock -Wl,--wrap=nanosleep
 WRAP_FLAGS = -Wl,--wrap=read -Wl,--wrap=write -Wl,--wrap=close -Wl,--wrap=readdir -Wl,--wrap=closedir -Wl,--wrap=fstat -Wl,--wrap=fdopendir -Wl,--wrap=openat
 .NOTPARALLEL:
-.PHONY: readlink setup format check test native handles resources fallback sanitize bench
+.PHONY: readlink setup format check test native handles resources fallback sanitize bench fuzz
 setup:
 	./scripts/setup-goose.sh
 format:
@@ -28,6 +32,8 @@ check:
 	$(GOOSE) check tests/listing.goose
 	$(GOOSE) check tests/api.goose
 	$(GOOSE) check tests/path_grammar.goose
+	$(GOOSE) check tests/fuzz.goose
+	python3 tests/fuzz_driver.py
 	$(GOOSE) check tests/roots.goose
 	$(GOOSE) check tests/roots_workers.goose
 	$(GOOSE) check tests/handles.goose
@@ -258,3 +264,5 @@ bench:
 	mkdir -p .build
 	$(GOOSE) build bench/bench.goose --cc $(BENCH_CC) -O2 -o .build/bench
 	python3 bench/measure.py --goose $(abspath $(GOOSE)) --cc $(BENCH_CC) --iterations $(BENCH_ITERATIONS)
+fuzz:
+	python3 scripts/fuzz.py --goose "$(abspath $(GOOSE))" --cc "$(FUZZ_CC)" --runs $(FUZZ_RUNS) --seconds $(FUZZ_SECONDS) --seed $(FUZZ_SEED)

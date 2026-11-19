@@ -36,3 +36,14 @@ and independent models; they do not cover every logical Goose array lifetime.
 See [documentation and measurement audit](docs/ANNOUNCEMENT-AUDIT.md) when changing
 public claims. Historical samples must remain unchanged. A benchmark date alone
 is not evidence that it measures the current code.
+
+## Path-validation campaign
+
+Changes to pure path predicates or the fuzz target/runner also require
+`make fuzz FUZZ_SECONDS=10 FUZZ_RUNS=2000`, including oracle replay, generated
+coverage floors and the native-boundary/output-clearing mutants. The dedicated
+CI job runs this bounded gate and retains diagnostics/corpus. A final qualifying
+run requires clean source. `scripts/fuzz.py --allow-dirty` is available for
+explicit development snapshots, whose retained bytes do not qualify a named
+clean revision. Do not lower coverage floors to make a regression pass; review
+changes to the pinned generated-code/Clang profile and dead blocks explicitly.

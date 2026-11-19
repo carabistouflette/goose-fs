@@ -63,3 +63,33 @@ jobs:
           python3 tests/read_aa.py --build-dir .build/read-contract
           python3 bench/compare/build.py --goose .toolchain/goose/build/goose
           python3 tests/native_compare.py .toolchain/goose/build/goose
+  path-fuzz:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
+        with:
+          path: .toolchain
+          key: goose-${{ runner.os }}-${{ hashFiles('GOOSE_REVISION', 'scripts/setup-goose.sh') }}
+      - run: sudo apt-get update && sudo apt-get install -y clang
+      - run: make setup
+      - run: make fuzz FUZZ_SECONDS=10 FUZZ_RUNS=2000
+      - if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: path-fuzz-evidence
+          path: |
+            .build/fuzz/runs/**/summary.json
+            .build/fuzz/runs/**/commands.jsonl
+            .build/fuzz/runs/**/failure.json
+            .build/fuzz/runs/**/*.log
+            .build/fuzz/runs/**/sources/**
+            .build/fuzz/runs/**/seeds/**
+            .build/fuzz/runs/**/corpus/**
+            .build/fuzz/runs/**/artifacts/**
+            .build/fuzz/runs/**/mutant-artifacts/**
+            .build/fuzz/runs/**/crash
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 90

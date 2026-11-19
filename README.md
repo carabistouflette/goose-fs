@@ -71,11 +71,14 @@ make check test CC=gcc
 make sanitize SANITIZER_CC=gcc
 make test CC=clang
 make sanitize SANITIZER_CC=clang
+make fuzz
 ```
 
 Tests also need Python 3.11+, `/proc`, GCC/Clang, and a filesystem supporting the
 operations under test. Run one Make invocation per checkout. Further test and
-filesystem requirements are in [CONTRIBUTING.md](CONTRIBUTING.md).
+filesystem requirements are in [CONTRIBUTING.md](CONTRIBUTING.md). The bounded
+path-grammar campaign and its oracle, controls and limits are described in
+[path fuzzing](docs/FUZZ.md).
 
 [Performance results and their scope](docs/PERFORMANCE.md) distinguish measurements
 of the current implementation from historical experiments. Costs depend on the
